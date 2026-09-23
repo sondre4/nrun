@@ -38,7 +38,7 @@ pub fn select_command(input: CliInput) -> () {
         }
 
         None => {
-            commands::find_package_json();
+            commands::default();
         }
     }
 }
