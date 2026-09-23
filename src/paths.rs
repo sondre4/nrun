@@ -12,6 +12,11 @@ pub fn get_caller_directory() -> Result<std::path::PathBuf, std::io::Error> {
 fn is_npm_project_root(path: &Path) -> bool {
     let workspace_filepath = path.join(NPM_CONFIG.manifest_name);
     let lockfile_filepath = path.join(NPM_CONFIG.lockfile_name);
+
+    // let debug_workspace = workspace_filepath.to_string_lossy();
+    // let debug_lockfile = lockfile_filepath.to_string_lossy();
+
+    // println!("[DEBUG] looking for: workspace file: {debug_workspace}, lockfile: {debug_lockfile}");
     if workspace_filepath.exists() && lockfile_filepath.exists() {
         return true
     }

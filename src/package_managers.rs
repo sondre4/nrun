@@ -9,7 +9,7 @@ pub struct PackageManagerConfig {
 
 pub const NPM_CONFIG: PackageManagerConfig = PackageManagerConfig {
     manifest_name: "package.json",
-    lockfile_name: "pnpm-lock.yaml",
+    lockfile_name: "package-lock.json",
     workspace_config_name: "",
     workspace_config_field: "workspaces",
 };
@@ -23,7 +23,7 @@ pub const PNPM_CONFIG: PackageManagerConfig = PackageManagerConfig {
 
 // const BUN_CONFIG: PackageManagerConfig = PackageManagerConfig {
 //     manifest_name: "package.json",
-//     lockfile_name: "pnpm-lock.yaml",
+//     lockfile_name: "bun.lock",
 //     workspace_config_name: "",
 //     workspace_config_field: "workspaces",
 // };
