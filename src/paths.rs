@@ -35,7 +35,7 @@ fn is_pnpm_project_root(path: &Path) -> bool {
 
 // TODO: add depth option in command
 pub fn find_project_base(start_directory: PathBuf) -> Option<Project> {
-    const DEPTH: i32 = 5;
+    const DEPTH: i32 = 7;
     let mut directory = start_directory;
 
     for i in 0..DEPTH {

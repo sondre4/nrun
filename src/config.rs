@@ -80,3 +80,27 @@ pub struct PackageJsonPartialSchema {
     pub workspaces: Option<Vec<String>>,
     pub scripts: Option<HashMap<String, String>>
 }
+
+
+
+#[derive(Debug, Deserialize)]
+pub struct PnpmWorkspaceYamlPartialSchema {
+    pub packages: Option<Vec<String>>,
+}
+
+
+// #[derive(Debug, Deserialize)]
+// pub struct Importers {
+//     #[serde(rename = ".")]
+//     pub package_paths: HashMap<String, serde_yaml::Value>
+// }
+
+// #[derive(Debug, Deserialize)]
+// pub struct PnpmLockfileYamlPartialSchema {
+//     pub importers: Importers
+// }
+
+#[derive(Debug, Deserialize)]
+pub struct PnpmLockfileYamlPartialSchema {
+    pub importers: HashMap<String, serde_yaml::Value>
+}
