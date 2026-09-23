@@ -1,4 +1,6 @@
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
+
+use serde::Deserialize;
 
 pub struct PackageManagerConfig {
     pub manifest_name: &'static str,
@@ -62,7 +64,8 @@ pub struct Workspace {
 
 pub struct Project {
     pub package_manager: PackageManager,
-    pub root_path: PathBuf
+    pub root_path: PathBuf,
+    pub config: PackageManagerConfig
 }
 
 
@@ -70,3 +73,10 @@ pub const PACKAGE_MANAGERS: [PackageManager; 2] = [
     PackageManager::Npm,
     PackageManager::Pnpm,
 ];
+
+#[derive(Debug, Deserialize)]
+pub struct PackageJsonPartialSchema {
+    pub name: Option<String>,
+    pub workspaces: Option<Vec<String>>,
+    pub scripts: Option<HashMap<String, String>>
+}
