@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 use clap::Subcommand;
 
@@ -6,14 +8,14 @@ use crate::commands;
 #[derive(Parser)]
 pub struct CliInput {
     #[command(subcommand)]
-    pub command: Command
+    pub command: Option<Command>
 }
 
 
 #[derive(Subcommand)]
 pub enum Command {
     Check {
-        path: String,
+        path: PathBuf,
 
         #[arg(short, long)]
         verbose: bool
@@ -28,10 +30,15 @@ pub enum Command {
 //     pub verbose: bool,
 // }
 
-pub fn select_command(cliInput: CliInput) -> () {
-    match cliInput.command {
-        Command::Check { path, verbose } => {
+
+pub fn select_command(input: CliInput) -> () {
+    match input.command {
+        Some(Command::Check { path, verbose }) => {
             commands::check(path, verbose);
+        }
+
+        None => {
+            commands::find_package_json();
         }
     }
 }
