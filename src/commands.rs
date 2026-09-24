@@ -6,10 +6,14 @@ use crate::parse_file::{parse_package_json, parse_pnpm_lockfile_yaml, parse_pnpm
 use crate::paths::{self, get_caller_directory};
 
 
+fn get_package_json_schema_from_path(path: &Path) -> Result<PackageJsonPartialSchema, String> {
+    let parsed_package_json = parse_package_json(path)?;
+    return Ok(parsed_package_json);
+}
+
 fn get_package_json_schema(project: &Project) -> Result<PackageJsonPartialSchema, String> {
     let package_json_path = project.root_path.join(project.config.manifest_name);
-    let parsed_package_json = parse_package_json(&package_json_path)?;
-    return Ok(parsed_package_json);
+    return get_package_json_schema_from_path(&package_json_path);
 }
 
 
@@ -81,13 +85,18 @@ fn get_pnpm_workspace(project: &Project, root_package_json_schema: &PackageJsonP
 
     for package_directory in second_schema.importers.keys() {
 
-        if package_directory == "." {
-            break;
-        }
+        println!("\npackage: {package_directory}");
 
-        let package_path = PathBuf::from(package_directory);
+        // if package_directory == "." {
+        //     break;
+        // }
+
+        // println!("package: {package_directory}");
+
+        let package_path = project.root_path.join(PathBuf::from(package_directory));
         let package_json_path = package_path.join(PNPM_CONFIG.manifest_name);
-        let scripts: Vec<Script> = get_scripts_from_package_json_schema(root_package_json_schema)?;
+        let package_json_schema  = get_package_json_schema_from_path(&package_json_path)?;
+        let scripts: Vec<Script> = get_scripts_from_package_json_schema(&package_json_schema)?;
 
         let last = package_path.file_name().unwrap().to_string_lossy();
         let second_last = package_path.parent().unwrap().file_name().unwrap().to_string_lossy();

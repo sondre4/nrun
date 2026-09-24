@@ -48,7 +48,7 @@ pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Vec<PnpmLockfileYamlPartialSchem
     let debug_out_path = path.to_string_lossy();
     println!("trying to parse {debug_out_path}...");
 
-    let mut outputPnpmLockfileSchemas: Vec<PnpmLockfileYamlPartialSchema> = Vec::new();
+    let mut output_pnpm_lockfile_schemas: Vec<PnpmLockfileYamlPartialSchema> = Vec::new();
 
     let yaml_file = fs::read_to_string(path).unwrap();
     let documents = Deserializer::from_str(&yaml_file);
@@ -64,7 +64,7 @@ pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Vec<PnpmLockfileYamlPartialSchem
 
         let parsed_yaml = parsed_yaml_result.unwrap();
         // return Some(parsed_yaml);
-        outputPnpmLockfileSchemas.push(parsed_yaml);
+        output_pnpm_lockfile_schemas.push(parsed_yaml);
         // if let Some(importers) = parsed_yaml.get("importers") { }
     }
 
@@ -73,5 +73,5 @@ pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Vec<PnpmLockfileYamlPartialSchem
 
 
     // let parsed_yaml = parsed_yaml_result.unwrap();
-    return outputPnpmLockfileSchemas;
+    return output_pnpm_lockfile_schemas;
 }
