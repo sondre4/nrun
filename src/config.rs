@@ -37,7 +37,7 @@ pub const PNPM_CONFIG: PackageManagerConfig = PackageManagerConfig {
 //     workspace_config_field: "workspaces",
 // };
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum PackageManager {
     Npm,
     Pnpm,
@@ -45,21 +45,24 @@ pub enum PackageManager {
     // Yarn
 }
 
+#[derive(Debug)]
 pub struct Script {
     pub name: String,
     pub command: String
 }
 
+#[derive(Debug)]
 pub struct Package {
     pub name: String,
     pub path: PathBuf, // relative or absolute?
     pub scripts: Vec<Script>
 }
 
+#[derive(Debug)]
 pub struct Workspace {
     pub root_path: PathBuf,
     pub package_manager: PackageManager,
-    pub packages: Vec<Script>
+    pub packages: Vec<Package>
 }
 
 pub struct Project {

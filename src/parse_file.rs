@@ -4,21 +4,25 @@ use serde_yaml::Deserializer;
 
 use crate::config::{PackageJsonPartialSchema, PnpmLockfileYamlPartialSchema, PnpmWorkspaceYamlPartialSchema};
 
-pub fn parse_package_json(path: &Path) -> Option<PackageJsonPartialSchema> {
+pub fn parse_package_json(path: &Path) -> Result<PackageJsonPartialSchema, String> {
     let debug_out_path = path.to_string_lossy();
 
     println!("trying to parse {debug_out_path}...");
 
     let json_file = fs::read_to_string(path).unwrap();
-    let parsedJsonResult: Result<PackageJsonPartialSchema, serde_json::Error> = serde_json::from_str(&json_file);
+    let parsed_json_result: Result<PackageJsonPartialSchema, serde_json::Error> = serde_json::from_str(&json_file);
 
-    if parsedJsonResult.is_err() {
-        return None;
-    }
+    match (parsed_json_result) {
+        Ok(value) => return Ok(value),
+        Err(error) => return Err(format!("Failed to parse '{debug_out_path}': {error}"))
+    };
+    // if parsedJsonResult.is_err() {
+    //     return Err(parsedJsonResult.unwrap_err());
+    // }
 
-    let parsedJson = parsedJsonResult.unwrap();
+    // let parsed_json = parsed_json_result.unwrap();
     // return parsedJsonResult;
-    return Some(parsedJson);
+    // return Ok(parsed_json);
 }
 
 pub fn parse_pnpm_workspace_yaml(path: &Path) -> Option<PnpmWorkspaceYamlPartialSchema> {
@@ -57,7 +61,7 @@ pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Vec<PnpmLockfileYamlPartialSchem
             println!("Error: {error:?}");
             break;
         }
-        
+
         let parsed_yaml = parsed_yaml_result.unwrap();
         // return Some(parsed_yaml);
         outputPnpmLockfileSchemas.push(parsed_yaml);
