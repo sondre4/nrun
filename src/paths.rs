@@ -2,7 +2,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::package_managers::{NPM_CONFIG, PACKAGE_MANAGERS, PNPM_CONFIG, PackageManager, Project};
+use crate::config::{NPM_CONFIG, PACKAGE_MANAGERS, PNPM_CONFIG, PackageManager, Project};
 
 pub fn get_caller_directory() -> Result<std::path::PathBuf, std::io::Error> {
     let path = std::env::current_dir();
@@ -33,8 +33,9 @@ fn is_pnpm_project_root(path: &Path) -> bool {
     return false;
 }
 
-pub fn find_project_base(start_directory: PathBuf) -> Option<Project> {
-    const DEPTH: i32 = 4;
+// TODO: add depth option in command
+pub fn find_project_root(start_directory: PathBuf) -> Option<Project> {
+    const DEPTH: i32 = 7;
     let mut directory = start_directory;
 
     for i in 0..DEPTH {
@@ -42,6 +43,7 @@ pub fn find_project_base(start_directory: PathBuf) -> Option<Project> {
             let project: Project = Project {
                 package_manager: PackageManager::Npm,
                 root_path: directory,
+                config: NPM_CONFIG,
             };
 
             return Some(project);
@@ -51,6 +53,7 @@ pub fn find_project_base(start_directory: PathBuf) -> Option<Project> {
             let project: Project = Project {
                 package_manager: PackageManager::Pnpm,
                 root_path: directory,
+                config: PNPM_CONFIG,
             };
 
             return Some(project);

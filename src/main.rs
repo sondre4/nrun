@@ -1,7 +1,9 @@
 mod commands;
 mod paths;
 mod cli;
-mod package_managers;
+mod config;
+mod parse_file;
+mod workspaces;
 
 use clap::Parser;
 
