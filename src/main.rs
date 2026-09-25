@@ -3,6 +3,7 @@ mod paths;
 mod cli;
 mod config;
 mod parse_file;
+mod workspaces;
 
 use clap::Parser;
 
