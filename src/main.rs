@@ -1,17 +1,12 @@
-mod commands;
-mod paths;
+mod workspace;
 mod cli;
-mod config;
-mod parse_file;
-mod workspaces;
+// mod tui;
+
+
 
 use clap::Parser;
 
 fn main() {
-    // let arguments: Vec<String> = std::env::args().collect();
-    // let arguments = cli::Arguments::parse();
-    // commands::handle_command(arguments);
-
-    let input = cli::CliInput::parse();
-    cli::select_command(input);
+    let input = cli::commands::Cli::parse();
+    cli::commands::handle_command(input);
 }
