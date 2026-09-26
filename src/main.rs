@@ -1,6 +1,6 @@
 mod workspace;
 mod cli;
-// mod tui;
+mod tui;
 
 
 

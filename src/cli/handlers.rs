@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
+use crate::tui::launch_tui;
 use crate::workspace::find_workspace;
 
 // fn debug_print_path_from_project(project: &Project) -> () {
@@ -17,6 +18,8 @@ pub fn default(path: Option<PathBuf>, depth: Option<i32>) -> () {
             return;
         }
     };
+
+    launch_tui(workspace);
 }
 
 pub fn check(path: PathBuf, verbose: bool) -> () {}
