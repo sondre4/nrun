@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
 use crate::workspace;
+use crate::workspace::config::Project;
 use crate::workspace::parsers::package_json::read_package_json;
-use crate::workspace::parsers::pnpm_workspace::read_pnpm_workspace_config;
+use crate::workspace::parsers::pnpm_workspace::{find_pnpm_package_path_patterns};
 use crate::workspace::project::find::find_monorepo_project;
 use crate::workspace::project::paths::get_start_directory;
 use crate::workspace::resolvers::scripts::get_scripts_from_package_json;
@@ -66,6 +67,7 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
 
     println!("Found project: '{}' with package manager '{:#?}'", monorepo.root_path.to_string_lossy(), monorepo.package_manager);
 
+
     // read root package.json
     // not needed for pnpm? still needed for main scripts
     let root_package_json_result  = read_package_json(&monorepo);
@@ -85,31 +87,35 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
         }
     };
 
+    // add root package to workspace vector
     let root_package: Package = Package {
         name: root_package_json.name.unwrap_or("Project root".to_string()),
-        path: workspace.root_path,
+        path: workspace.root_path.clone(),
         scripts: root_package_json_scripts,
     };
 
     workspace.packages.push(root_package);
 
+
     // find path patterns of packages
-    // for pnpm: parse pnpm-workspace.yaml
-    let workspace_config = read_pnpm_workspace_config(&monorepo)?;
 
-    let package_path_patterns_option = workspace_config.packages;
+    let mut extra_patterns: Vec<String> = Vec::new();
 
-    if package_path_patterns_option.is_none() {
-        // return error message
-        // equivalent patterns should be available in PackageJson.workspaces for other package managers than npm
-        return Err(format!("No package path patterns found in pnpm workspace"));
-        // fallback to lockfile?
+    match monorepo.package_manager {
+        PackageManager::Pnpm => {
+            // for pnpm: parse pnpm-workspace.yaml
+            let patterns = find_pnpm_package_path_patterns(&monorepo)?;
+            extra_patterns = patterns;
+        }
+        PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
+            // check workspaces field in root package.json
+        }
     }
 
-    let package_path_patterns = package_path_patterns_option.unwrap();
-    // with patterns, try to find the package.json in each package
+    println!("Package patterns: {:#?}", extra_patterns);
+    println!("Project found: {:#?}", workspace);
 
-    println!("Package patterns: {package_path_patterns:#?}");
+    // TODO: add
 
     return Err("Not implemented".to_string());
 }
