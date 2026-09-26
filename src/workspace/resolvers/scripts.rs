@@ -1,7 +1,7 @@
 use crate::workspace::types::{PackageJson, Script};
 
-pub fn get_scripts_from_package_json(package_json_schema: &PackageJson) -> Result<Vec<Script>, String> {
-    let script_map_option = &package_json_schema.scripts;
+pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String> {
+    let script_map_option = &package_json.scripts;
 
     if script_map_option.is_none() {
         return Err("package.json schema contains no scripts".to_string());
@@ -21,4 +21,3 @@ pub fn get_scripts_from_package_json(package_json_schema: &PackageJson) -> Resul
 
     return Ok(scripts);
 }
-
