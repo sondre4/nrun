@@ -15,12 +15,14 @@ pub enum PackageManager {
 
 #[derive(Debug)]
 pub struct Script {
+    pub id: usize,
     pub name: String,
     pub command: String
 }
 
 #[derive(Debug)]
 pub struct Package {
+    pub id: usize,
     pub name: String,
     pub path: PathBuf, // relative or absolute?
     pub scripts: Vec<Script>

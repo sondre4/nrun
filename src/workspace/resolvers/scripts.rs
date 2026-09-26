@@ -10,13 +10,17 @@ pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String
     let script_map = script_map_option.as_ref().unwrap();
     let mut scripts: Vec<Script> = Vec::new();
 
+    let mut current_script_id: usize = 0;
+
     for (script_name, script_command) in script_map {
         let script: Script = Script {
+            id: current_script_id,
             name: script_name.to_string(),
             command: script_command.to_string(),
         };
 
         scripts.push(script);
+        current_script_id += 1;
     }
 
     return Ok(scripts);

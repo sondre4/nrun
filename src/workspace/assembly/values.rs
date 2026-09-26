@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::workspace::{assembly::search_values::SearchValues, project::paths::get_start_directory};
+use crate::workspace::{assembly::search_values::SearchValues, project::paths::get_start_directory, types::Package};
 
 pub fn initialize_values(_start_directory: Option<PathBuf>, _search_depth: Option<i32>) -> Result<SearchValues, String> {
     let mut start_directory = PathBuf::new();
@@ -27,4 +27,8 @@ pub fn initialize_values(_start_directory: Option<PathBuf>, _search_depth: Optio
     };
 
     return Ok(initial_values);
+}
+
+pub fn get_next_package_id(package: &Package) -> usize {
+    return package.id + 1;
 }

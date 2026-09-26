@@ -40,10 +40,11 @@ fn resolve_pattern(root_path: &Path, path_pattern: &String) -> Result<Vec<PathBu
     return Ok(found_paths);
 }
 
-pub fn resolve_packages(monorepo: &Project, path_pattern: &String) -> Result<Vec<Package>, String> {
+pub fn resolve_packages(monorepo: &Project, path_pattern: &String, start_package_id: usize) -> Result<Vec<Package>, String> {
     let found_paths = resolve_pattern(&monorepo.root_path, path_pattern)?;
 
     let mut resolved_packages: Vec<Package> = Vec::new();
+    let mut current_package_id = start_package_id;
 
     for found_path in found_paths {
 
@@ -53,12 +54,14 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String) -> Result<Vec
             let read_scripts = resolve_scripts(&package_json)?;
             
             let resolved_package: Package = Package {
+                id: current_package_id,
                 name: package_json.name.unwrap_or("Unnamed package".to_string()),
                 path: found_path,
                 scripts: read_scripts,
             };
 
             resolved_packages.push(resolved_package);
+            current_package_id += 1;
         }
     }
 

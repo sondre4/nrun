@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 
-use crate::workspace::{assembly::handle_input::initialize_values, parsers::{package_json::read_package_json, pnpm_workspace::find_pnpm_package_path_patterns}, project::find::find_monorepo_project, resolvers::{path_patterns::resolve_packages, scripts::resolve_scripts}, types::{Package, PackageManager, Workspace}};
+use crate::workspace::{assembly::values::{get_next_package_id, initialize_values}, parsers::{package_json::read_package_json, pnpm_workspace::find_pnpm_package_path_patterns}, project::find::find_monorepo_project, resolvers::{path_patterns::resolve_packages, scripts::resolve_scripts}, types::{Package, PackageManager, Workspace}};
+
+const ROOT_PACKAGE_ID: usize = 0;
 
 pub fn build_workspace_object(_start_directory: Option<PathBuf>, _search_depth: Option<i32>) -> Result<Workspace, String> {
 
@@ -42,6 +44,7 @@ pub fn build_workspace_object(_start_directory: Option<PathBuf>, _search_depth: 
 
     // add root package to workspace vector
     let root_package: Package = Package {
+        id: ROOT_PACKAGE_ID,
         name: root_package_json.name.unwrap_or("Project root".to_string()),
         path: workspace.root_path.clone(),
         scripts: root_package_json_scripts,
@@ -67,13 +70,23 @@ pub fn build_workspace_object(_start_directory: Option<PathBuf>, _search_depth: 
         }
     }
 
+    let first_package = workspace.packages.first();
+    let mut package_start_id = get_next_package_id(first_package.unwrap());
 
     // Find packages from path patterns
     for path_pattern in &extra_patterns {
-        let found_packages = resolve_packages(&monorepo, &path_pattern)?;
+        let found_packages = resolve_packages(&monorepo, &path_pattern, package_start_id)?;
 
         for found_package in found_packages {
             workspace.packages.push(found_package);
+        }
+
+        let last_package_found = workspace.packages.last();
+
+        if last_package_found.is_some() {
+            package_start_id = get_next_package_id(last_package_found.unwrap());
+        } else {
+            package_start_id += workspace.packages.len();
         }
     }
 
