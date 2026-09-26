@@ -2,8 +2,6 @@ use std::path::PathBuf;
 
 use crate::workspace::types::PackageManager;
 
-// pub const PACKAGE_IDENTIFIER: &str = "package.json";
-
 pub struct MonorepoConfig {
     pub manifest_name: &'static str,
     pub lockfile_name: &'static str,
