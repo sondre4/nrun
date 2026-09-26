@@ -18,13 +18,13 @@ fn parse_package_json(path: &Path) -> Result<PackageJson, String> {
     };
 }
 
-fn get_package_json_from_path(path: &Path) -> Result<PackageJson, String> {
+pub fn read_package_json_from_path(path: &Path) -> Result<PackageJson, String> {
     let parsed_package_json = parse_package_json(path)?;
     return Ok(parsed_package_json);
 }
 
 pub fn read_package_json(project: &Project) -> Result<PackageJson, String> {
     let package_json_path = project.root_path.join(project.config.manifest_name);
-    let package_json = get_package_json_from_path(&package_json_path)?;
+    let package_json = read_package_json_from_path(&package_json_path)?;
     return Ok(package_json);
 }

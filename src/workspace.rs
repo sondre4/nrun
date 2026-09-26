@@ -1,12 +1,11 @@
 use std::path::PathBuf;
 
-use crate::workspace;
-use crate::workspace::config::Project;
 use crate::workspace::parsers::package_json::read_package_json;
 use crate::workspace::parsers::pnpm_workspace::{find_pnpm_package_path_patterns};
 use crate::workspace::project::find::find_monorepo_project;
 use crate::workspace::project::paths::get_start_directory;
-use crate::workspace::resolvers::scripts::get_scripts_from_package_json;
+use crate::workspace::resolvers::path_patterns::resolve_packages;
+use crate::workspace::resolvers::scripts::resolve_scripts;
 use crate::workspace::types::{Package, PackageManager};
 use crate::workspace::{types::Workspace};
 
@@ -79,7 +78,7 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
     };
 
     // read scripts in root package.json
-    let root_package_json_scripts_result = get_scripts_from_package_json(&root_package_json);
+    let root_package_json_scripts_result = resolve_scripts(&root_package_json);
     let root_package_json_scripts = match root_package_json_scripts_result {
         Ok(result) => result,
         Err(error) => {
@@ -108,14 +107,22 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
             extra_patterns = patterns;
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
-            // check workspaces field in root package.json
+            // TODO: check workspaces field in root package.json
+        }
+    }
+
+
+    // Find packages from path patterns
+    for path_pattern in &extra_patterns {
+        let found_packages = resolve_packages(&monorepo, &path_pattern)?;
+
+        for found_package in found_packages {
+            workspace.packages.push(found_package);
         }
     }
 
     println!("Package patterns: {:#?}", extra_patterns);
     println!("Project found: {:#?}", workspace);
-
-    // TODO: add
 
     return Err("Not implemented".to_string());
 }
