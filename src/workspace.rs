@@ -108,6 +108,9 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
             // TODO: check workspaces field in root package.json
+            if root_package_json.workspaces.is_some() { // workspaces field in package.json
+                extra_patterns = root_package_json.workspaces.unwrap();
+            }
         }
     }
 
