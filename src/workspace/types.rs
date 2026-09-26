@@ -9,8 +9,7 @@ pub enum PackageManager {
     Npm,
     Pnpm,
     Bun,
-    Yarn,
-    Unknown
+    Yarn
 }
 
 

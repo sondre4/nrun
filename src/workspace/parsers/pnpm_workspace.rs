@@ -18,8 +18,24 @@ fn parse_pnpm_workspace_from_path(path: &Path) -> Result<WorkspaceConfig, String
     }
 }
 
-pub fn read_pnpm_workspace_config(project: &Project) -> Result<WorkspaceConfig, String> {
+fn read_pnpm_workspace_config(project: &Project) -> Result<WorkspaceConfig, String> {
     let path = project.root_path.join(project.config.workspace_config_name);
     let read_config = parse_pnpm_workspace_from_path(&path)?;
     return Ok(read_config);
+}
+
+
+pub fn find_pnpm_package_path_patterns(project: &Project) -> Result<Vec<String>, String> {
+    let workspace_config = read_pnpm_workspace_config(project)?;
+
+    let package_path_patterns_option = workspace_config.packages;
+
+    if package_path_patterns_option.is_none() {
+        // return error message
+        // equivalent patterns should be available in PackageJson.workspaces for other package managers than npm
+        return Err(format!("No package path patterns found in pnpm workspace"));
+        // fallback to lockfile?
+    }
+
+    return Ok(package_path_patterns_option.unwrap());
 }

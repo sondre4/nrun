@@ -91,11 +91,11 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: i32) -> Resul
 
         let pop_successfully = directory.pop();
         if pop_successfully == false {
-            return Err("Unable to find monorepo project: Reached top level directory".to_string());
+            return Err("Unable to find project: Reached top level directory".to_string());
         }
     }
 
-    return Err(format!("Unable to find monorepo project: Did not find monorepo root within depth: {depth}").to_string());
+    return Err(format!("Unable to find project: Did not find monorepo root within depth: {depth}").to_string());
 }
 
 
