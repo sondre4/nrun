@@ -115,7 +115,7 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
     println!("Package patterns: {:#?}", extra_patterns);
     println!("Project found: {:#?}", workspace);
 
-    // TODO: add
+    // TODO: check the 
 
     return Err("Not implemented".to_string());
 }
