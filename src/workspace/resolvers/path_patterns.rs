@@ -13,6 +13,9 @@ fn resolve_pattern(root_path: &Path, path_pattern: &String) -> Result<Vec<PathBu
     let combined_pattern = root_path.join(path_pattern);
     let path_matches_result = glob(combined_pattern.to_str().unwrap());
 
+    let debug_out_path = combined_pattern.to_string_lossy();
+    println!("Trying path pattern: {debug_out_path}");
+
     let path_matches = match path_matches_result {
         Ok(matches) => matches,
         Err(error) => {
@@ -54,6 +57,8 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String) -> Result<Vec
                 path: found_path,
                 scripts: read_scripts,
             };
+
+            resolved_packages.push(resolved_package);
         }
     }
 

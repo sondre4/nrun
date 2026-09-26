@@ -107,10 +107,12 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
             extra_patterns = patterns;
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
-            // check workspaces field in root package.json
+            // TODO: check workspaces field in root package.json
         }
     }
 
+
+    // Find packages from path patterns
     for path_pattern in &extra_patterns {
         let found_packages = resolve_packages(&monorepo, &path_pattern)?;
 
@@ -121,8 +123,6 @@ pub fn find_workspace(_start_directory: Option<PathBuf>, _search_depth: Option<i
 
     println!("Package patterns: {:#?}", extra_patterns);
     println!("Project found: {:#?}", workspace);
-
-    // TODO: check the 
 
     return Err("Not implemented".to_string());
 }
