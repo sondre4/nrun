@@ -2,7 +2,7 @@ use std::io;
 
 use crossterm::event::{self, Event, KeyCode};
 
-use crate::tui::action::Action;
+use crate::tui::keybinds::Action;
 
 
 pub fn next() -> Result<Event, String> {

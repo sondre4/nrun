@@ -16,7 +16,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     // render tui
     // read events
     // handle events
-    // update app state
+    // update app ui_state
 
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
@@ -36,7 +36,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
         // handle action
 
-        // update app state
+        // update app ui_state
     }
 
     tui::terminal::restore_terminal();

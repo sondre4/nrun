@@ -5,7 +5,8 @@ pub struct Selection {
     pub visible_script_index: usize,
 }
 
-pub enum State {
+pub enum UiState {
+    All,
     View,
     Search
 }
@@ -15,7 +16,7 @@ pub struct App {
     pub selected: Selection,
     pub search_query: String,
     pub running: bool,
-    pub state: State
+    pub ui_state: UiState
 }
 
 pub struct Tui {
@@ -39,7 +40,7 @@ impl App {
             selected: Selection::new(),
             search_query: String::new(),
             running: true,
-            state: State::View
+            ui_state: UiState::View
         };
 
         return app;
