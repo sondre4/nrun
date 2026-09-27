@@ -22,4 +22,6 @@ pub fn default(path: Option<PathBuf>, depth: Option<i32>) -> () {
     launch_tui(workspace);
 }
 
-pub fn check(path: PathBuf, verbose: bool) -> () {}
+pub fn check(path: PathBuf, verbose: bool) -> () {
+    println!("Not implemented");
+}
