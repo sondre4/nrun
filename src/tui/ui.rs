@@ -1,6 +1,8 @@
 use std::io;
 
-use crate::{tui::{self, app::App, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
+use crossterm::event;
+
+use crate::{tui::{self, app::App, events, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
 
 
 
@@ -23,12 +25,15 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     while app.running {
 
         // render
-        terminal.draw(|frame| {
-        });
+        // terminal.draw(|frame| {
+        // });
 
         // read events
+        let event = events::next()?;
 
-        // handle events
+        // event to action
+
+        // handle action
 
         // update app state
     }

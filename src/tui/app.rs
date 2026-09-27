@@ -5,11 +5,17 @@ pub struct Selection {
     pub visible_script_index: usize,
 }
 
+pub enum State {
+    View,
+    Search
+}
+
 pub struct App {
     pub workspace: Workspace,
     pub selected: Selection,
     pub search_query: String,
-    pub running: bool
+    pub running: bool,
+    pub state: State
 }
 
 pub struct Tui {
@@ -32,10 +38,12 @@ impl App {
             workspace: app_data,
             selected: Selection::new(),
             search_query: String::new(),
-            running: true
+            running: true,
+            state: State::View
         };
 
         return app;
     }
 }
 
+// call handle action in action.rs?
