@@ -1,11 +1,14 @@
 pub enum Action {
+    Nothing,
     Quit,
     Up,
     Down,
     Left,
     Right,
     Enter,
-    Search
+    EnterSearch,
+    ExitSearch,
+    Confirm
 }
 
 // handle actions

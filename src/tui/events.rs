@@ -1,6 +1,8 @@
 use std::io;
 
-use crossterm::event::{self, Event};
+use crossterm::event::{self, Event, KeyCode};
+
+use crate::tui::action::Action;
 
 
 pub fn next() -> Result<Event, String> {
@@ -15,8 +17,30 @@ pub fn next() -> Result<Event, String> {
     return Ok(event);
 }
 
-// pub fn to_action(event: Event) -> Action {
-//     match {
+fn map_key_to_action(key_code: KeyCode) -> Action {
+    let action =  match key_code {
+        KeyCode::Up => Action::Up,
+        KeyCode::Down => Action::Down,
+        KeyCode::Char('q') => Action::Quit,
 
-//     }
-// }
+        _ => Action::Nothing
+    };
+
+    return action;
+}
+
+pub fn to_action(event: Event) -> Option<Action> {
+    let key = match event {
+        Event::Key(key_event) => key_event,
+        _ => {
+            return None;
+        }
+    };
+
+    if !key.is_press() {
+        return None;
+    }
+
+    let mapped_action = map_key_to_action(key.code);
+    return Some(mapped_action);
+}

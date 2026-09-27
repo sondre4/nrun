@@ -32,6 +32,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         let event = events::next()?;
 
         // event to action
+        let action = events::to_action(event);
 
         // handle action
 
