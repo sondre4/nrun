@@ -12,12 +12,12 @@ use ratatui::Frame;
 
 use crate::tui::{app::App, rendering::{search_bar::render_search_bar, styling::get_area_with_border, ui_layout::get_ui_layout, ui_rows::render_ui_rows}};
 
-pub mod ui_layout;
-pub mod ui_keybinds;
-pub mod ui_rows;
-pub mod scrolling;
 pub mod search_bar;
 pub mod styling;
+pub mod ui_keybinds;
+pub mod ui_layout;
+pub mod ui_rows;
+pub mod visibility;
 
 
 pub fn render(frame: &mut Frame, app: &App) -> () {

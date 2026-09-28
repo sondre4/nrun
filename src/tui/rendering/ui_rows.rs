@@ -1,14 +1,14 @@
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 
-use crate::{tui::{app::App, rendering::{scrolling::get_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
+use crate::{tui::{app::App, rendering::{visibility::get_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
 
 pub enum UiRow {
     Package {
-        id: usize
+        package_id: usize
     },
     Script {
         package_id: usize,
-        id: usize
+        script_id: usize
     },
     Vspace
 }
@@ -58,8 +58,8 @@ fn render_vspace_row(frame: &mut Frame, area: Rect) -> () {
 
 fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
     match ui_row {
-        UiRow::Package { id } => {
-            let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *id });
+        UiRow::Package { package_id } => {
+            let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *package_id });
 
             if package_wrapped.is_some() {
                 let package = package_wrapped.unwrap();
@@ -68,7 +68,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
                 render_package_row(frame, area, ui_style, app, package);
             }
         },
-        UiRow::Script { package_id, id } => {
+        UiRow::Script { package_id, script_id } => {
             let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *package_id });
             if package_wrapped.is_none() {
                 // it is fine to return here, this returns from the function but there is nothing after the match statement
@@ -76,7 +76,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
             };
 
             let package = package_wrapped.unwrap();
-            let script_wrapped = package.scripts.iter().find(|s| { s.id == *id });
+            let script_wrapped = package.scripts.iter().find(|s| { s.id == *script_id });
 
             if script_wrapped.is_none() {
                 return;

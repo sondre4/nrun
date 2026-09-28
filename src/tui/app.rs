@@ -7,10 +7,16 @@ pub struct Selection {
     pub script_id: Option<usize>,
 }
 
+pub enum SelectionMovement {
+    Up,
+    Down
+}
+
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UiState {
     All,
-    View,
+    Main,
     Search
 }
 
@@ -32,7 +38,7 @@ impl Selection {
     pub fn new() -> Selection {
         return Selection {
             package_id: 0,
-            script_id: Some(4),
+            script_id: None,
         };
     }
 }
@@ -45,7 +51,7 @@ impl App {
             selection: Selection::new(),
             search_query: String::new(),
             running: true,
-            ui_state: UiState::View
+            ui_state: UiState::Main
         };
 
         return app;
