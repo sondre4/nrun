@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::keybinds::Action, workspace::types::Workspace};
+use crate::{tui::action::Action, workspace::types::Workspace};
 
 pub struct Selection {
     pub package_id: usize,

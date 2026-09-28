@@ -1,13 +1,32 @@
-use ratatui::{Frame, layout::{Margin, Rect}, style::Style, widgets::{Block, Borders}};
+use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-struct HighlightedStyles {
-    name_column: Style,
-    command_column: Style
-}
+const PACKAGE_NAME_STYLE: Style = Style::new()
+    .fg(Color::Cyan)
+    .add_modifier(Modifier::BOLD);
+
+const SCRIPT_NAME_STYLE: Style = Style::new()
+    .fg(Color::White);
+
+const SCRIPT_COMMAND_STYLE: Style = Style::new()
+    .fg(Color::DarkGray);
+
+const SELECTED_STYLE: Style = Style::new()
+    .fg(Color::Black)
+    .bg(Color::Cyan);
 
 
 
-// fn is_selected()
+// fn get_package_name_style() -> Style {
+
+// }
+
+// fn get_script_name_style() -> Style {
+
+// }
+
+// fn get_script_command_style() -> Style {
+
+// }
 
 // fn get_selected_style()
 

@@ -27,13 +27,15 @@ fn render_package_row(frame: &mut Frame, area: Rect, app: &App, package: &Packag
 }
 
 fn render_script_row(frame: &mut Frame, area: Rect, app: &App, script: &Script) -> () { // TODO: add style parameter
-    let [name_column_area, command_column_area] = Layout::horizontal(
-        [Constraint::Percentage(35), Constraint::Percentage(65)]
-    ).areas(area);
+    let [indent_column, name_column_area, command_column_area] = Layout::horizontal([
+        Constraint::Percentage(5),
+        Constraint::Percentage(30),
+        Constraint::Percentage(65)
+    ]).areas(area);
 
     // script name
     let displayed_script_name = format!("{}", script.name);
-    let script_name_widget = Paragraph::new(format!("   {displayed_script_name}"));
+    let script_name_widget = Paragraph::new(format!("{displayed_script_name}"));
     frame.render_widget(script_name_widget, name_column_area);
 
     // script command
@@ -99,28 +101,3 @@ pub fn render_ui_rows(frame: &mut Frame, area: Rect, app: &App) -> () {
         render_row(frame, row_area, app, ui_row);
     }
 }
-
-// fn render_package_scripts(frame: &mut Frame, area: Rect, package: &Package, expanded: bool) -> () {
-//     let [name_column_area, command_column_area] = Layout::horizontal(
-//         [Constraint::Percentage(35), Constraint::Percentage(65)]
-//     ).areas(area);
-
-//     // render package name
-//     let expanded_indicator = if expanded { "v ▼" } else { "> ▶" };
-//     let displayed_package_name = format!("{expanded_indicator} {}", package.name.clone());
-//     let package_name_widget = Paragraph::new(displayed_package_name);
-//     frame.render_widget(package_name_widget, name_column_area);
-
-//     if expanded {
-        
-//     }
-// }
-
-// fn render_view_area(frame: &mut Frame, area: Rect, app: &App) -> () {
-//     // for package in &app.workspace.packages {
-//     //     let expanded = app.expanded_packages.contains(&package.id);
-//     //     render_package_scripts(frame, area, &package, expanded);
-//     // }
-    
-//     render_rows(frame, area, app);
-// }

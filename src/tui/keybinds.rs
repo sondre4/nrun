@@ -1,20 +1,6 @@
 use crossterm::event::{KeyCode, KeyModifiers};
 
-use crate::tui::app::UiState;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Action {
-    Nothing,
-    Quit,
-    Up,
-    Down,
-    Left,
-    Right,
-    Enter,
-    StartSearch,
-    ExitSearch,
-    Confirm
-}
+use crate::tui::{action::Action, app::UiState};
 
 pub struct Keybind {
     pub key_code: KeyCode,
