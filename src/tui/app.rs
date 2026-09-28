@@ -1,10 +1,11 @@
 use std::collections::HashSet;
 
-use crate::{tui::action::Action, workspace::types::Workspace};
+use crate::{tui::{action::Action, rendering::ui_rows::UiRow}, workspace::types::Workspace};
 
 pub struct Selection {
     pub package_id: usize,
     pub script_id: Option<usize>,
+    // pub row: UiRow
 }
 
 pub enum SelectionMovement {

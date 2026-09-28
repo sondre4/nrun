@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-use crate::{tui::app::Selection, workspace::types::{Package, Script}};
+use crate::{tui::{app::Selection, rendering::ui_rows::UiRow}, workspace::types::{Package, Script}};
 
 // pub struct UiStyle {
 //     pub package_name: Style,
@@ -17,6 +17,16 @@ pub struct ScriptUiStyle {
     pub command: Style
 }
 
+pub struct VSpaceUiStyle {
+    pub style: Style
+}
+
+// pub enum UiStyle {
+//     PackageStyle(PackageUiStyle),
+//     ScriptStyle(ScriptUiStyle),
+//     VspaceStyle(VSpaceUiStyle)
+// }
+
 pub struct UiStyles {
     // pub script_name: UiStyle,
     // pub package_name: UiStyle,
@@ -27,12 +37,14 @@ pub struct UiStyles {
     relevant_package: PackageUiStyle,
     unselected_package: PackageUiStyle,
     selected_script: ScriptUiStyle,
-    unselected_script: ScriptUiStyle
+    unselected_script: ScriptUiStyle,
+    vspace_style: VSpaceUiStyle
 }
 
 impl Default for UiStyles {
     fn default() -> Self {
 
+        // package styles
         let unselected_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default(),
         };
@@ -50,8 +62,7 @@ impl Default for UiStyles {
                 .add_modifier(Modifier::BOLD)
         };
 
-
-
+        // script styles
         let script_unselected: ScriptUiStyle = ScriptUiStyle {
             name: Style::default(),
             command: Style::default().fg(Color::DarkGray)
@@ -67,17 +78,23 @@ impl Default for UiStyles {
                 .bg(Color::White)
         };
 
+        let vspace_style: VSpaceUiStyle = VSpaceUiStyle {
+            style: Style::default().fg(Color::Black).bg(Color::Black)
+        };
+
         let ui_styles: UiStyles = UiStyles {
             selected_package: selected_package_style,
             relevant_package: relevant_package_style,
             unselected_package: unselected_package_style,
             selected_script: script_selected,
-            unselected_script: script_unselected
+            unselected_script: script_unselected,
+            vspace_style: vspace_style
         };
 
         return ui_styles;
     }
 }
+
 
 pub fn get_package_row_style(package: &Package, selection: &Selection) -> PackageUiStyle {
     // 2 cases:
