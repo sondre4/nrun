@@ -32,7 +32,7 @@ impl Selection {
     pub fn new() -> Selection {
         return Selection {
             package_id: 0,
-            script_id: Some(0),
+            script_id: Some(4),
         };
     }
 }

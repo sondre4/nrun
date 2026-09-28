@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 
-use crate::{tui::{app::App, rendering::{scrolling::get_visible_rows, styling::{UiStyle, get_row_style}}}, workspace::types::{Package, Script}};
+use crate::{tui::{app::App, rendering::{scrolling::get_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
 
 pub enum UiRow {
     Package {
@@ -14,39 +14,39 @@ pub enum UiRow {
 }
 
 
-fn render_package_row(frame: &mut Frame, area: Rect, ui_style: UiStyle, app: &App, package: &Package) -> () {
+fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiStyle, app: &App, package: &Package) -> () {
     let [name_column_area, command_column_area] = Layout::horizontal(
         [Constraint::Percentage(35), Constraint::Percentage(65)]
     ).areas(area);
 
     let expanded = app.expanded_packages.contains(&package.id);
     let expanded_indicator = if expanded { "▼" } else { "▶" };
-    let displayed_package_name = format!("{expanded_indicator} {}", package.name);
+    let displayed_package_name = format!("{expanded_indicator} ({}) {}", package.id, package.name);
 
     let package_name_widget = Paragraph::new(displayed_package_name)
-        .style(ui_style.package_name);
+        .style(package_style.name);
 
     frame.render_widget(package_name_widget, name_column_area);
 }
 
-fn render_script_row(frame: &mut Frame, area: Rect, ui_style: UiStyle, app: &App, script: &Script) -> () {
+fn render_script_row(frame: &mut Frame, area: Rect, script_style: ScriptUiStyle, app: &App, script: &Script) -> () {
     let [indent_column, name_column_area, command_column_area] = Layout::horizontal([
-        Constraint::Percentage(5),
-        Constraint::Percentage(30),
+        Constraint::Percentage(3),
+        Constraint::Percentage(32),
         Constraint::Percentage(65)
     ]).areas(area);
 
     // script name
     let displayed_script_name = format!("{}", script.name);
-    let script_name_widget = Paragraph::new(format!("{displayed_script_name}"))
-        .style(ui_style.script_name);
+    let script_name_widget = Paragraph::new(format!("({}) {displayed_script_name}", script.id))
+        .style(script_style.name);
 
     frame.render_widget(script_name_widget, name_column_area);
 
     // script command
     let displayed_script_command = format!("{}", script.command);
     let script_command_widget = Paragraph::new(displayed_script_command)
-        .style(ui_style.script_command);
+        .style(script_style.command);
 
     frame.render_widget(script_command_widget, command_column_area);
 }
@@ -63,7 +63,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
 
             if package_wrapped.is_some() {
                 let package = package_wrapped.unwrap();
-                let ui_style = get_row_style(package, &app.selection);
+                let ui_style = get_package_row_style(package, &app.selection);
 
                 render_package_row(frame, area, ui_style, app, package);
             }
@@ -84,7 +84,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
 
             let script = script_wrapped.unwrap();
 
-            let ui_style = get_row_style(package, &app.selection);
+            let ui_style = get_script_row_style(script, &app.selection);
             render_script_row(frame, area, ui_style, app, script);
 
         },
