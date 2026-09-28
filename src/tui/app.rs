@@ -17,7 +17,7 @@ pub enum UiState {
 pub struct App {
     pub workspace: Workspace,
     pub expanded_packages: HashSet<usize>,
-    pub selected: Selection,
+    pub selection: Selection,
     pub search_query: String,
     pub running: bool,
     pub ui_state: UiState
@@ -42,7 +42,7 @@ impl App {
         let app: App = App {
             workspace: app_data,
             expanded_packages: HashSet::new(),
-            selected: Selection::new(),
+            selection: Selection::new(),
             search_query: String::new(),
             running: true,
             ui_state: UiState::View

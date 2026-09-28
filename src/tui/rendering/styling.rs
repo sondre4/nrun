@@ -1,52 +1,50 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-struct UiStyle {
-    package_name: Style,
-    script_name: Style,
-    script_command: Style,
+use crate::{tui::app::Selection, workspace::types::Package};
 
-    // when a package's script is selected
-    relevant_package_name: Style
+pub struct UiStyle {
+    pub package_name: Style,
+    pub script_name: Style,
+    pub script_command: Style,
 }
 
-struct UiStyles {
-    normal: UiStyle,
-    selected: UiStyle
+pub struct UiStyles {
+    pub script_name_selected: UiStyle,
+    pub package_name_selected: UiStyle
 }
 
 impl Default for UiStyles {
     fn default() -> Self {
 
-        let normal_style: UiStyle = UiStyle {
-            package_name: Style::default(),
-            script_name: Style::default(),
-            script_command: Style::default()
-                .fg(Color::DarkGray),
-
-            relevant_package_name: Style::default(),
-        };
-
-        let selected_style: UiStyle = UiStyle {
+        let script_selected: UiStyle = UiStyle {
             package_name: Style::default()
-                .fg(Color::Blue)
-                .bg(Color::Gray)
-                .add_modifier(Modifier::BOLD),
+                .fg(Color::DarkGray)
+                .bg(Color::Gray),
 
             script_name: Style::default()
                 .fg(Color::Blue)
                 .bg(Color::White),
+
             script_command: Style::default()
                 .fg(Color::Gray)
-                .bg(Color::White),
-            relevant_package_name: Style::default()
-                .fg(Color::DarkGray)
-                .bg(Color::Gray)
+                .bg(Color::White)
         };
 
+        let package_selected: UiStyle = UiStyle {
+            package_name: Style::default()
+                .fg(Color::Blue)
+                .bg(Color::White)
+                .add_modifier(Modifier::BOLD),
+
+            script_name: Style::default(),
+
+            script_command: Style::default()
+                .fg(Color::DarkGray)
+        };
 
         let ui_styles: UiStyles = UiStyles {
-            normal: normal_style,
-            selected: selected_style,
+            script_name_selected: script_selected,
+            package_name_selected: package_selected
         };
 
         return ui_styles;
@@ -54,9 +52,21 @@ impl Default for UiStyles {
 }
 
 
-// fn get_package_name_style() -> Style {
+pub fn get_row_style(package: &Package, selection: &Selection) -> UiStyle {
+    // 2 cases:
+    // script name is selected => both selection.package_id and selection.script_id
+    // package name is selected => only selection.package_id
 
-// }
+    let ui_styles = UiStyles::default();
+
+    if selection.script_id.is_some() {
+        // case 1: script id is selected
+        return ui_styles.script_name_selected;
+    }
+
+    // case 2: package name is selected
+    return ui_styles.package_name_selected;
+}
 
 // style
 // fn get_list_style(package: &Package, selection: &Selection) -> Style {
