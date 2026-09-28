@@ -4,10 +4,10 @@ use crate::workspace::{assembly::values::{get_next_package_id, initialize_values
 
 const ROOT_PACKAGE_ID: usize = 0;
 
-pub fn build_workspace_object(_start_directory: Option<PathBuf>, _search_depth: Option<i32>) -> Result<Workspace, String> {
+pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: Option<i32>) -> Result<Workspace, String> {
 
     // initial values
-    let values = initialize_values(_start_directory, _search_depth)?;
+    let values = initialize_values(start_directory, search_depth)?;
     let directory = values.directory;
     let depth = values.depth;
 
@@ -20,7 +20,7 @@ pub fn build_workspace_object(_start_directory: Option<PathBuf>, _search_depth: 
         packages: Vec::new()
     };
 
-    println!("Found project: '{}' with package manager '{:#?}'", monorepo.root_path.to_string_lossy(), monorepo.package_manager);
+    // println!("Found project: '{}' with package manager '{:#?}'", monorepo.root_path.to_string_lossy(), monorepo.package_manager);
 
 
     // read root package.json
@@ -90,8 +90,8 @@ pub fn build_workspace_object(_start_directory: Option<PathBuf>, _search_depth: 
         }
     }
 
-    println!("Package patterns: {:#?}", extra_patterns);
-    println!("Project found: {:#?}", workspace);
+    // println!("Package patterns: {:#?}", extra_patterns);
+    // println!("Project found: {:#?}", workspace);
 
     return Ok(workspace);
 }

@@ -9,7 +9,7 @@ pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Result<Vec<LockfileConfig>, Stri
     file_exists(path)?;
 
     let debug_out_path = path.to_string_lossy();
-    println!("trying to parse {debug_out_path}...");
+    // println!("trying to parse {debug_out_path}...");
 
     let mut output_pnpm_lockfile_schemas: Vec<LockfileConfig> = Vec::new();
 

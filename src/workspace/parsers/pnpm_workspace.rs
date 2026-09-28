@@ -7,7 +7,7 @@ fn parse_pnpm_workspace_from_path(path: &Path) -> Result<WorkspaceConfig, String
 
     let debug_out_path = path.to_string_lossy();
 
-    println!("trying to parse {debug_out_path}...");
+    // println!("trying to parse {debug_out_path}...");
 
     let yaml_file = fs::read_to_string(path).unwrap();
     let parsed_yaml_result: Result<WorkspaceConfig, serde_yaml::Error> = serde_yaml::from_str(&yaml_file);

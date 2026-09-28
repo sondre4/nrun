@@ -14,7 +14,7 @@ fn resolve_pattern(root_path: &Path, path_pattern: &String) -> Result<Vec<PathBu
     let path_matches_result = glob(combined_pattern.to_str().unwrap());
 
     let debug_out_path = combined_pattern.to_string_lossy();
-    println!("Trying path pattern: {debug_out_path}");
+    // println!("Trying path pattern: {debug_out_path}");
 
     let path_matches = match path_matches_result {
         Ok(matches) => matches,
@@ -55,7 +55,7 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String, start_package
             
             let resolved_package: Package = Package {
                 id: current_package_id,
-                name: package_json.name.unwrap_or("Unnamed package".to_string()),
+                name: package_json.name.unwrap_or(format!("Package {}", current_package_id)),
                 path: found_path,
                 scripts: read_scripts,
             };

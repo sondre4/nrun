@@ -5,12 +5,6 @@ use tui::rendering;
 
 use crate::{tui::{self, app::{App}, events, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
 
-
-
-pub fn render() {
-
-}
-
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     // steps:
@@ -21,6 +15,8 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
+
+    app.initialize_expanded_packages();
 
     // main loop
     while app.running {

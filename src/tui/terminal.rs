@@ -43,8 +43,7 @@ pub fn restore_terminal() -> Result<(), String> {
     }
 
     let mut stdout = io::stdout();
-    
-
     execute!(stdout, LeaveAlternateScreen);
+
     return Ok(());
 }

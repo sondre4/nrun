@@ -19,7 +19,14 @@ pub fn default(path: Option<PathBuf>, depth: Option<i32>) -> () {
         }
     };
 
-    launch_tui(workspace);
+    let launch_tui_result = launch_tui(workspace);
+    match launch_tui_result {
+        Ok(result) => result,
+        Err(error) => {
+            println!("Error whilst launching tui: {error}");
+            return;
+        }
+    };
 }
 
 pub fn check(path: PathBuf, verbose: bool) -> () {
