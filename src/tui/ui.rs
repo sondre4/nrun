@@ -40,11 +40,9 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         // event to action
         let action_option = events::to_action(event);
 
-
         // handle action
         if action_option.is_some() {
             let action = action_option.unwrap();
-            // handle_action(&mut app, action);
             app.handle_action(action);
         }
 
@@ -52,7 +50,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             break;
         }
 
-        // update app ui_state
+        // update app ui_state => happens in app.handle_action(...)
     }
 
     tui::terminal::restore_terminal()?;

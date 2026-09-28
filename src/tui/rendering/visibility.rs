@@ -28,7 +28,7 @@ pub fn get_visible_rows(app: &App) -> Vec<UiRow> {
     return visible_rows;
 }
 
-pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: Vec<UiRow>) -> Option<usize> {
+pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: &Vec<UiRow>) -> Option<usize> {
     let selected_package_id = selection.package_id;
     let selected_script_id = selection.script_id;
 

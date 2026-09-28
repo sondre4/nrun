@@ -7,14 +7,8 @@ pub fn initialize_values(initial_directory: Option<PathBuf>, initial_search_dept
     let mut search_depth = 7; // default value
 
     if initial_directory.is_none() {
-        let current_directory = get_start_directory();
-
-        match current_directory {
-            Ok(directory) => {
-                start_directory = directory
-            },
-            Err(error) => return Err(format!("Failed to find current directory: {error}"))
-        };
+        let current_directory = get_start_directory()?;
+        start_directory = current_directory;
     }
 
     if initial_search_depth.is_some() {

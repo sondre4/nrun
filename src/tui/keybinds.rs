@@ -35,14 +35,14 @@ pub const KEYBINDS: &[Keybind] = &[
 
     // Down
     Keybind {
-        key_code: KeyCode::Up,
+        key_code: KeyCode::Down,
         modifiers: KeyModifiers::NONE,
         action: Action::Down,
         description: "Down",
         available_in: UiState::All
     },
     Keybind {
-        key_code: KeyCode::Char('k'),
+        key_code: KeyCode::Char('j'),
         modifiers: KeyModifiers::NONE,
         action: Action::Down,
         description: "Down",

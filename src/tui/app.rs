@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::Action, rendering::ui_rows::UiRow}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, move_selection}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
 
+#[derive(Debug)]
 pub struct Selection {
     pub package_id: usize,
     pub script_id: Option<usize>,
@@ -67,6 +68,16 @@ impl App {
 
     pub fn handle_action(&mut self, action: Action) -> () {
         match action {
+
+            // selection movement
+            Action::Up => {
+                move_selection(self, SelectionMovement::Up);
+            }
+            Action::Down => {
+                move_selection(self, SelectionMovement::Down);
+            }
+
+            // exit the program
             Action::Quit => {
                 self.running = false;
             }
