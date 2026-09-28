@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, move_selection}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, change_selection::{self, move_selection}}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
