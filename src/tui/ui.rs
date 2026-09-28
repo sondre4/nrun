@@ -1,8 +1,9 @@
 use std::io;
 
 use crossterm::event;
+use tui::rendering;
 
-use crate::{tui::{self, app::App, events, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
+use crate::{tui::{self, app::{App}, events, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
 
 
 
@@ -25,21 +26,40 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     while app.running {
 
         // render
-        // terminal.draw(|frame| {
-        // });
+        let render_result = terminal.draw(|frame| {
+            rendering::render(frame, &app);
+        });
+
+        match render_result {
+            Ok(result) => (),
+            Err(error) => {
+                tui::terminal::restore_terminal()?;
+                return Err(format!("Error whilst drawing rendered frame: {error}"));
+            }
+        }
 
         // read events
         let event = events::next()?;
 
         // event to action
-        let action = events::to_action(event);
+        let action_option = events::to_action(event);
+
 
         // handle action
+        if action_option.is_some() {
+            let action = action_option.unwrap();
+            // handle_action(&mut app, action);
+            app.handle_action(action);
+        }
+
+        if !app.running {
+            break;
+        }
 
         // update app ui_state
     }
 
-    tui::terminal::restore_terminal();
+    tui::terminal::restore_terminal()?;
 
     // loop {
     //     terminal.draw(|frame| {

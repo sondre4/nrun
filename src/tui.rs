@@ -4,6 +4,7 @@ use crate::{tui::ui::run_tui, workspace::types::Workspace};
 pub mod action;
 pub mod app;
 pub mod events;
+pub mod rendering;
 pub mod keybinds;
 pub mod searching;
 pub mod terminal;

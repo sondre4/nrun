@@ -2,6 +2,7 @@ use crossterm::event::{KeyCode, KeyModifiers};
 
 use crate::tui::app::UiState;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Action {
     Nothing,
     Quit,
@@ -34,15 +35,15 @@ pub const KEYBINDS: &[Keybind] = &[
     Keybind {
         key_code: KeyCode::Up,
         modifiers: KeyModifiers::NONE,
-        action: Action::Quit,
-        description: "Quit",
+        action: Action::Up,
+        description: "Up",
         available_in: UiState::All
     },
     Keybind {
         key_code: KeyCode::Char('k'),
         modifiers: KeyModifiers::NONE,
-        action: Action::Quit,
-        description: "Quit",
+        action: Action::Up,
+        description: "Up",
         available_in: UiState::All
     },
 
@@ -50,15 +51,15 @@ pub const KEYBINDS: &[Keybind] = &[
     Keybind {
         key_code: KeyCode::Up,
         modifiers: KeyModifiers::NONE,
-        action: Action::Quit,
-        description: "Quit",
+        action: Action::Down,
+        description: "Down",
         available_in: UiState::All
     },
     Keybind {
         key_code: KeyCode::Char('k'),
         modifiers: KeyModifiers::NONE,
-        action: Action::Quit,
-        description: "Quit",
+        action: Action::Down,
+        description: "Down",
         available_in: UiState::All
     },
 
@@ -79,8 +80,7 @@ pub const KEYBINDS: &[Keybind] = &[
         action: Action::Quit,
         description: "Quit",
         available_in: UiState::All
-    },
-
+    }
 ];
 
 

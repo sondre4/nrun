@@ -2,8 +2,6 @@ mod workspace;
 mod cli;
 mod tui;
 
-
-
 use clap::Parser;
 
 fn main() {

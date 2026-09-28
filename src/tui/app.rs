@@ -1,10 +1,11 @@
-use crate::workspace::types::Workspace;
+use crate::{tui::keybinds::Action, workspace::types::Workspace};
 
 pub struct Selection {
     pub visible_package_index: usize,
     pub visible_script_index: usize,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UiState {
     All,
     View,
@@ -45,6 +46,26 @@ impl App {
 
         return app;
     }
+
+    pub fn handle_action(&mut self, action: Action) -> () {
+        match action {
+            Action::Quit => {
+                self.running = false;
+            }
+
+            _ => ()
+        }
+    }
 }
 
 // call handle action in action.rs?
+
+// pub fn handle_action(app: &mut App, action: Action) -> () {
+//     match action {
+//         Action::Quit => {
+//             app.running = false;
+//         }
+
+//         _ => ()
+//     }
+// }
