@@ -3,8 +3,8 @@ use std::collections::HashSet;
 use crate::{tui::keybinds::Action, workspace::types::Workspace};
 
 pub struct Selection {
-    pub visible_package_index: usize,
-    pub visible_script_index: usize,
+    pub package_id: usize,
+    pub script_id: Option<usize>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,8 +31,8 @@ pub struct Tui {
 impl Selection {
     pub fn new() -> Selection {
         return Selection {
-            visible_package_index: 0,
-            visible_script_index: 0,
+            package_id: 0,
+            script_id: Some(0),
         };
     }
 }
