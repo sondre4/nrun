@@ -1,36 +1,62 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-const PACKAGE_NAME_STYLE: Style = Style::new()
-    .fg(Color::Cyan)
-    .add_modifier(Modifier::BOLD);
+struct UiStyle {
+    package_name: Style,
+    script_name: Style,
+    script_command: Style,
 
-const SCRIPT_NAME_STYLE: Style = Style::new()
-    .fg(Color::White);
+    // when a package's script is selected
+    relevant_package_name: Style
+}
 
-const SCRIPT_COMMAND_STYLE: Style = Style::new()
-    .fg(Color::DarkGray);
+struct UiStyles {
+    normal: UiStyle,
+    selected: UiStyle
+}
 
-const SELECTED_STYLE: Style = Style::new()
-    .fg(Color::Black)
-    .bg(Color::Cyan);
+impl Default for UiStyles {
+    fn default() -> Self {
 
+        let normal_style: UiStyle = UiStyle {
+            package_name: Style::default(),
+            script_name: Style::default(),
+            script_command: Style::default()
+                .fg(Color::DarkGray),
+
+            relevant_package_name: Style::default(),
+        };
+
+        let selected_style: UiStyle = UiStyle {
+            package_name: Style::default()
+                .fg(Color::Blue)
+                .bg(Color::Gray)
+                .add_modifier(Modifier::BOLD),
+
+            script_name: Style::default()
+                .fg(Color::Blue)
+                .bg(Color::White),
+            script_command: Style::default()
+                .fg(Color::Gray)
+                .bg(Color::White),
+            relevant_package_name: Style::default()
+                .fg(Color::DarkGray)
+                .bg(Color::Gray)
+        };
+
+
+        let ui_styles: UiStyles = UiStyles {
+            normal: normal_style,
+            selected: selected_style,
+        };
+
+        return ui_styles;
+    }
+}
 
 
 // fn get_package_name_style() -> Style {
 
 // }
-
-// fn get_script_name_style() -> Style {
-
-// }
-
-// fn get_script_command_style() -> Style {
-
-// }
-
-// fn get_selected_style()
-
-// fn get_unselected_style()
 
 // style
 // fn get_list_style(package: &Package, selection: &Selection) -> Style {
