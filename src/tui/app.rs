@@ -1,12 +1,12 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::ui_rows::TuiRow}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
-    pub package_id: usize,
-    pub script_id: Option<usize>,
-    // pub row: UiRow
+    // pub package_id: usize,
+    // pub script_id: Option<usize>,
+    pub row: TuiRow
 }
 
 pub enum SelectionMovement {
@@ -31,16 +31,16 @@ pub struct App {
     pub ui_state: UiState
 }
 
-pub struct Tui {
-
-}
-
-
 impl Selection {
     pub fn new() -> Selection {
+
         return Selection {
-            package_id: 0,
-            script_id: None,
+            row: TuiRow::Script { package_id: 0, script_id: 0 } // initialize to first script, change later?
+            // row: {
+
+            // },
+            // package_id: 0,
+            // script_id: None,
         };
     }
 }
@@ -76,15 +76,23 @@ impl App {
             Operation::Nothing => { },
 
             // Exit program
-            Operation::Quit => todo!(),
+            Operation::Quit => {
+                self.running = false;
+            },
 
             // Navigation
-            Operation::MoveUp => todo!(),
-            Operation::MoveDown => todo!(),
+            Operation::MoveUp => {
+                move_selection(self, SelectionMovement::Up);
+            },
+            Operation::MoveDown => {
+                move_selection(self, SelectionMovement::Down);
+            },
 
             // Interaction
             Operation::ConfirmSelection => todo!(),
-            Operation::TogglePackageExpansion => todo!(),
+            Operation::TogglePackageExpansion => {
+                toggle_expansion(self);
+            },
 
             // Searching
             Operation::StartSearch => todo!(),

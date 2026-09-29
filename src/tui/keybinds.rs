@@ -2,13 +2,13 @@
 
 use crossterm::event::{KeyCode, KeyModifiers};
 
-use crate::tui::{action::Action, app::UiState, rendering::ui_rows::UiRow};
+use crate::tui::{action::Action, app::UiState, rendering::ui_rows::TuiRow};
 
 pub struct Keybind {
     pub key_code: KeyCode,
     pub modifiers: KeyModifiers,
     pub action: Action,
-    // pub limited_to_row: Option<UiRow>, // moved to handler, actions should be general
+    // pub limited_to_row: Option<TuiRow>, // moved to handler, actions should be general
     pub description: &'static str,
     // pub available_in: UiState // not needed with separate keybinds for each UiState enum
 }

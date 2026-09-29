@@ -1,16 +1,9 @@
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 
-use crate::{tui::{app::App, rendering::{visibility::build_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
+use crate::{tui::{app::App, rendering::{styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}, visibility::build_visible_rows}}, workspace::types::{Package, Script}};
 
 #[derive(Debug, Clone)]
-pub enum RowType {
-    Package,
-    Script,
-    Vspace
-}
-
-#[derive(Debug, Clone)]
-pub enum UiRow {
+pub enum TuiRow {
     Package {
         package_id: usize
     },
@@ -20,17 +13,58 @@ pub enum UiRow {
     },
     Vspace
 }
-// pub struct UiRow {
-//     package_id: Option<usize>,
-//     script_id: Option<usize>,
-//     row_type: RowType
-// }
 
+pub struct TuiRowData {
+    pub package_id: usize,
+    pub script_id: Option<usize>
+}
 
+impl TuiRow {
+    pub fn get_package_id(&self) -> Option<usize> {
+        match self {
+            TuiRow::Package { package_id } => Some(*package_id),
+            TuiRow::Script { package_id, script_id: _ } => Some(*package_id),
+            TuiRow::Vspace => None,
+        }
+    }
 
+    pub fn get_script_id(&self) -> Option<usize> {
+        match self {
+            TuiRow::Package { package_id: _ } => None,
+            TuiRow::Script { package_id: _, script_id } => Some(*script_id),
+            TuiRow::Vspace => None,
+        }
+    }
+
+    pub fn get_row_data(&self) -> Option<TuiRowData> {
+        let mut found_package_id: Option<usize> = None;
+        let mut found_script_id: Option<usize> = None;
+
+        match self {
+            TuiRow::Package { package_id } => {
+                found_package_id = Some(*package_id);
+            },
+            TuiRow::Script { package_id, script_id } => {
+                found_package_id = Some(*package_id);
+                found_script_id = Some(*script_id);
+            },
+            TuiRow::Vspace => {
+                // return Err(format!("Unable to get row data: row is of type Vspace"));
+                return None;
+            },
+        }
+
+        let data: TuiRowData = TuiRowData {
+            package_id: found_package_id.unwrap(),
+            script_id: found_script_id
+        };
+
+        return Some(data);
+    }
+}
 
 fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiStyle, app: &App, package: &Package) -> () {
-    let [name_column_area, command_column_area] = Layout::horizontal(
+    let [name_column_area, _command_column_area] = Layout::horizontal(
         [Constraint::Percentage(35), Constraint::Percentage(65)]
     ).areas(area);
 
@@ -44,8 +78,8 @@ fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiSty
     frame.render_widget(package_name_widget, name_column_area);
 }
 
-fn render_script_row(frame: &mut Frame, area: Rect, script_style: ScriptUiStyle, app: &App, script: &Script) -> () {
-    let [indent_column, name_column_area, command_column_area] = Layout::horizontal([
+fn render_script_row(frame: &mut Frame, area: Rect, script_style: ScriptUiStyle, script: &Script) -> () {
+    let [_indent_column, name_column_area, command_column_area] = Layout::horizontal([
         Constraint::Percentage(3),
         Constraint::Percentage(32),
         Constraint::Percentage(65)
@@ -71,19 +105,19 @@ fn render_vspace_row(frame: &mut Frame, area: Rect) -> () {
     frame.render_widget(vspace_widget, area);
 }
 
-fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
-    match ui_row {
-        UiRow::Package { package_id } => {
+fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () {
+    match tui_row {
+        TuiRow::Package { package_id } => {
             let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *package_id });
 
             if package_wrapped.is_some() {
                 let package = package_wrapped.unwrap();
-                let ui_style = get_package_row_style(package, &app.selection);
+                let ui_style = get_package_row_style(tui_row, &app.selection);
 
                 render_package_row(frame, area, ui_style, app, package);
             }
         },
-        UiRow::Script { package_id, script_id } => {
+        TuiRow::Script { package_id, script_id } => {
             let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *package_id });
             if package_wrapped.is_none() {
                 // it is fine to return here, this returns from the function but there is nothing after the match statement
@@ -99,31 +133,31 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
 
             let script = script_wrapped.unwrap();
 
-            let ui_style = get_script_row_style(script, &app.selection);
-            render_script_row(frame, area, ui_style, app, script);
+            let ui_style = get_script_row_style(tui_row, &app.selection);
+            render_script_row(frame, area, ui_style, script);
 
         },
-        UiRow::Vspace => {
+        TuiRow::Vspace => {
             render_vspace_row(frame, area);
         }
     }
 }
 
 pub fn render_ui_rows(frame: &mut Frame, area: Rect, app: &App) -> () {
-    let rows_to_be_rendered = build_visible_rows(app);
+    let visible_rows = build_visible_rows(app);
     let mut constraints: Vec<Constraint> = Vec::new();
 
-    for _ in &rows_to_be_rendered {
+    for _ in &visible_rows {
         constraints.push(Constraint::Length(1));
     }
 
     let row_layout = Layout::vertical(constraints);
     let row_areas = row_layout.split(area);
-    let row_count = rows_to_be_rendered.len();
+    let row_count = visible_rows.len();
 
     for i in 0..(row_count) {
         let row_area = row_areas[i];
-        let ui_row = &rows_to_be_rendered[i];
-        render_row(frame, row_area, app, ui_row);
+        let visible_row = &visible_rows[i];
+        render_row(frame, row_area, app, visible_row);
     }
 }

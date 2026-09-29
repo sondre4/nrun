@@ -2,7 +2,7 @@ use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent};
 
-use crate::tui::{action::Action, app::{App, Selection, UiState}, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS}, rendering::{ui_rows::UiRow, visibility::{build_visible_rows, get_selected_row}}};
+use crate::tui::{action::Action, app::UiState, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS}};
 
 pub fn next() -> Result<Event, String> {
     let event_result = event::read();

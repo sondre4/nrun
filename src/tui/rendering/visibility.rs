@@ -1,42 +1,50 @@
-// TODO: add map for caching results from more expensive operations like build_visible_rows, find_index_of_selection_in_visible_rows could be improved with a map of UiRow
+// TODO: add map for caching results from more expensive operations like build_visible_rows, find_index_of_selection_in_visible_rows could be improved with a map of TuiRow
 
 use std::collections::HashSet;
 
-use crate::{tui::{app::{App, Selection}, rendering::ui_rows::UiRow, }, workspace::types::Package};
+use crate::{tui::{app::{App, Selection}, rendering::ui_rows::TuiRow, }, workspace::types::Package};
 
 fn is_package_expanded(package: &Package, expanded_set: &HashSet<usize>) -> bool {
     return expanded_set.contains(&package.id);
 }
 
-pub fn build_visible_rows(app: &App) -> Vec<UiRow> {
+pub fn build_visible_rows(app: &App) -> Vec<TuiRow> {
     let mut visible_rows = Vec::new();
 
     for package in &app.workspace.packages {
-        let package_ui_row = UiRow::Package { package_id: package.id };
+        let package_ui_row = TuiRow::Package { package_id: package.id };
         visible_rows.push(package_ui_row);
 
         if is_package_expanded(package, &app.expanded_packages) {
             
             for script in &package.scripts {
-                let script_ui_row = UiRow::Script { package_id: package.id, script_id: script.id };
+                let script_ui_row = TuiRow::Script { package_id: package.id, script_id: script.id };
                 visible_rows.push(script_ui_row);
             }
 
             // add empty row
-            visible_rows.push(UiRow::Vspace);
+            visible_rows.push(TuiRow::Vspace);
         }
     }
 
     return visible_rows;
 }
 
-pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: &Vec<UiRow>) -> Option<usize> {
-    let selected_package_id = selection.package_id;
-    let selected_script_id = selection.script_id;
+pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: &Vec<TuiRow>) -> Option<usize> {
+    let selected_package_id_wrapped = selection.row.get_package_id();
+    let selected_script_id = selection.row.get_script_id();
+
+    let selected_row = selection.row.get_row_data();
+
+    if selected_package_id_wrapped.is_none() {
+        return None;
+    }
+
+    let selected_package_id = selected_package_id_wrapped.unwrap();
 
     let selected_row_wrapped = visible_rows.iter().position(|ui_row| {
         match ui_row {
-            UiRow::Package { package_id } => {
+            TuiRow::Package { package_id } => {
                 // package name selected
                 if *package_id == selected_package_id && selected_script_id.is_none() {
                     return true;
@@ -45,7 +53,7 @@ pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_ro
                 }
             },
 
-            UiRow::Script { package_id, script_id } => {
+            TuiRow::Script { package_id, script_id } => {
                 // script name selected
                 if selected_script_id.is_none() {
                     return false;
@@ -58,7 +66,7 @@ pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_ro
                 }
             },
 
-            UiRow::Vspace => {
+            TuiRow::Vspace => {
                 return false;
             }
         }
@@ -71,16 +79,16 @@ pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_ro
     return None;
 }
 
-pub fn get_selected_row(selection: &Selection, visible_rows: &Vec<UiRow>) -> Option<UiRow> {
-    let selected_index = find_index_of_selection_in_visible_rows(selection, &visible_rows);
+// pub fn get_selected_row(selection: &Selection, visible_rows: &Vec<TuiRow>) -> Option<TuiRow> {
+//     let selected_index = find_index_of_selection_in_visible_rows(selection, &visible_rows);
 
-    if selected_index.is_some() {
-        let index = selected_index.unwrap();
+//     if selected_index.is_some() {
+//         let index = selected_index.unwrap();
 
-        let row = &visible_rows[index];
-        let cloned_row = row.clone();
-        return Some(cloned_row);
-    }
+//         let row = &visible_rows[index];
+//         let cloned_row = row.clone();
+//         return Some(cloned_row);
+//     }
 
-    return None;
-}
+//     return None;
+// }

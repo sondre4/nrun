@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-use crate::{tui::{app::Selection, rendering::ui_rows::UiRow}, workspace::types::{Package, Script}};
+use crate::{tui::{app::Selection, rendering::ui_rows::TuiRow}, workspace::types::{Package, Script}};
 
 // pub struct UiStyle {
 //     pub package_name: Style,
@@ -21,11 +21,11 @@ pub struct VSpaceUiStyle {
     pub style: Style
 }
 
-// pub enum UiStyle {
-//     PackageStyle(PackageUiStyle),
-//     ScriptStyle(ScriptUiStyle),
-//     VspaceStyle(VSpaceUiStyle)
-// }
+pub enum UiStyle {
+    PackageStyle(PackageUiStyle),
+    ScriptStyle(ScriptUiStyle),
+    VspaceStyle(VSpaceUiStyle)
+}
 
 pub struct UiStyles {
     // pub script_name: UiStyle,
@@ -33,12 +33,12 @@ pub struct UiStyles {
     // pub script_name_selected: UiStyle,
     // pub package_name_selected: UiStyle
 
-    selected_package: PackageUiStyle,
-    relevant_package: PackageUiStyle,
-    unselected_package: PackageUiStyle,
-    selected_script: ScriptUiStyle,
-    unselected_script: ScriptUiStyle,
-    vspace_style: VSpaceUiStyle
+    selected_package: UiStyle,
+    relevant_package: UiStyle,
+    unselected_package: UiStyle,
+    selected_script: UiStyle,
+    unselected_script: UiStyle,
+    vspace_style: UiStyle
 }
 
 impl Default for UiStyles {
@@ -83,62 +83,101 @@ impl Default for UiStyles {
         };
 
         let ui_styles: UiStyles = UiStyles {
-            selected_package: selected_package_style,
-            relevant_package: relevant_package_style,
-            unselected_package: unselected_package_style,
-            selected_script: script_selected,
-            unselected_script: script_unselected,
-            vspace_style: vspace_style
+            selected_package: UiStyle::PackageStyle(selected_package_style),
+            relevant_package: UiStyle::PackageStyle(relevant_package_style),
+            unselected_package: UiStyle::PackageStyle(unselected_package_style),
+            selected_script: UiStyle::ScriptStyle(script_selected),
+            unselected_script: UiStyle::ScriptStyle(script_unselected),
+            vspace_style: UiStyle::VspaceStyle(vspace_style)
         };
 
         return ui_styles;
     }
 }
 
-
-pub fn get_package_row_style(package: &Package, selection: &Selection) -> PackageUiStyle {
-    // 2 cases:
+fn get_row_style(visible_row: &TuiRow, selection: &Selection) -> UiStyle {
+    // 5 cases:
     // script name is selected => both selection.package_id and selection.script_id
     // package name is selected => only selection.package_id
+    // script unselected
+    // package unselected
+    // package relevant
+
+    // println!("getting row style for {visible_row:#?}");
 
     let ui_styles = UiStyles::default();
+    // let visible_row_data_option = visible_row.get_row_data();
+    let selected_row_option = selection.row.get_row_data();
 
-    // check if package is part of selection in the first place
-    if package.id == selection.package_id {
+    match visible_row {
+        TuiRow::Package { package_id } => {
+            let selected_row = selected_row_option.unwrap();
 
-        // check if a script is also selected
-        // if a script is selected here,
-        // then one of this package's scripts is part of the selection
+            // case 1: relevant package - both package_id and script_id selected
+            if *package_id == selected_row.package_id && selected_row.script_id.is_some() {
+                return ui_styles.relevant_package;
+            }
 
-        if selection.script_id.is_some() {
-            // one of this package's scripts are selected
-            return ui_styles.relevant_package;
+            // case 2: selected package - only package_id, because no script is selected
+            if *package_id == selected_row.package_id && selected_row.script_id.is_none() {
+                return ui_styles.selected_package;
+            }
+
+            // case 3: package is not selected, package_id does not match visible_row package_id
+            return ui_styles.unselected_package;
+        },
+
+        TuiRow::Script { package_id, script_id } => {
+            let selected_row = selected_row_option.unwrap();
+
+            if selected_row.script_id.is_none() {
+                // If script does not exist here, something is very wrong
+                unreachable!("Unable to get display style for script: No script id specified");
+            }
+
+            // case 4: script is selected, identified by both script_id and package_id
+            if *package_id == selected_row.package_id && *script_id == selected_row.script_id.unwrap() {
+                return ui_styles.selected_script;
+            }
+
+            // case 5: script is not selected
+            return ui_styles.unselected_script;
+        },
+
+        TuiRow::Vspace => {
+            return ui_styles.vspace_style;
         }
-
-        // if no script is part of the selection, then a package name is selected
-        return ui_styles.selected_package;
     }
-
-    // if not, return unselected style
-    return ui_styles.unselected_package;
 }
 
-pub fn get_script_row_style(script: &Script, selection: &Selection) -> ScriptUiStyle {
-    // 2 cases:
-    // script name is selected => both selection.package_id and selection.script_id
-    // package name is selected => only selection.package_id
+pub fn get_package_row_style(visible_row: &TuiRow, selection: &Selection) -> PackageUiStyle {
+    let style = get_row_style(visible_row, selection);
+    match style {
+        UiStyle::PackageStyle(package_ui_style) => {
+            return package_ui_style;
+        },
+        _ => unreachable!("Row style should not be other than style for package row")
+    };
+}
 
-    let ui_styles = UiStyles::default();
+pub fn get_script_row_style(visible_row: &TuiRow, selection: &Selection) -> ScriptUiStyle {
+    let style = get_row_style(visible_row, selection);
+    match style {
+        UiStyle::ScriptStyle(script_ui_style) => {
+            return script_ui_style;
+        },
+        _ => unreachable!("Row style should not be other than style for script row")
+    };
+}
 
-    if selection.script_id.is_none() {
-        return ui_styles.unselected_script;
-    }
-
-    if script.id == selection.script_id.unwrap() {
-        return ui_styles.selected_script;
-    }
-
-    return ui_styles.unselected_script
+pub fn get_vspace_row_style(visible_row: &TuiRow, selection: &Selection) -> VSpaceUiStyle {
+    let style = get_row_style(visible_row, selection);
+    match style {
+        UiStyle::VspaceStyle(vspace_ui_style) => {
+            return vspace_ui_style;
+        },
+        _ => unreachable!("Row style should not be other than style for vspace row")
+    };
 }
 
 pub fn get_area_with_border(frame: &mut Frame, area: Rect) -> Rect {

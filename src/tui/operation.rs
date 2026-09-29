@@ -41,9 +41,9 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
         },
 
         // Interaction
-        // Action::Activate => {
-            
-        // },
+        Action::Activate => {
+            return Operation::TogglePackageExpansion;
+        },
 
         // implement later
         Action::StartSearch => todo!(),
