@@ -1,3 +1,5 @@
+// TODO: add map for caching results from more expensive operations like build_visible_rows, find_index_of_selection_in_visible_rows could be improved with a map of UiRow
+
 use std::collections::HashSet;
 
 use crate::{tui::{app::{App, Selection}, rendering::ui_rows::UiRow, }, workspace::types::Package};
@@ -6,7 +8,7 @@ fn is_package_expanded(package: &Package, expanded_set: &HashSet<usize>) -> bool
     return expanded_set.contains(&package.id);
 }
 
-pub fn get_visible_rows(app: &App) -> Vec<UiRow> {
+pub fn build_visible_rows(app: &App) -> Vec<UiRow> {
     let mut visible_rows = Vec::new();
 
     for package in &app.workspace.packages {
@@ -64,6 +66,20 @@ pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_ro
 
     if selected_row_wrapped.is_some() {
         return Some(selected_row_wrapped.unwrap());
+    }
+
+    return None;
+}
+
+pub fn get_selected_row(selection: &Selection, visible_rows: &Vec<UiRow>) -> Option<UiRow> {
+    let selected_index = find_index_of_selection_in_visible_rows(selection, &visible_rows);
+
+    if selected_index.is_some() {
+        let index = selected_index.unwrap();
+
+        let row = &visible_rows[index];
+        let cloned_row = row.clone();
+        return Some(cloned_row);
     }
 
     return None;

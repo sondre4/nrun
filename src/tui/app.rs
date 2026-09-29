@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, change_selection::{self, move_selection}}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
@@ -72,15 +72,21 @@ impl App {
             // selection movement
             Action::Up => {
                 move_selection(self, SelectionMovement::Up);
-            }
+            },
+
             Action::Down => {
                 move_selection(self, SelectionMovement::Down);
-            }
+            },
+
+            // Interaction with rows
+            Action::TogglePackageExpansion => {
+                toggle_expansion(self);
+            },
 
             // exit the program
             Action::Quit => {
                 self.running = false;
-            }
+            },
 
             _ => ()
         }

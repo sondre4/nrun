@@ -1,7 +1,8 @@
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 
-use crate::{tui::{app::App, rendering::{visibility::get_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
+use crate::{tui::{app::App, rendering::{visibility::build_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
 
+#[derive(Debug, Clone)]
 pub enum UiRow {
     Package {
         package_id: usize
@@ -12,6 +13,8 @@ pub enum UiRow {
     },
     Vspace
 }
+
+
 
 
 fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiStyle, app: &App, package: &Package) -> () {
@@ -95,7 +98,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, ui_row: &UiRow) -> () {
 }
 
 pub fn render_ui_rows(frame: &mut Frame, area: Rect, app: &App) -> () {
-    let rows_to_be_rendered = get_visible_rows(app);
+    let rows_to_be_rendered = build_visible_rows(app);
     let mut constraints: Vec<Constraint> = Vec::new();
 
     for _ in &rows_to_be_rendered {

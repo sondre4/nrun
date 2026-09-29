@@ -1,4 +1,4 @@
-use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{ui_rows::UiRow, visibility::{find_index_of_selection_in_visible_rows, get_visible_rows}}};
+use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{ui_rows::UiRow, visibility::{find_index_of_selection_in_visible_rows, build_visible_rows}}};
 
 fn get_new_index(old_index: usize, change: i64) -> usize {
     return (old_index as i64 + change) as usize;
@@ -83,7 +83,7 @@ fn get_new_selection(rows: Vec<UiRow>, selected_row_index: usize, direction: &Se
 }
 
 pub fn move_selection(app: &mut App, direction: SelectionMovement) -> () {
-    let visible_rows = get_visible_rows(&app);
+    let visible_rows = build_visible_rows(&app);
     let selection = &app.selection;
 
     let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(&selection, &visible_rows);

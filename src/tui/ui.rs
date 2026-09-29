@@ -38,7 +38,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         let event = events::next()?;
 
         // event to action
-        let action_option = events::to_action(event);
+        let action_option = events::to_action(&app, event);
 
         // handle action
         if action_option.is_some() {

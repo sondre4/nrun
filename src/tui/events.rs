@@ -2,7 +2,7 @@ use std::io;
 
 use crossterm::event::{self, Event, KeyCode};
 
-use crate::tui::{action::Action, keybinds::KEYBINDS};
+use crate::tui::{action::Action, app::{App, Selection}, keybinds::KEYBINDS, rendering::{ui_rows::UiRow, visibility::{build_visible_rows, get_selected_row}}};
 
 
 pub fn next() -> Result<Event, String> {
@@ -31,7 +31,7 @@ pub fn next() -> Result<Event, String> {
 //     return Some(&found_keybind.action);
 // }
 
-pub fn to_action(event: Event) -> Option<Action> {
+pub fn to_action(app: &App, event: Event) -> Option<Action> {
     let key = match event {
         Event::Key(key_event) => key_event,
         _ => {
@@ -46,8 +46,40 @@ pub fn to_action(event: Event) -> Option<Action> {
     // let mapped_action = map_key_to_action(key.code);
 
     let found_keybind_option = KEYBINDS.iter().find(|keybind| {
-        keybind.key_code == key.code && keybind.modifiers == key.modifiers
+
+        if keybind.key_code == key.code && keybind.modifiers == key.modifiers {
+
+            // not limited to any row
+            if keybind.limited_to_row.is_none() {
+                return true;
+            }
+
+            // limited to a type of row
+            let visible_rows = build_visible_rows(app);
+            let selected_row_wrapped = get_selected_row(&app.selection, &visible_rows);
+
+            if selected_row_wrapped.is_none() {
+                return false;
+            }
+
+            let selected_row = selected_row_wrapped.unwrap();
+
+            if matches!(selected_row, UiRow::Package { .. }) {
+                return true;
+            }
+
+            if matches!(selected_row, UiRow::Script { .. }) {
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+
     }).map(|binding| binding.action);
+
+    // println!("keybind: {found_keybind_option:#?}");
 
     if found_keybind_option.is_none() {
         return None;
