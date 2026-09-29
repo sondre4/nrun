@@ -8,71 +8,69 @@ pub struct Keybind {
     pub key_code: KeyCode,
     pub modifiers: KeyModifiers,
     pub action: Action,
-    pub limited_to_row: Option<UiRow>,
+    // pub limited_to_row: Option<UiRow>, // moved to handler, actions should be general
     pub description: &'static str,
-    pub available_in: UiState
+    // pub available_in: UiState // not needed with separate keybinds for each UiState enum
 }
 
         // KeyCode::Up => Action::Up,
         // KeyCode::Down => Action::Down,
         // KeyCode::Char('q') => Action::Quit,
 
-pub const KEYBINDS: &[Keybind] = &[
+pub const SEARCH_KEYBINDS: &[Keybind] = &[
+    Keybind {
+        key_code: KeyCode::Enter,
+        modifiers: KeyModifiers::NONE,
+        action: Action::FinishSearch,
+        description: "Finish search"
+    },
+
+    Keybind {
+        key_code: KeyCode::Esc,
+        modifiers: KeyModifiers::NONE,
+        action: Action::ExitSearch,
+        description: "Exit search"
+    }
+];
+
+pub const MAIN_KEYBINDS: &[Keybind] = &[
 
     // Navigation
     // Up
     Keybind {
         key_code: KeyCode::Up,
         modifiers: KeyModifiers::NONE,
-        action: Action::Up,
-        limited_to_row: None,
-        description: "Up",
-        available_in: UiState::Main
+        action: Action::MoveUp,
+        description: "Move up"
     },
     Keybind {
         key_code: KeyCode::Char('k'),
         modifiers: KeyModifiers::NONE,
-        action: Action::Up,
-        limited_to_row: None,
-        description: "Up",
-        available_in: UiState::Main
+        action: Action::MoveUp,
+        description: "Move up"
     },
 
     // Down
     Keybind {
         key_code: KeyCode::Down,
         modifiers: KeyModifiers::NONE,
-        action: Action::Down,
-        limited_to_row: None,
-        description: "Down",
-        available_in: UiState::Main
+        action: Action::MoveDown,
+        description: "Move down"
     },
     Keybind {
         key_code: KeyCode::Char('j'),
         modifiers: KeyModifiers::NONE,
-        action: Action::Down,
-        limited_to_row: None,
-        description: "Down",
-        available_in: UiState::Main
+        action: Action::MoveDown,
+        description: "Move down"
     },
 
     // user interaction
-    // toggle package expansion
+    // activate row
     Keybind {
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
-        action: Action::TogglePackageExpansion,
-        limited_to_row: Some(UiRow::Package { package_id: 0 }), // 0 is placeholder
-        description: "Expand",
-        available_in: UiState::Main
-    },
-    Keybind {
-        key_code: KeyCode::Enter,
-        modifiers: KeyModifiers::NONE,
-        action: Action::Confirm,
-        limited_to_row: Some(UiRow::Script { package_id: 0, script_id: 0 }), // 0 is placeholder
-        description: "Confirm",
-        available_in: UiState::Main
+        action: Action::Activate,
+        description: "Expand"
     },
 
     // Quit
@@ -80,17 +78,13 @@ pub const KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Char('q'),
         modifiers: KeyModifiers::NONE,
         action: Action::Quit,
-        limited_to_row: None,
-        description: "Quit",
-        available_in: UiState::Main
+        description: "Quit"
     },
     Keybind {
         key_code: KeyCode::Char('c'),
         modifiers: KeyModifiers::CONTROL,
         action: Action::Quit,
-        limited_to_row: None,
-        description: "Quit",
-        available_in: UiState::Main
+        description: "Quit"
     }
 ];
 

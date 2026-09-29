@@ -7,10 +7,10 @@ pub mod package_expansion;
 pub enum Action {
     Nothing,
     Quit,
-    Up,
-    Down,
+    MoveUp,
+    MoveDown,
     StartSearch,
     ExitSearch,
-    TogglePackageExpansion,
-    Confirm
+    FinishSearch,
+    Activate // enter
 }

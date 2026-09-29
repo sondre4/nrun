@@ -3,6 +3,13 @@ use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 use crate::{tui::{app::App, rendering::{visibility::build_visible_rows, styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}}}, workspace::types::{Package, Script}};
 
 #[derive(Debug, Clone)]
+pub enum RowType {
+    Package,
+    Script,
+    Vspace
+}
+
+#[derive(Debug, Clone)]
 pub enum UiRow {
     Package {
         package_id: usize
@@ -13,6 +20,11 @@ pub enum UiRow {
     },
     Vspace
 }
+// pub struct UiRow {
+//     package_id: Option<usize>,
+//     script_id: Option<usize>,
+//     row_type: RowType
+// }
 
 
 

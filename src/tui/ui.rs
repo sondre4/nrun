@@ -38,12 +38,13 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         let event = events::next()?;
 
         // event to action
-        let action_option = events::to_action(&app, event);
+        let action_option = events::to_action(app.ui_state, event);
 
         // handle action
         if action_option.is_some() {
             let action = action_option.unwrap();
-            app.handle_action(action);
+            let mapped_app_operation = app.action_to_operation(action);
+            app.handle_operation(mapped_app_operation);
         }
 
         if !app.running {

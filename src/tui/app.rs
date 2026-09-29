@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::ui_rows::UiRow}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
@@ -66,41 +66,32 @@ impl App {
         self.expanded_packages.insert(self.workspace.packages[0].id);
     }
 
-    pub fn handle_action(&mut self, action: Action) -> () {
-        match action {
+    pub fn action_to_operation(&mut self, action: Action) -> Operation {
+        let operation = action_to_operation(self, action);
+        return operation;
+    }
 
-            // selection movement
-            Action::Up => {
-                move_selection(self, SelectionMovement::Up);
-            },
+    pub fn handle_operation(&mut self, operation: Operation) -> () {
+        match operation {
+            Operation::Nothing => { },
 
-            Action::Down => {
-                move_selection(self, SelectionMovement::Down);
-            },
+            // Exit program
+            Operation::Quit => todo!(),
 
-            // Interaction with rows
-            Action::TogglePackageExpansion => {
-                toggle_expansion(self);
-            },
+            // Navigation
+            Operation::MoveUp => todo!(),
+            Operation::MoveDown => todo!(),
 
-            // exit the program
-            Action::Quit => {
-                self.running = false;
-            },
+            // Interaction
+            Operation::ConfirmSelection => todo!(),
+            Operation::TogglePackageExpansion => todo!(),
 
-            _ => ()
+            // Searching
+            Operation::StartSearch => todo!(),
+            Operation::FinishSearch => todo!(),
+            Operation::ExitSearch => todo!(),
+
+            _ => { }
         }
     }
 }
-
-// call handle action in action.rs?
-
-// pub fn handle_action(app: &mut App, action: Action) -> () {
-//     match action {
-//         Action::Quit => {
-//             app.running = false;
-//         }
-
-//         _ => ()
-//     }
-// }
