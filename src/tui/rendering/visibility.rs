@@ -31,45 +31,12 @@ pub fn build_visible_rows(app: &App) -> Vec<TuiRow> {
 }
 
 pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: &Vec<TuiRow>) -> Option<usize> {
-    let selected_package_id_wrapped = selection.row.get_package_id();
-    let selected_script_id = selection.row.get_script_id();
-
-    let selected_row = selection.row.get_row_data();
-
-    if selected_package_id_wrapped.is_none() {
-        return None;
-    }
-
-    let selected_package_id = selected_package_id_wrapped.unwrap();
-
-    let selected_row_wrapped = visible_rows.iter().position(|ui_row| {
-        match ui_row {
-            TuiRow::Package { package_id } => {
-                // package name selected
-                if *package_id == selected_package_id && selected_script_id.is_none() {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-
-            TuiRow::Script { package_id, script_id } => {
-                // script name selected
-                if selected_script_id.is_none() {
-                    return false;
-                }
-
-                if *package_id == selected_package_id && *script_id == selected_script_id.unwrap() {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-
-            TuiRow::Vspace => {
-                return false;
-            }
+    let selected_row_wrapped = visible_rows.iter().position(|tui_row| {
+        if *tui_row == selection.row {
+            return true;
         }
+
+        return false;
     });
 
     if selected_row_wrapped.is_some() {
@@ -78,17 +45,3 @@ pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_ro
 
     return None;
 }
-
-// pub fn get_selected_row(selection: &Selection, visible_rows: &Vec<TuiRow>) -> Option<TuiRow> {
-//     let selected_index = find_index_of_selection_in_visible_rows(selection, &visible_rows);
-
-//     if selected_index.is_some() {
-//         let index = selected_index.unwrap();
-
-//         let row = &visible_rows[index];
-//         let cloned_row = row.clone();
-//         return Some(cloned_row);
-//     }
-
-//     return None;
-// }

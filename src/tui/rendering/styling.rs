@@ -105,13 +105,19 @@ fn get_row_style(visible_row: &TuiRow, selection: &Selection) -> UiStyle {
 
     // println!("getting row style for {visible_row:#?}");
 
+    let selected_row = &selection.row;
+
     let ui_styles = UiStyles::default();
     // let visible_row_data_option = visible_row.get_row_data();
-    let selected_row_option = selection.row.get_row_data();
+    
+    let visible_row_data_option = visible_row.get_row_data();
+    let selected_row_data_option = selected_row.get_row_data();
 
     match visible_row {
         TuiRow::Package { package_id } => {
-            let selected_row = selected_row_option.unwrap();
+            let selected_row = selected_row_data_option.unwrap();
+
+            // println!("Visible row is a package");
 
             // case 1: relevant package - both package_id and script_id selected
             if *package_id == selected_row.package_id && selected_row.script_id.is_some() {
@@ -128,15 +134,20 @@ fn get_row_style(visible_row: &TuiRow, selection: &Selection) -> UiStyle {
         },
 
         TuiRow::Script { package_id, script_id } => {
-            let selected_row = selected_row_option.unwrap();
+            let selected_row_data = selected_row_data_option.unwrap();
 
-            if selected_row.script_id.is_none() {
-                // If script does not exist here, something is very wrong
+            if visible_row_data_option.is_none() {
                 unreachable!("Unable to get display style for script: No script id specified");
             }
 
+            if selected_row_data.script_id.is_none() {
+                // for some reason this fixes the bug
+                // also case 5?: script is not selected
+                return ui_styles.unselected_script;
+            }
+
             // case 4: script is selected, identified by both script_id and package_id
-            if *package_id == selected_row.package_id && *script_id == selected_row.script_id.unwrap() {
+            if *package_id == selected_row_data.package_id && *script_id == selected_row_data.script_id.unwrap() {
                 return ui_styles.selected_script;
             }
 

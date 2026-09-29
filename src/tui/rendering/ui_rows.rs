@@ -2,7 +2,7 @@ use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 
 use crate::{tui::{app::App, rendering::{styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}, visibility::build_visible_rows}}, workspace::types::{Package, Script}};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TuiRow {
     Package {
         package_id: usize
