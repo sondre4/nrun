@@ -1,5 +1,6 @@
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 
+#[derive(Clone)]
 pub struct UiLayout {
     pub search: Rect,
     pub main: Rect,
@@ -33,4 +34,9 @@ fn create_layout(area: Rect) -> UiLayout {
 
 pub fn get_ui_layout(area: Rect) -> UiLayout {
     return create_layout(area);
+}
+
+pub fn height_of_area(area: Rect) -> usize {
+    let height = area.height;
+    return usize::from(height);
 }

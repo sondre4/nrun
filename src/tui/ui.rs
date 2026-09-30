@@ -3,7 +3,7 @@ use std::io;
 use crossterm::event;
 use tui::rendering;
 
-use crate::{tui::{self, app::{App}, events, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
+use crate::{tui::{self, app::App, events, rendering::{TuiRenderer}, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
@@ -20,14 +20,20 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     // main loop
     while app.running {
+        // define rendering object
+        let mut tui_renderer: TuiRenderer;
+        // build data to be rendered
+        // app.initialize_rendering_data();
 
         // render
         let render_result = terminal.draw(|frame| {
-            rendering::render(frame, &app);
+            tui_renderer.initialize_layout(frame);
+            tui_renderer.set_scroll_state(0);
+            // rendering::render(frame, &app);
         });
 
         match render_result {
-            Ok(result) => (),
+            Ok(_result) => (),
             Err(error) => {
                 tui::terminal::restore_terminal()?;
                 return Err(format!("Error whilst drawing rendered frame: {error}"));

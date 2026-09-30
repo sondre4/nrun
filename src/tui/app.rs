@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::ui_rows::TuiRow}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::{RenderingData, ui_rows::TuiRow, visibility::{build_tui_rows, to_visible_rows}}}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
@@ -28,7 +28,8 @@ pub struct App {
     pub selection: Selection,
     pub search_query: String,
     pub running: bool,
-    pub ui_state: UiState
+    pub ui_state: UiState,
+    pub visible_rows_copy: Vec<TuiRow>
 }
 
 impl Selection {
@@ -53,17 +54,20 @@ impl App {
             selection: Selection::new(),
             search_query: String::new(),
             running: true,
-            ui_state: UiState::Main
+            ui_state: UiState::Main,
+            visible_rows_copy: Vec::new(),
         };
 
         return app;
     }
 
     pub fn initialize_expanded_packages(&mut self) -> () {
-        // for package in &self.workspace.packages {
-        //     self.expanded_packages.insert(package.id);
-        // }
         self.expanded_packages.insert(self.workspace.packages[0].id);
+    }
+
+    pub fn packages_to_tui_rows(self) -> Vec<TuiRow> {
+        let all_tui_rows = build_tui_rows(&self);
+        return all_tui_rows;
     }
 
     pub fn action_to_operation(&mut self, action: Action) -> Operation {
