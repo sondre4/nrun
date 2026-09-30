@@ -2,7 +2,7 @@
 
 use crossterm::event::{KeyCode, KeyModifiers};
 
-use crate::tui::{action::Action, app::UiState, rendering::ui_rows::TuiRow};
+use crate::tui::{action::Action};
 
 pub struct Keybind {
     pub key_code: KeyCode,
@@ -10,7 +10,7 @@ pub struct Keybind {
     pub action: Action,
     // pub limited_to_row: Option<TuiRow>, // moved to handler, actions should be general
     pub description: &'static str,
-    // pub available_in: UiState // not needed with separate keybinds for each UiState enum
+    // pub available_in: FocusedSection // not needed with separate keybinds for each FocusedSection enum
 }
 
         // KeyCode::Up => Action::Up,

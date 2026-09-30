@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::{RenderingData, ui_rows::TuiRow, visibility::{build_tui_rows, to_visible_rows}}}, workspace::types::Workspace};
+use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::{ui_rows::TuiRow}}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
@@ -16,20 +16,39 @@ pub enum SelectionMovement {
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UiState {
-    All,
+pub enum FocusedSection {
     Main,
     Search
 }
 
-pub struct App {
+pub struct AppState {
     pub workspace: Workspace,
     pub expanded_packages: HashSet<usize>,
     pub selection: Selection,
     pub search_query: String,
     pub running: bool,
-    pub ui_state: UiState,
-    pub visible_rows_copy: Vec<TuiRow>
+    pub focused_section: FocusedSection
+}
+
+pub struct TuiViewData {
+    pub filtered_rows: Vec<TuiRow>,
+    pub current_scroll_offset: usize
+    // pub selected_row_index: usize
+}
+
+impl TuiViewData {
+    fn default() -> TuiViewData {
+        return TuiViewData {
+            filtered_rows: Vec::new(),
+            current_scroll_offset: 0
+            // selected_row_index: 0
+        };
+    }
+}
+
+pub struct App {
+    pub app_state: AppState,
+    pub tui_view_data: TuiViewData
 }
 
 impl Selection {
@@ -48,26 +67,25 @@ impl Selection {
 
 impl App {
     pub fn new(app_data: Workspace) -> App {
-        let app: App = App {
+        let app_state: AppState = AppState {
             workspace: app_data,
             expanded_packages: HashSet::new(),
             selection: Selection::new(),
             search_query: String::new(),
             running: true,
-            ui_state: UiState::Main,
-            visible_rows_copy: Vec::new(),
+            focused_section: FocusedSection::Main
+        };
+
+        let app: App = App {
+            app_state: app_state,
+            tui_view_data: TuiViewData::default()
         };
 
         return app;
     }
 
     pub fn initialize_expanded_packages(&mut self) -> () {
-        self.expanded_packages.insert(self.workspace.packages[0].id);
-    }
-
-    pub fn packages_to_tui_rows(self) -> Vec<TuiRow> {
-        let all_tui_rows = build_tui_rows(&self);
-        return all_tui_rows;
+        self.app_state.expanded_packages.insert(self.app_state.workspace.packages[0].id);
     }
 
     pub fn action_to_operation(&mut self, action: Action) -> Operation {
@@ -81,7 +99,7 @@ impl App {
 
             // Exit program
             Operation::Quit => {
-                self.running = false;
+                self.app_state.running = false;
             },
 
             // Navigation

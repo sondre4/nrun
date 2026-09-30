@@ -1,9 +1,8 @@
 use std::io;
 
 use crossterm::event;
-use tui::rendering;
 
-use crate::{tui::{self, app::App, events, rendering::{TuiRenderer}, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
+use crate::{tui::{self, app::App, events, rendering::{TuiView}, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
@@ -11,7 +10,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     // render tui
     // read events
     // handle events
-    // update app ui_state
+    // update app
 
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
@@ -19,24 +18,42 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     app.initialize_expanded_packages();
 
     // main loop
-    while app.running {
-        // define rendering object
-        let mut tui_renderer: TuiRenderer;
-        // build data to be rendered
-        // app.initialize_rendering_data();
+    while app.app_state.running {
 
-        // render
+        // initialize tui_view
+        let mut view: TuiView = TuiView::initialize_new(&app);
+
+        // get a clone of the view's filtered rows and update app state filtered rows
+        // app state needs them for navigating handling
+        let filtered_rows = view.get_filtered_tui_rows();
+        app.tui_view_data.filtered_rows = filtered_rows;
+
+
         let render_result = terminal.draw(|frame| {
-            tui_renderer.initialize_layout(frame);
-            tui_renderer.set_scroll_state(0);
-            // rendering::render(frame, &app);
+
+            // initialize layout
+            let mut layout = view.get_tui_layout(frame);
+            layout = view.style_tui_layout(frame, layout, &app.app_state.focused_section);
+
+            // calculate viewport values
+            let viewport_state = view.calculate_viewport_state(
+                &layout,
+                &app.app_state.selection,
+                app.tui_view_data.current_scroll_offset
+            );
+
+            // update app state scroll offset
+            app.tui_view_data.current_scroll_offset = viewport_state.scroll_offset;
+
+            // render
+            view.render(frame, layout, viewport_state, &app);
         });
 
         match render_result {
             Ok(_result) => (),
             Err(error) => {
                 tui::terminal::restore_terminal()?;
-                return Err(format!("Error whilst drawing rendered frame: {error}"));
+                return Err(format!("Error whilst rendering: {error}"));
             }
         }
 
@@ -44,7 +61,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         let event = events::next()?;
 
         // event to action
-        let action_option = events::to_action(app.ui_state, event);
+        let action_option = events::to_action(app.app_state.focused_section, event);
 
         // handle action
         if action_option.is_some() {
@@ -53,26 +70,14 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             app.handle_operation(mapped_app_operation);
         }
 
-        if !app.running {
+        if !app.app_state.running {
             break;
         }
 
-        // update app ui_state => happens in app.handle_action(...)
+        // update app focused_section => happens in app.handle_action(...)
     }
 
     tui::terminal::restore_terminal()?;
-
-    // loop {
-    //     terminal.draw(|frame| {
-    //         frame.render_widget("hello", frame.area());
-    //     });
-
-    //     // if event::poll(std::time::Duration::from_millis(100)) {
-    //     //     if let Event::Key(key) = event::read() {
-                
-    //     //     }
-    //     // }
-    // }
 
     return Ok(());
 }

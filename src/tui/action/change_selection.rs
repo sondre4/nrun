@@ -63,8 +63,8 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
 
 pub fn move_selection(app: &mut App, direction: SelectionMovement) -> () {
     // let visible_rows = build_visible_rows(&app);
-    let visible_rows = &app.rendering_data.visible_rows;
-    let selection = &app.selection;
+    let visible_rows = &app.tui_view_data.filtered_rows;
+    let selection = &app.app_state.selection;
 
     let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(selection, &visible_rows);
 
@@ -78,6 +78,6 @@ pub fn move_selection(app: &mut App, direction: SelectionMovement) -> () {
     // println!("New selection: {new_selection:#?}");
 
     if new_selection.is_some() {
-        app.selection = new_selection.unwrap();
+        app.app_state.selection = new_selection.unwrap();
     }
 }
