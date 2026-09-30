@@ -15,3 +15,12 @@ pub fn toggle_expansion(app: &mut App) -> () {
         app.app_state.expanded_packages.insert(selected_package_id);
     }
 }
+
+// not implemented yet
+pub fn scripts_not_visible_after_expanding() -> bool {
+    return false;
+}
+
+pub fn new_scroll_offset_after_expanding() -> usize {
+    return 0;
+}

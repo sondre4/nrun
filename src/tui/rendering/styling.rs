@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-use crate::{tui::{app::Selection, rendering::ui_rows::TuiRow}, workspace::types::{Package, Script}};
+use crate::{tui::{app::Selection, rendering::tui_rows::TuiRow}, workspace::types::{Package, Script}};
 
 // pub struct UiStyle {
 //     pub package_name: Style,
@@ -44,6 +44,9 @@ pub struct UiStyles {
 impl Default for UiStyles {
     fn default() -> Self {
 
+        // TODO: once focused_section is set, set variables to be different colors depending on FocusedSection enum
+        // could be implemented with a focused bool?
+
         // package styles
         let unselected_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default(),
@@ -51,8 +54,8 @@ impl Default for UiStyles {
 
         let relevant_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default()
-                .fg(Color::DarkGray)
-                .bg(Color::Gray)
+                .fg(Color::LightCyan)
+                .bg(Color::DarkGray)
         };
 
         let selected_package_style: PackageUiStyle = PackageUiStyle {

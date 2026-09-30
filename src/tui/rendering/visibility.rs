@@ -2,7 +2,7 @@
 
 use std::collections::HashSet;
 
-use crate::{tui::{app::{App, Selection}, rendering::ui_rows::TuiRow}, workspace::types::Package};
+use crate::{tui::{app::{App, Selection}, rendering::tui_rows::TuiRow}, workspace::types::Package};
 
 pub fn is_package_expanded(package: &Package, expanded_set: &HashSet<usize>) -> bool {
     return expanded_set.contains(&package.id);

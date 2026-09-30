@@ -1,4 +1,4 @@
-use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{ui_rows::TuiRow, visibility::{find_index_of_selection_in_visible_rows}}};
+use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{tui_rows::TuiRow, visibility::{find_index_of_selection_in_visible_rows}}};
 
 fn get_new_index(old_index: usize, change: i64) -> usize {
     return (old_index as i64 + change) as usize;

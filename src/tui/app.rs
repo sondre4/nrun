@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::{Action, change_selection::{self, move_selection}, package_expansion::toggle_expansion}, operation::{Operation, action_to_operation}, rendering::{ui_rows::TuiRow}}, workspace::types::Workspace};
+use crate::{tui::{action::Action, operation::{Operation, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
+
+
 
 #[derive(Debug)]
 pub struct Selection {
@@ -111,7 +113,10 @@ impl App {
             },
 
             // Interaction
-            Operation::ConfirmSelection => todo!(),
+            Operation::ConfirmSelection => {
+                // script has been selected
+            },
+
             Operation::TogglePackageExpansion => {
                 toggle_expansion(self);
             },

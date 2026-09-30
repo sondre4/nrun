@@ -2,7 +2,7 @@ use std::io;
 
 use crossterm::event;
 
-use crate::{tui::{self, app::App, events, rendering::{TuiView}, terminal::{self, initialize_terminal}}, workspace::types::Workspace};
+use crate::{tui::{self, app::App, events, rendering::tui_view::TuiView, terminal::{initialize_terminal}}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 

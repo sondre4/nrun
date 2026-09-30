@@ -1,4 +1,7 @@
-use crate::tui::{action::Action, app::App};
+use crate::tui::{action::Action, app::App, rendering::tui_rows::TuiRow};
+
+pub mod change_selection;
+pub mod package_expansion;
 
 pub enum Operation {
     Nothing,
@@ -42,7 +45,20 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
 
         // Interaction
         Action::Activate => {
-            return Operation::TogglePackageExpansion;
+            let currently_selected_row = &app.app_state.selection.row;
+            match currently_selected_row {
+                TuiRow::Package { package_id } => {
+                    return Operation::TogglePackageExpansion;
+                },
+
+                TuiRow::Script { package_id, script_id } => {
+                    return Operation::ConfirmSelection;
+                },
+
+                TuiRow::Vspace => {
+                    unreachable!("Activating a Vspace row should not be possible");
+                }
+            }
         },
 
         // implement later
