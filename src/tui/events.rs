@@ -2,7 +2,7 @@ use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent};
 
-use crate::tui::{action::Action, app::UiState, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS}};
+use crate::tui::{action::Action, app::FocusedSection, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS}};
 
 pub fn next() -> Result<Event, String> {
     let event_result = event::read();
@@ -27,7 +27,7 @@ fn keybinds_to_action(keybind_map: &[Keybind], key_event: KeyEvent) -> Option<Ac
     return result_wrapped;
 }
 
-pub fn to_action(ui_state: UiState, event: Event) -> Option<Action> {
+pub fn to_action(focused_section: FocusedSection, event: Event) -> Option<Action> {
     let key_event = match event {
         Event::Key(matched_key_event) => matched_key_event,
         _ => {
@@ -39,12 +39,12 @@ pub fn to_action(ui_state: UiState, event: Event) -> Option<Action> {
         return None;
     }
 
-    match ui_state {
-        UiState::Main => {
+    match focused_section {
+        FocusedSection::Main => {
             return keybinds_to_action(MAIN_KEYBINDS, key_event);
         },
 
-        UiState::Search => {
+        FocusedSection::Search => {
             return keybinds_to_action(SEARCH_KEYBINDS, key_event);
         },
 

@@ -191,7 +191,7 @@ pub fn get_vspace_row_style(visible_row: &TuiRow, selection: &Selection) -> VSpa
     };
 }
 
-pub fn get_area_with_border(frame: &mut Frame, area: Rect) -> Rect {
+pub fn add_border_to_area(frame: &mut Frame, area: Rect) -> Rect {
     // add border on area
     let border = Block::default().borders(Borders::ALL).title(" Scripts ");
     frame.render_widget(border, area);

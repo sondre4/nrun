@@ -1,12 +1,13 @@
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 
-pub struct UiLayout {
+#[derive(Clone)]
+pub struct TuiLayout {
     pub search: Rect,
     pub main: Rect,
     pub keybind_display: Rect
 }
 
-fn create_layout(area: Rect) -> UiLayout {
+fn create_layout(area: Rect) -> TuiLayout {
     let sections = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -22,7 +23,7 @@ fn create_layout(area: Rect) -> UiLayout {
     //         Constraint::Percentage(60)
     //     ]).split(vertical[1]);
 
-    let layout = UiLayout {
+    let layout = TuiLayout {
         search: sections[0],
         main: sections[1],
         keybind_display: sections[2]
@@ -31,6 +32,11 @@ fn create_layout(area: Rect) -> UiLayout {
     return layout;
 }
 
-pub fn get_ui_layout(area: Rect) -> UiLayout {
+pub fn get_ui_layout(area: Rect) -> TuiLayout {
     return create_layout(area);
+}
+
+pub fn height_of_area(area: Rect) -> usize {
+    let height = area.height;
+    return usize::from(height);
 }

@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
 
-use crate::{tui::{app::App, rendering::{styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}, visibility::build_visible_rows}}, workspace::types::{Package, Script}};
+use crate::{tui::{app::App, rendering::{styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}, visibility::is_package_expanded}}, workspace::types::{Package, Script}};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TuiRow {
@@ -68,7 +68,7 @@ fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiSty
         [Constraint::Percentage(35), Constraint::Percentage(65)]
     ).areas(area);
 
-    let expanded = app.expanded_packages.contains(&package.id);
+    let expanded = is_package_expanded(package, &app.app_state.expanded_packages);
     let expanded_indicator = if expanded { "▼" } else { "▶" };
     let displayed_package_name = format!("{expanded_indicator} ({}) {}", package.id, package.name);
 
@@ -108,17 +108,17 @@ fn render_vspace_row(frame: &mut Frame, area: Rect) -> () {
 fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () {
     match tui_row {
         TuiRow::Package { package_id } => {
-            let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *package_id });
+            let package_wrapped = app.app_state.workspace.packages.iter().find(|p| { p.id == *package_id });
 
             if package_wrapped.is_some() {
                 let package = package_wrapped.unwrap();
-                let ui_style = get_package_row_style(tui_row, &app.selection);
+                let ui_style = get_package_row_style(tui_row, &app.app_state.selection);
 
                 render_package_row(frame, area, ui_style, app, package);
             }
         },
         TuiRow::Script { package_id, script_id } => {
-            let package_wrapped = app.workspace.packages.iter().find(|p| { p.id == *package_id });
+            let package_wrapped = app.app_state.workspace.packages.iter().find(|p| { p.id == *package_id });
             if package_wrapped.is_none() {
                 // it is fine to return here, this returns from the function but there is nothing after the match statement
                 return;
@@ -133,7 +133,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 
             let script = script_wrapped.unwrap();
 
-            let ui_style = get_script_row_style(tui_row, &app.selection);
+            let ui_style = get_script_row_style(tui_row, &app.app_state.selection);
             render_script_row(frame, area, ui_style, script);
 
         },
@@ -143,11 +143,12 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
     }
 }
 
-pub fn render_ui_rows(frame: &mut Frame, area: Rect, app: &App) -> () {
-    let visible_rows = build_visible_rows(app);
+pub fn render_ui_rows(frame: &mut Frame, area: Rect, app: &App, visible_rows: &Vec<TuiRow>) -> () {
+    // let visible_rows = build_visible_rows(app);
+
     let mut constraints: Vec<Constraint> = Vec::new();
 
-    for _ in &visible_rows {
+    for _ in visible_rows {
         constraints.push(Constraint::Length(1));
     }
 

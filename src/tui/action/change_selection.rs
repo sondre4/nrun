@@ -1,4 +1,4 @@
-use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{ui_rows::TuiRow, visibility::{find_index_of_selection_in_visible_rows, build_visible_rows}}};
+use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{ui_rows::TuiRow, visibility::{find_index_of_selection_in_visible_rows}}};
 
 fn get_new_index(old_index: usize, change: i64) -> usize {
     return (old_index as i64 + change) as usize;
@@ -28,16 +28,12 @@ fn change_within_bounds(collection_length: usize, current_index: usize, change: 
     return true;
 }
 
-fn get_new_selection(rows: Vec<TuiRow>, selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
+fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
     let mut running = true;
     let row_collection_length = rows.len();
     let mut new_index = selected_row_index;
-    // let mut new_package_id: Option<usize> = None;
-    // let mut new_script_id: Option<usize> = None;
 
     let mut move_to_row: TuiRow;
-
-    // println!("1");
     
     while running {
         let change = get_selection_change(direction);
@@ -45,19 +41,11 @@ fn get_new_selection(rows: Vec<TuiRow>, selected_row_index: usize, direction: &S
             return None;
         }
 
-        // println!("2");
-
         new_index = get_new_index(new_index, change);
-        // println!("3");
 
         if matches!(rows[new_index], TuiRow::Vspace) {
             continue;
         }
-
-        // println!("4");
-
-        // println!("Found row, moving...");
-
         running = false;
         break;
     }
@@ -65,24 +53,6 @@ fn get_new_selection(rows: Vec<TuiRow>, selected_row_index: usize, direction: &S
     let new_row = &rows[new_index];
 
     move_to_row = new_row.clone();
-
-    // match new_row {
-    //     TuiRow::Package { package_id } => {
-    //         new_package_id = Some(*package_id);
-    //     },
-    //     TuiRow::Script { package_id, script_id } => {
-    //         new_package_id = Some(*package_id);
-    //         new_script_id = Some(*script_id);
-    //     },
-    //     TuiRow::Vspace => {
-    //         return None;
-    //     }
-    // }
-
-    // let new_selection: Selection = Selection {
-    //     package_id: new_package_id.unwrap(),
-    //     script_id: new_script_id,
-    // };
 
     let new_selection: Selection = Selection {
         row: move_to_row
@@ -92,21 +62,22 @@ fn get_new_selection(rows: Vec<TuiRow>, selected_row_index: usize, direction: &S
 }
 
 pub fn move_selection(app: &mut App, direction: SelectionMovement) -> () {
-    let visible_rows = build_visible_rows(&app);
-    let selection = &app.selection;
+    // let visible_rows = build_visible_rows(&app);
+    let visible_rows = &app.tui_view_data.filtered_rows;
+    let selection = &app.app_state.selection;
 
-    let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(&selection, &visible_rows);
+    let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(selection, &visible_rows);
 
     if selected_visible_row_index_wrapped.is_none() {
         return;
     }
 
     let current_index = selected_visible_row_index_wrapped.unwrap();
-    let new_selection = get_new_selection(visible_rows, current_index, &direction);
+    let new_selection = get_new_selection(&visible_rows, current_index, &direction);
 
     // println!("New selection: {new_selection:#?}");
 
     if new_selection.is_some() {
-        app.selection = new_selection.unwrap();
+        app.app_state.selection = new_selection.unwrap();
     }
 }
