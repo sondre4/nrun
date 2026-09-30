@@ -1,5 +1,3 @@
-// TODO: refactor keybind definitions
-
 use crossterm::event::{KeyCode, KeyModifiers};
 
 use crate::tui::{action::Action};
@@ -12,10 +10,6 @@ pub struct Keybind {
     pub description: &'static str,
     // pub available_in: FocusedSection // not needed with separate keybinds for each FocusedSection enum
 }
-
-        // KeyCode::Up => Action::Up,
-        // KeyCode::Down => Action::Down,
-        // KeyCode::Char('q') => Action::Quit,
 
 pub const SEARCH_KEYBINDS: &[Keybind] = &[
     Keybind {

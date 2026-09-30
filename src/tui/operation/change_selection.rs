@@ -33,7 +33,7 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
     let row_collection_length = rows.len();
     let mut new_index = selected_row_index;
 
-    let mut move_to_row: TuiRow;
+    let move_to_row: TuiRow;
     
     while running {
         let change = get_selection_change(direction);
@@ -74,8 +74,6 @@ pub fn move_selection(app: &mut App, direction: SelectionMovement) -> () {
 
     let current_index = selected_visible_row_index_wrapped.unwrap();
     let new_selection = get_new_selection(&visible_rows, current_index, &direction);
-
-    // println!("New selection: {new_selection:#?}");
 
     if new_selection.is_some() {
         app.app_state.selection = new_selection.unwrap();

@@ -9,7 +9,7 @@ pub type AppTerminal = Terminal<CrosstermBackend<io::Stdout>>;
 pub fn initialize_terminal() -> Result<AppTerminal, String> {
     let enabling_raw_result = enable_raw_mode();
     match enabling_raw_result {
-        Ok(result) => (),
+        Ok(_result) => { },
         Err(error) => {
             return Err(format!("Error whilst enabling raw terminal: {error}"));
         }
@@ -17,10 +17,16 @@ pub fn initialize_terminal() -> Result<AppTerminal, String> {
 
     let mut stdout = io::stdout();
 
-    execute!(stdout, EnterAlternateScreen);
+    let enter_result = execute!(stdout, EnterAlternateScreen);
+    match enter_result {
+        Ok(_result) => { },
+        Err(error) => {
+            return Err(format!("Error whilst entering alternate screen: {error}"));
+        }
+    }
 
     let backend = CrosstermBackend::new(stdout);
-    let mut terminal_result = Terminal::new(backend);
+    let terminal_result = Terminal::new(backend);
 
     let terminal = match terminal_result {
         Ok(result) => result,
@@ -36,14 +42,21 @@ pub fn initialize_terminal() -> Result<AppTerminal, String> {
 pub fn restore_terminal() -> Result<(), String> {
     let disabling_raw_result = disable_raw_mode();
     match disabling_raw_result {
-        Ok(result) => (),
+        Ok(_result) => (),
         Err(error) => {
             return Err(format!("Error whilst disabling raw terminal: {error}"));
         }
     }
 
     let mut stdout = io::stdout();
-    execute!(stdout, LeaveAlternateScreen);
+    let leave_result = execute!(stdout, LeaveAlternateScreen);
+
+    match leave_result {
+        Ok(_result) => { },
+        Err(error) => {
+            return Err(format!("Error whilst leaving alternate screen: {error}"));
+        }
+    }
 
     return Ok(());
 }

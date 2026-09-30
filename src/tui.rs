@@ -1,4 +1,3 @@
-use std::io;
 use crate::{tui::ui::run_tui, workspace::types::Workspace};
 
 pub mod action;

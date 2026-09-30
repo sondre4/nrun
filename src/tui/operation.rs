@@ -47,11 +47,11 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
         Action::Activate => {
             let currently_selected_row = &app.app_state.selection.row;
             match currently_selected_row {
-                TuiRow::Package { package_id } => {
+                TuiRow::Package { package_id: _ } => {
                     return Operation::TogglePackageExpansion;
                 },
 
-                TuiRow::Script { package_id, script_id } => {
+                TuiRow::Script { package_id: _, script_id: _ } => {
                     return Operation::ConfirmSelection;
                 },
 

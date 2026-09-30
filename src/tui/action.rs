@@ -7,5 +7,5 @@ pub enum Action {
     StartSearch,
     ExitSearch,
     FinishSearch,
-    Activate // enter
+    Activate
 }
