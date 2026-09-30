@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{tui::{action::Action, operation::{Operation, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
+use crate::{tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
 
 
 
@@ -95,7 +95,7 @@ impl App {
         return operation;
     }
 
-    pub fn handle_operation(&mut self, operation: Operation) -> () {
+    pub fn handle_operation(&mut self, operation: Operation) -> OperationResult {
         match operation {
             Operation::Nothing => { },
 
@@ -118,7 +118,8 @@ impl App {
             },
 
             Operation::TogglePackageExpansion => {
-                toggle_expansion(self);
+                let operation_result = toggle_expansion(self);
+                return operation_result;
             },
 
             // Searching
@@ -128,5 +129,7 @@ impl App {
 
             _ => { }
         }
+
+        return OperationResult::None;
     }
 }

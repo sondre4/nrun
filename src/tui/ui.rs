@@ -1,4 +1,4 @@
-use crate::{tui::{self, app::App, events, rendering::tui_view::TuiView, terminal::{initialize_terminal}}, workspace::types::Workspace};
+use crate::{tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
@@ -10,6 +10,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
+    let mut last_operation_result: OperationResult = OperationResult::None;
 
     app.initialize_expanded_packages();
 
@@ -35,7 +36,8 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             let viewport_state = view.calculate_viewport_state(
                 &layout,
                 &app.app_state.selection,
-                app.tui_view_data.current_scroll_offset
+                app.tui_view_data.current_scroll_offset,
+                &last_operation_result
             );
 
             // update app state scroll offset
@@ -63,7 +65,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         if action_option.is_some() {
             let action = action_option.unwrap();
             let mapped_app_operation = app.action_to_operation(action);
-            app.handle_operation(mapped_app_operation);
+            last_operation_result = app.handle_operation(mapped_app_operation);
         }
 
         if !app.app_state.running {

@@ -2,12 +2,6 @@ use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, wi
 
 use crate::{tui::{app::Selection, rendering::tui_rows::TuiRow}, workspace::types::{Package, Script}};
 
-// pub struct UiStyle {
-//     pub package_name: Style,
-//     pub script_name: Style,
-//     pub script_command: Style,
-// }
-
 pub struct PackageUiStyle {
     pub name: Style
 }

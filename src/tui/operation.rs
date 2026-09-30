@@ -23,6 +23,12 @@ pub enum Operation {
     ExitSearch
 }
 
+pub enum OperationResult {
+    None,
+    PackageExpanded,
+    PackageCollapsed
+}
+
 pub fn action_to_operation(app: &App, action: Action) -> Operation {
     match action {
         Action::Nothing => {

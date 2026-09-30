@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::tui::{app::{App, FocusedSection, Selection}, rendering::{search_bar::render_search_bar, styling::add_border_to_area, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, searching::filter_tui_rows};
+use crate::tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::add_border_to_area, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, searching::filter_tui_rows};
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -49,6 +49,24 @@ impl TuiView {
         return old_scroll_offset;
     }
 
+    fn adjust_scroll_offset(&mut self, calculated_scroll_offset: usize, selected_row: &TuiRow, selected_row_index: usize, main_height: usize, operation_result: &OperationResult) -> usize {
+        match operation_result {
+            OperationResult::PackageExpanded => {
+                return new_scroll_offset_after_expanding(
+                    &self.filtered_rows,
+                    selected_row,
+                    selected_row_index,
+                    calculated_scroll_offset,
+                    main_height
+                );
+            },
+
+            _ => {
+                return calculated_scroll_offset;
+            }
+        }
+    }
+
     pub fn get_tui_layout(&mut self, frame: &mut Frame) -> TuiLayout {
         // setup layout
         let terminal_area = frame.area();
@@ -62,11 +80,19 @@ impl TuiView {
         return tui_layout;
     }
 
-    pub fn calculate_viewport_state(&mut self, styled_layout: &TuiLayout, current_selection: &Selection, previous_scroll_offset: usize) -> TuiViewportState {
+    pub fn calculate_viewport_state(&mut self, styled_layout: &TuiLayout, current_selection: &Selection, previous_scroll_offset: usize, last_operation_result: &OperationResult) -> TuiViewportState {
         let main_section_height = self.get_height_from_area(styled_layout.main);
         let selected_index_wrapped = find_index_of_selection_in_visible_rows(current_selection, &self.filtered_rows);
         let selected_index = selected_index_wrapped.unwrap_or(0);
-        let new_scroll_offset = self.calculate_new_scroll_offset(main_section_height, selected_index, previous_scroll_offset);
+        let calculated_scroll_offset = self.calculate_new_scroll_offset(main_section_height, selected_index, previous_scroll_offset);
+
+        let new_scroll_offset = self.adjust_scroll_offset(
+            calculated_scroll_offset,
+            &current_selection.row,
+            selected_index,
+            main_section_height,
+            last_operation_result
+        );
 
         return TuiViewportState {
             main_section_height: main_section_height,
