@@ -63,12 +63,12 @@ impl TuiRow {
     }
 }
 
-fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiStyle, app: &App, package: &Package) -> () {
+fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiStyle, package: &Package, expanded: bool) -> () {
     let [name_column_area, _command_column_area] = Layout::horizontal(
         [Constraint::Percentage(35), Constraint::Percentage(65)]
     ).areas(area);
 
-    let expanded = is_package_expanded(package, &app.app_state.expanded_packages);
+    // let expanded = is_package_expanded(package, &app.app_state.expanded_packages);
     let expanded_indicator = if expanded { "▼" } else { "▶" };
     let displayed_package_name = format!("{expanded_indicator} ({}) {}", package.id, package.name);
 
@@ -114,7 +114,8 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
                 let package = package_wrapped.unwrap();
                 let ui_style = get_package_row_style(tui_row, &app.app_state.selection);
 
-                render_package_row(frame, area, ui_style, app, package);
+                let expanded = is_package_expanded(package, &app.app_state.expanded_packages);
+                render_package_row(frame, area, ui_style, package, expanded);
             }
         },
         TuiRow::Script { package_id, script_id } => {

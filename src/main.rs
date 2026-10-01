@@ -1,6 +1,7 @@
-mod workspace;
 mod cli;
+mod search;
 mod tui;
+mod workspace;
 
 use clap::Parser;
 

@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::{style_border_of_area}, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, searching::filter_tui_rows};
+use crate::tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::{style_border_of_area}, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}};
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -15,10 +15,12 @@ pub struct TuiView {
 impl TuiView {
     pub fn initialize_new(from_app: &App) -> TuiView {
         let all_rows = build_tui_rows(from_app);
-        let filtered_rows = filter_tui_rows(all_rows, from_app.app_state.search_input.value());
+
+        // filter rows before building all_rows
+        // let filtered_rows = filter_tui_rows(all_rows, from_app.app_state.search_input.value());
 
         return TuiView {
-            filtered_rows: filtered_rows
+            filtered_rows: all_rows
         };
     }
 

@@ -4,8 +4,6 @@ use tui_input::Input;
 
 use crate::{tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
 
-
-
 #[derive(Debug)]
 pub struct Selection {
     // pub package_id: usize,
@@ -60,11 +58,6 @@ impl Selection {
 
         return Selection {
             row: TuiRow::Script { package_id: 0, script_id: 0 } // initialize to first script, change later?
-            // row: {
-
-            // },
-            // package_id: 0,
-            // script_id: None,
         };
     }
 }
