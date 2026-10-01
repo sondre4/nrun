@@ -15,7 +15,7 @@ pub struct TuiView {
 impl TuiView {
     pub fn initialize_new(from_app: &App) -> TuiView {
         let all_rows = build_tui_rows(from_app);
-        let filtered_rows = filter_tui_rows(all_rows, &from_app.app_state.search_query);
+        let filtered_rows = filter_tui_rows(all_rows, from_app.app_state.search_input.value());
 
         return TuiView {
             filtered_rows: filtered_rows

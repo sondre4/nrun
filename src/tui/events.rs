@@ -1,4 +1,5 @@
 use crossterm::event::{self, Event, KeyEvent};
+use tui_input::backend::crossterm::to_input_request;
 
 use crate::tui::{action::Action, app::FocusedSection, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS}};
 
@@ -43,7 +44,21 @@ pub fn to_action(focused_section: FocusedSection, event: Event) -> Option<Action
         },
 
         FocusedSection::Search => {
-            return keybinds_to_action(SEARCH_KEYBINDS, key_event);
+            let found_action = keybinds_to_action(SEARCH_KEYBINDS, key_event);
+
+            if found_action.is_some() {
+                let action = found_action.unwrap();
+                return Some(action);
+            }
+
+            let found_input_request = to_input_request(&event);
+
+            if found_input_request.is_some() {
+                let input_request = found_input_request.unwrap();
+                return Some(Action::SearchAction(input_request));
+            }
+
+            return None;
         },
 
         _ => {

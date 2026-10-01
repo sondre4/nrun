@@ -1,4 +1,6 @@
-use crate::tui::{action::Action, app::App, rendering::tui_rows::TuiRow, text_editing::TextEditingOperation};
+use tui_input::InputRequest;
+
+use crate::tui::{action::Action, app::App, rendering::tui_rows::TuiRow};
 
 pub mod change_selection;
 pub mod package_expansion;
@@ -23,7 +25,7 @@ pub enum Operation {
     CancelSearch, // Esc
 
     // Text editing
-    SearchOperation(TextEditingOperation)
+    SearchOperation(InputRequest)
 }
 
 pub enum OperationResult {
@@ -84,8 +86,8 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
         },
 
         // Search text editing
-        Action::SearchAction(text_editing_operation) => {
-            return Operation::SearchOperation(text_editing_operation);
+        Action::SearchAction(input_request) => {
+            return Operation::SearchOperation(input_request);
         }
     }
 }

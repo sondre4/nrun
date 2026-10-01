@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use tui_input::Input;
+
 use crate::{tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
 
 
@@ -27,7 +29,7 @@ pub struct AppState {
     pub workspace: Workspace,
     pub expanded_packages: HashSet<usize>,
     pub selection: Selection,
-    pub search_query: String,
+    pub search_input: Input,
     pub running: bool,
     pub focused_section: FocusedSection
 }
@@ -73,7 +75,7 @@ impl App {
             workspace: app_data,
             expanded_packages: HashSet::new(),
             selection: Selection::new(),
-            search_query: String::new(),
+            search_input: Input::default(),
             running: true,
             focused_section: FocusedSection::Main
         };
@@ -137,8 +139,9 @@ impl App {
                 self.app_state.focused_section = FocusedSection::Main
             },
 
-            Operation::SearchOperation(operation) => {
-                
+            // tui-input handles text editing
+            Operation::SearchOperation(input_request) => {
+                self.app_state.search_input.handle(input_request);
             },
 
             _ => { }

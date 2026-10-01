@@ -1,4 +1,4 @@
-use crate::tui::text_editing::TextEditingOperation;
+use tui_input::InputRequest;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Action {
@@ -20,5 +20,5 @@ pub enum Action {
     CancelSearch, // Esc
 
     // SearchAction
-    SearchAction(TextEditingOperation)
+    SearchAction(InputRequest)
 }
