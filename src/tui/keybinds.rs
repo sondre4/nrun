@@ -27,6 +27,13 @@ pub const SEARCH_KEYBINDS: &[Keybind] = &[
     },
 
     Keybind {
+        key_code: KeyCode::Tab,
+        modifiers: KeyModifiers::NONE,
+        action: Action::FinishSearch,
+        description: "Exit search"
+    },
+
+    Keybind {
         key_code: KeyCode::Char('c'),
         modifiers: KeyModifiers::CONTROL,
         action: Action::Quit,
@@ -78,15 +85,22 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
     Keybind {
         key_code: KeyCode::Char('/'),
         modifiers: KeyModifiers::NONE,
-        action: Action::EnterSearch,
-        description: "Search"
+        action: Action::FocusSearch,
+        description: "Focus Search"
     },
 
     Keybind {
         key_code: KeyCode::Char('7'),
         modifiers: KeyModifiers::SHIFT,
-        action: Action::EnterSearch,
-        description: "Search"
+        action: Action::FocusSearch,
+        description: "Focus Search"
+    },
+
+    Keybind {
+        key_code: KeyCode::Tab,
+        modifiers: KeyModifiers::NONE,
+        action: Action::FocusSearch,
+        description: "Focus search"
     },
 
     // Quit

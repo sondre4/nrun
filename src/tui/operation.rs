@@ -20,7 +20,7 @@ pub enum Operation {
     TogglePackageExpansion,
 
     // Searching
-    EnterSearch, // '/'
+    FocusSearch, // '/'
     FinishSearch, // Enter
     CancelSearch, // Esc
 
@@ -73,8 +73,8 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
         },
 
         // Searching
-        Action::EnterSearch => {
-            return Operation::EnterSearch;
+        Action::FocusSearch => {
+            return Operation::FocusSearch;
         },
 
         Action::FinishSearch => {

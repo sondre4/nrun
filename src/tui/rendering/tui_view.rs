@@ -119,7 +119,9 @@ impl TuiView {
             viewport_state.main_section_height
         );
 
-        render_search_bar(frame, styled_layout.search, app);
+        let search_focused = matches!(app.app_state.focused_section, FocusedSection::Search);
+
+        render_search_bar(frame, styled_layout.search, &app.app_state.search_input, search_focused);
         render_ui_rows(frame, styled_layout.main, app, &visible_rows);
     }
 

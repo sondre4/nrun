@@ -125,7 +125,7 @@ impl App {
             },
 
             // Searching
-            Operation::EnterSearch => {
+            Operation::FocusSearch => {
                 self.app_state.focused_section = FocusedSection::Search;
             },
 

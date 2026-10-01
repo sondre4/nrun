@@ -15,7 +15,7 @@ pub enum Action {
     Activate,
 
     // Searching
-    EnterSearch, // '/'
+    FocusSearch, // '/'
     FinishSearch, // Enter
     CancelSearch, // Esc
 
