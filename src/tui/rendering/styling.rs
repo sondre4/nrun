@@ -188,9 +188,15 @@ pub fn get_vspace_row_style(visible_row: &TuiRow, selection: &Selection) -> VSpa
     };
 }
 
-pub fn add_border_to_area(frame: &mut Frame, area: Rect) -> Rect {
+pub fn style_border_of_area(frame: &mut Frame, area: Rect, title: String, focused: bool) -> Rect {
+    let style: Style = if focused {
+        Style::new().fg(Color::Cyan)
+    } else {
+        Style::new().fg(Color::LightCyan)
+    };
+
     // add border on area
-    let border = Block::default().borders(Borders::ALL).title(" Scripts ");
+    let border = Block::default().borders(Borders::ALL).border_style(style).title(format!(" {title} "));
     frame.render_widget(border, area);
 
     let inner_area = area.inner(Margin { vertical: 1, horizontal: 1 });

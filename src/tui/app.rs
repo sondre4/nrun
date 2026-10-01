@@ -136,7 +136,8 @@ impl App {
             },
 
             Operation::CancelSearch => {
-                self.app_state.focused_section = FocusedSection::Main
+                self.app_state.search_input.reset();
+                self.app_state.focused_section = FocusedSection::Main;
             },
 
             // tui-input handles text editing

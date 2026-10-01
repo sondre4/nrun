@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::add_border_to_area, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, searching::filter_tui_rows};
+use crate::tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::{style_border_of_area}, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, searching::filter_tui_rows};
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -75,8 +75,15 @@ impl TuiView {
     }
 
     pub fn style_tui_layout(&mut self, frame: &mut Frame, mut tui_layout: TuiLayout, focused_section: &FocusedSection) -> TuiLayout {
+        let search_focused = matches!(focused_section, FocusedSection::Search);
+        let main_focused = matches!(focused_section, FocusedSection::Main);
+
+        // add border to search section
+        tui_layout.search = style_border_of_area(frame, tui_layout.search, String::from("Search"), search_focused);
+
         // add border to main section
-        tui_layout.main = add_border_to_area(frame, tui_layout.main);
+        tui_layout.main = style_border_of_area(frame, tui_layout.main, String::from("Scripts"), main_focused);
+
         return tui_layout;
     }
 
