@@ -123,9 +123,23 @@ impl App {
             },
 
             // Searching
-            Operation::StartSearch => todo!(),
-            Operation::FinishSearch => todo!(),
-            Operation::ExitSearch => todo!(),
+            Operation::EnterSearch => {
+                self.app_state.focused_section = FocusedSection::Search;
+            },
+
+            // finish search and exit search are logically similar operations
+            // while focused in search, both Enter and Esc will switch focus back to main
+            Operation::FinishSearch => {
+                self.app_state.focused_section = FocusedSection::Main;
+            },
+
+            Operation::CancelSearch => {
+                self.app_state.focused_section = FocusedSection::Main
+            },
+
+            Operation::SearchOperation(operation) => {
+                
+            },
 
             _ => { }
         }

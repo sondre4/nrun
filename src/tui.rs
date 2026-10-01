@@ -9,6 +9,7 @@ pub mod keybinds;
 // pub mod scrolling;
 pub mod searching;
 pub mod terminal;
+pub mod text_editing;
 pub mod ui;
 
 pub fn launch_tui(data: Workspace) -> Result<(), String> {

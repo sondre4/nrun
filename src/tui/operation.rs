@@ -1,4 +1,4 @@
-use crate::tui::{action::Action, app::App, rendering::tui_rows::TuiRow};
+use crate::tui::{action::Action, app::App, rendering::tui_rows::TuiRow, text_editing::TextEditingOperation};
 
 pub mod change_selection;
 pub mod package_expansion;
@@ -12,15 +12,18 @@ pub enum Operation {
     // Navigation
     MoveUp,
     MoveDown,
-    
+
     // Interaction
     ConfirmSelection,
     TogglePackageExpansion,
 
     // Searching
-    StartSearch,
-    FinishSearch,
-    ExitSearch
+    EnterSearch, // '/'
+    FinishSearch, // Enter
+    CancelSearch, // Esc
+
+    // Text editing
+    SearchOperation(TextEditingOperation)
 }
 
 pub enum OperationResult {
@@ -67,9 +70,22 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
             }
         },
 
-        // implement later
-        Action::StartSearch => todo!(),
-        Action::ExitSearch => todo!(),
-        Action::FinishSearch => todo!()
+        // Searching
+        Action::EnterSearch => {
+            return Operation::EnterSearch;
+        },
+
+        Action::FinishSearch => {
+            return Operation::FinishSearch;
+        },
+
+        Action::CancelSearch => {
+            return Operation::CancelSearch;
+        },
+
+        // Search text editing
+        Action::SearchAction(text_editing_operation) => {
+            return Operation::SearchOperation(text_editing_operation);
+        }
     }
 }
