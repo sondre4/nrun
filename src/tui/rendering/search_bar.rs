@@ -1,8 +1,6 @@
 use ratatui::{Frame, layout::{Position, Rect}, widgets::Paragraph};
 use tui_input::Input;
 
-use crate::tui::app::App;
-
 pub fn render_search_bar(frame: &mut Frame, search_bar_section: Rect, input: &Input, mut render_cursor: bool) -> () { // TODO: add style parameter
     let search_widget = Paragraph::new(input.value());
     

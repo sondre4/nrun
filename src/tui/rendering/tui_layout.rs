@@ -16,13 +16,6 @@ fn create_layout(area: Rect) -> TuiLayout {
             Constraint::Length(1)
         ]).split(area);
 
-    // let main = Layout::default()
-    //     .direction(Direction::Horizontal)
-    //     .constraints([
-    //         Constraint::Percentage(40),
-    //         Constraint::Percentage(60)
-    //     ]).split(vertical[1]);
-
     let layout = TuiLayout {
         search: sections[0],
         main: sections[1],
