@@ -7,6 +7,6 @@ use crate::workspace::types::Package;
 
 
 // will be deprecated
-pub fn search_packages(packages: &Vec<Package>, search_query: &str) -> Vec<Package> {
-    return packages.to_vec();
-}
+// pub fn search_packages(packages: &Vec<Package>, search_query: &str) -> Vec<Package> {
+//     return packages.to_vec();
+// }
