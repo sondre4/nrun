@@ -1,7 +1,9 @@
 use crate::workspace::types::{Package, Script};
 
+// f64 to be compatible with the scores
 pub const SIGNIFICANT_SCORE_GAP: f64 = 0.25;
 pub const MINIMUM_RELATIVE_SCORE_FACTOR: f64 = 0.5;
+pub const PACKAGE_NAME_SCORE_MULTIPLIER: f64 = 1.25;
 
 pub struct ScoredScript  {
     pub script: Script,

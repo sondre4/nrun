@@ -1,6 +1,6 @@
 use nucleo::{Matcher, pattern::Pattern};
 
-use crate::{search::{matching::match_find_score, scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript}}, workspace::types::{Package, Script}};
+use crate::{search::{matching::match_find_score, scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_SCORE_MULTIPLIER, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript}}, workspace::types::{Package, Script}};
 
 pub fn get_scores_from_scored_scripts(scored_scripts: &Vec<ScoredScript>) -> Vec<f64> {
     let mut scores: Vec<f64> = Vec::new();
@@ -122,7 +122,7 @@ pub fn score_package(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &
     let scored_package: ScoredPackage = ScoredPackage {
         package: package.clone(),
         scored_scripts: scored_scripts,
-        package_name_score: name_score,
+        package_name_score: name_score * PACKAGE_NAME_SCORE_MULTIPLIER,
         score: score_max(name_score, best_item_score) // multiply with weights here?
     };
 
