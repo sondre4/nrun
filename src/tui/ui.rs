@@ -1,4 +1,4 @@
-use crate::{tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
+use crate::{search::PackageSearcher, tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
@@ -11,14 +11,19 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
     let mut last_operation_result: OperationResult = OperationResult::None;
+    let mut searcher: PackageSearcher = PackageSearcher::new();
 
     app.initialize_expanded_packages();
 
     // main loop
     while app.app_state.running {
 
+        // filter the data based on search query
+        let packages = &app.app_state.workspace.packages;
+        let search_results = searcher.search(packages, app.app_state.search_input.value());
+
         // initialize tui_view
-        let mut view: TuiView = TuiView::initialize_new(&app);
+        let mut view: TuiView = TuiView::initialize_new(&app, &search_results);
 
         // get a clone of the view's filtered rows and update app state filtered rows
         // app state needs them for navigating handling

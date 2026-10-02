@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use tui_input::Input;
 
-use crate::{tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
+use crate::{search::matching::search_query_empty, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
@@ -34,6 +34,7 @@ pub struct AppState {
 
 pub struct TuiViewData {
     pub filtered_rows: Vec<TuiRow>,
+    pub search_expanded_packages: HashSet<usize>,
     pub current_scroll_offset: usize
     // pub selected_row_index: usize
 }
@@ -42,6 +43,7 @@ impl TuiViewData {
     fn default() -> TuiViewData {
         return TuiViewData {
             filtered_rows: Vec::new(),
+            search_expanded_packages: HashSet::new(),
             current_scroll_offset: 0
             // selected_row_index: 0
         };
@@ -88,6 +90,12 @@ impl App {
     pub fn action_to_operation(&mut self, action: Action) -> Operation {
         let operation = action_to_operation(self, action);
         return operation;
+    }
+
+    pub fn currently_searching(&self) -> bool {
+        // return self.app_state.search_input.value().len() > 0;
+        let empty = search_query_empty(&self.app_state.search_input.value());
+        return !empty;
     }
 
     pub fn handle_operation(&mut self, operation: Operation) -> OperationResult {

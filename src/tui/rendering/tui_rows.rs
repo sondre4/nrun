@@ -68,7 +68,6 @@ fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiSty
         [Constraint::Percentage(35), Constraint::Percentage(65)]
     ).areas(area);
 
-    // let expanded = is_package_expanded(package, &app.app_state.expanded_packages);
     let expanded_indicator = if expanded { "▼" } else { "▶" };
     let displayed_package_name = format!("{expanded_indicator} ({}) {}", package.id, package.name);
 
@@ -114,7 +113,14 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
                 let package = package_wrapped.unwrap();
                 let ui_style = get_package_row_style(tui_row, &app.app_state.selection);
 
-                let expanded = is_package_expanded(package, &app.app_state.expanded_packages);
+                let expanded = if app.currently_searching() {
+                    // only used when search query exists
+                    is_package_expanded(package, &app.tui_view_data.search_expanded_packages)
+                } else {
+                    // used when no search query is present
+                    is_package_expanded(package, &app.app_state.expanded_packages)
+                };
+
                 render_package_row(frame, area, ui_style, package, expanded);
             }
         },

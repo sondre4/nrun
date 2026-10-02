@@ -8,14 +8,14 @@ pub fn is_package_expanded(package: &Package, expanded_set: &HashSet<usize>) -> 
     return expanded_set.contains(&package.id);
 }
 
-pub fn build_tui_rows(app: &App) -> Vec<TuiRow> {
+pub fn build_tui_rows(packages: &Vec<Package>, expanded_set: &HashSet<usize>) -> Vec<TuiRow> {
     let mut tui_rows = Vec::new();
 
-    for package in &app.app_state.workspace.packages {
+    for package in packages {
         let package_ui_row = TuiRow::Package { package_id: package.id };
         tui_rows.push(package_ui_row);
 
-        if is_package_expanded(package, &app.app_state.expanded_packages) {
+        if is_package_expanded(package, expanded_set) {
             
             for script in &package.scripts {
                 let script_ui_row = TuiRow::Script { package_id: package.id, script_id: script.id };
