@@ -58,6 +58,7 @@ impl PackageSearcher {
     fn filter_scored_packages(&mut self, sorted_scored_packages: &mut Vec<ScoredPackage>) -> () {
         let scored_package_scores = get_scores_from_scored_packages(&sorted_scored_packages);
         let minimum_needed_score = calculate_minimum_needed_score(&scored_package_scores);
+        // println!("\nMinimum score needed: {minimum_needed_score}");
         only_keep_groups_with_score_above_minimum_score(sorted_scored_packages, minimum_needed_score);
     }
 
@@ -88,9 +89,24 @@ impl PackageSearcher {
 
         let mut scored_packages = self.score_packages(packages, query);
 
+        // debug
+        // println!("\n------------------\nAfter scoring packages:");
+        // self.debug_display_package_scores(&scored_packages);
+        //
+
         sort_packages_by_score(&mut scored_packages);
 
+        // debug
+        // println!("\n------------------\nAfter sorting by score:");
+        // self.debug_display_package_scores(&scored_packages);
+        //
+
         self.filter_scored_packages(&mut scored_packages);
+
+        // debug
+        // println!("\n------------------\nAfter filtering:");
+        // self.debug_display_package_scores(&scored_packages);
+        //
 
         // define vector to be returned
         let mut search_results: Vec<Package> = Vec::new();
@@ -103,5 +119,11 @@ impl PackageSearcher {
 
         // let search_results = search_packages(packages, query);
         return search_results;
+    }
+
+    fn debug_display_package_scores(&self, scored_packages: &Vec<ScoredPackage>) -> () {
+        for package in scored_packages {
+            println!("total_score: {:<6.2} | name_score: {:<6.2} | package: {}", &package.score, &package.package_name_score, &package.package.name);
+        }
     }
 }

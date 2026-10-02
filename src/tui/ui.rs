@@ -1,4 +1,4 @@
-use crate::{search::PackageSearcher, tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
+use crate::{search::searcher::PackageSearcher, tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
