@@ -44,7 +44,7 @@ fn is_pnpm_project_root(path: &Path) -> bool {
 
 
 // TODO: add depth option in command
-fn find_monorepo_project_metadata(start_directory: PathBuf, depth: i32) -> Result<Project, String> {
+fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Result<Project, String> {
     // const DEPTH: i32 = 7;
     let mut directory = start_directory;
 
@@ -99,7 +99,7 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: i32) -> Resul
 }
 
 
-pub fn find_monorepo_project(start_directory: PathBuf, search_depth: i32) -> Result<Project, String> {
+pub fn find_monorepo_project(start_directory: PathBuf, search_depth: u32) -> Result<Project, String> {
     let found_monorepo = find_monorepo_project_metadata(start_directory, search_depth)?;
     return Ok(found_monorepo);
 }

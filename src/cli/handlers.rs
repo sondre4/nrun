@@ -1,34 +1,51 @@
-use std::path::{Path, PathBuf};
-use std::str::FromStr;
-
+use crate::cli::commands::GlobalArguments;
+use crate::cli::display_packages::display_packages;
+use crate::search::PackageSearcher;
 use crate::tui::launch_tui;
 use crate::workspace::find_workspace;
+use crate::workspace::types::Workspace;
 
-// fn debug_print_path_from_project(project: &Project) -> () {
-//     let root_path = project.root_path.to_string_lossy();
-//     println!("project root: {root_path}");
-// }
-
-pub fn default(path: Option<PathBuf>, depth: Option<i32>) -> () {
-    let workspace_result = find_workspace(path, depth);
-    let workspace = match workspace_result {
-        Ok(result) => result,
+fn handle_finding_workspace(global_arguments: GlobalArguments) -> Option<Workspace> {
+    let workspace_result = find_workspace(global_arguments.path, global_arguments.depth);
+    match workspace_result {
+        Ok(result) => {
+            return Some(result);
+        },
         Err(error) => {
-            println!("Unable to find workspace: {error}");
-            return;
+            println!("nrun: Unable to find workspace: {error}");
+            return None;
         }
-    };
+    }
+}
 
-    let launch_tui_result = launch_tui(workspace);
+
+pub fn handle_launching_tui(global_arguments: GlobalArguments) -> () {
+    let found_workspace = handle_finding_workspace(global_arguments);
+
+    if found_workspace.is_none() {
+        return;
+    }
+
+    let launch_tui_result = launch_tui(found_workspace.unwrap());
     match launch_tui_result {
         Ok(result) => result,
         Err(error) => {
-            println!("Error whilst launching tui: {error}");
+            println!("nrun: Error whilst launching tui: {error}");
             return;
         }
     };
 }
 
-pub fn check(path: PathBuf, verbose: bool) -> () {
-    println!("Not implemented");
+pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String) -> () {
+    let found_workspace = handle_finding_workspace(global_arguments);
+
+    if found_workspace.is_none() {
+        return;
+    }
+
+    let mut searcher: PackageSearcher = PackageSearcher::new();
+    let packages = found_workspace.unwrap().packages;
+
+    let search_results = searcher.search(&packages, search_query);
+
 }

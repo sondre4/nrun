@@ -1,4 +1,4 @@
-use nucleo::{Config, Matcher, Utf32Str, pattern::{CaseMatching, Normalization, Pattern}};
+use nucleo::{Config, Matcher, pattern::{CaseMatching, Normalization, Pattern}};
 
 use crate::{
     search::{filtering::{
