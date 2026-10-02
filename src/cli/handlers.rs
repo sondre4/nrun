@@ -1,6 +1,6 @@
 use crate::cli::commands::GlobalArguments;
 use crate::cli::display_packages::display_packages;
-use crate::search::PackageSearcher;
+use crate::search::searcher::PackageSearcher;
 use crate::tui::launch_tui;
 use crate::workspace::find_workspace;
 use crate::workspace::types::Workspace;
@@ -24,6 +24,10 @@ pub fn handle_list_packages(global_arguments: GlobalArguments) -> () {
     if found_workspace.is_none() {
         return;
     }
+    
+    let packages = found_workspace.unwrap().packages;
+
+    display_packages(&packages);
 }
 
 pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String) -> () {
@@ -34,10 +38,10 @@ pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &Strin
     }
 
     let mut searcher: PackageSearcher = PackageSearcher::new();
+    searcher.enable_debug();
     let packages = found_workspace.unwrap().packages;
 
     let search_results = searcher.search(&packages, search_query);
-
 }
 
 pub fn handle_launching_tui(global_arguments: GlobalArguments) -> () {

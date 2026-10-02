@@ -3,18 +3,15 @@ use nucleo::{Config, Matcher, pattern::{CaseMatching, Normalization, Pattern}};
 use crate::{search::{
     filtering::{
         only_keep_groups_with_score_above_minimum_score,
-        only_keep_scripts_with_score_above_minimum_score},
-    matching::search_query_empty,
-    scoring::{
+        only_keep_scripts_with_score_above_minimum_score}, matching::search_query_empty, scoring::{
         calculate_minimum_needed_score,
         get_scores_from_scored_packages,
         get_scores_from_scored_scripts,
-        package_name_scored_most,
         score_package,
+        should_filter_package_scripts,
         sort_packages_by_score,
         sort_scripts_by_score
-    },
-    scoring_types::{
+    }, scoring_types::{
         ScoredPackage,
         ScoredScript
         }
@@ -92,13 +89,13 @@ impl PackageSearcher {
         }
 
         // check if scored package's scripts need to be filtered
-        let keep_all_package_scripts = package_name_scored_most(&scored_package);
+        let filter_package_scripts = should_filter_package_scripts(&scored_package);
 
         if self.display_debug_info {
-            println!("\n------------\nfilter package scripts: {}", !keep_all_package_scripts);
+            println!("\n------------\nfilter package scripts: {}", filter_package_scripts);
         }
 
-        if !keep_all_package_scripts {
+        if filter_package_scripts {
             self.filter_scored_scripts(&mut scored_package.scored_scripts);
         }
 
@@ -117,7 +114,7 @@ impl PackageSearcher {
         let mut scored_packages = self.score_packages(packages, query);
 
         if self.display_debug_info {
-            println!("\n------------------\nAfter scoring packages:");
+            println!("After scoring packages:");
             self.debug_display_package_scores(&scored_packages);
         }
 
@@ -143,7 +140,9 @@ impl PackageSearcher {
             self.process_scored_package_scripts(&mut package);
 
             if self.display_debug_info {
-                println!("\n------------\nScripts before adding to search results:");
+                println!("\n\n\n---------------------------------\nSCRIPTS | Package: {}\n----------------------------------\nScripts before adding to search results:",
+                    package.package.name
+                );
                 self.debug_display_script_scores(&package.scored_scripts);
             }
 

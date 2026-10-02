@@ -80,8 +80,9 @@ pub fn sort_packages_by_score(packages: &mut Vec<ScoredPackage>) -> () {
     });
 }
 
-pub fn package_name_scored_most(scored_package: &ScoredPackage) -> bool {
-    let result = scored_package.package_name_score > scored_package.score;
+pub fn should_filter_package_scripts(scored_package: &ScoredPackage) -> bool {
+    // only filter scripts if one of the package's scripts was the reason it scored high
+    let result = scored_package.score > scored_package.package_name_score;
     return result;
 }
 
