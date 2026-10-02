@@ -14,12 +14,7 @@ pub struct TuiView {
 
 impl TuiView {
     pub fn initialize_new(app: &App, search_results: &Vec<Package>) -> TuiView {
-        let expanded_set = if app.currently_searching() {
-            &app.tui_view_data.search_expanded_packages
-        } else {
-            &app.app_state.expanded_packages
-        };
-
+        let expanded_set = app.get_current_expanded_packages();
         let rows = build_tui_rows(search_results, expanded_set);
 
         return TuiView {
@@ -124,9 +119,9 @@ impl TuiView {
             viewport_state.main_section_height
         );
 
-        let search_focused = matches!(app.app_state.focused_section, FocusedSection::Search);
+        let search_section_focused = app.search_focused();
 
-        render_search_bar(frame, styled_layout.search, &app.app_state.search_input, search_focused);
+        render_search_bar(frame, styled_layout.search, &app.app_state.search_input, search_section_focused);
         render_ui_rows(frame, styled_layout.main, app, &visible_rows);
     }
 

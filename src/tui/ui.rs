@@ -40,7 +40,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             // calculate viewport values
             let viewport_state = view.calculate_viewport_state(
                 &layout,
-                &app.app_state.selection,
+                &app.get_current_selection(),
                 app.tui_view_data.current_scroll_offset,
                 &last_operation_result
             );

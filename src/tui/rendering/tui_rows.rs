@@ -111,16 +111,9 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 
             if package_wrapped.is_some() {
                 let package = package_wrapped.unwrap();
-                let ui_style = get_package_row_style(tui_row, &app.app_state.selection);
+                let ui_style = get_package_row_style(tui_row, &app.get_current_selection());
 
-                let expanded = if app.currently_searching() {
-                    // only used when search query exists
-                    is_package_expanded(package, &app.tui_view_data.search_expanded_packages)
-                } else {
-                    // used when no search query is present
-                    is_package_expanded(package, &app.app_state.expanded_packages)
-                };
-
+                let expanded = is_package_expanded(&package, app.get_current_expanded_packages());
                 render_package_row(frame, area, ui_style, package, expanded);
             }
         },
@@ -140,7 +133,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 
             let script = script_wrapped.unwrap();
 
-            let ui_style = get_script_row_style(tui_row, &app.app_state.selection);
+            let ui_style = get_script_row_style(tui_row, &app.get_current_selection());
             render_script_row(frame, area, ui_style, script);
 
         },
@@ -151,8 +144,6 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 }
 
 pub fn render_ui_rows(frame: &mut Frame, area: Rect, app: &App, visible_rows: &Vec<TuiRow>) -> () {
-    // let visible_rows = build_visible_rows(app);
-
     let mut constraints: Vec<Constraint> = Vec::new();
 
     for _ in visible_rows {

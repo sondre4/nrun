@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use tui_input::Input;
 
-use crate::{search::matching::search_query_empty, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, change_selection::move_selection, package_expansion::toggle_expansion}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
+use crate::{search::matching::search_query_empty, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::move_selection}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
 
 #[derive(Debug)]
 pub struct Selection {
@@ -25,9 +25,8 @@ pub enum FocusedSection {
 
 pub struct AppState {
     pub workspace: Workspace,
-    pub expanded_packages: HashSet<usize>,
-    pub selection: Selection,
-    pub old_selection: Selection,
+    expanded_packages: HashSet<usize>,
+    selection: Selection,
     pub search_input: Input,
     pub running: bool,
     pub focused_section: FocusedSection
@@ -35,7 +34,8 @@ pub struct AppState {
 
 pub struct TuiViewData {
     pub filtered_rows: Vec<TuiRow>,
-    pub search_expanded_packages: HashSet<usize>,
+    search_expanded_packages: HashSet<usize>,
+    search_package_selection: Selection,
     pub current_scroll_offset: usize
     // pub selected_row_index: usize
 }
@@ -45,8 +45,8 @@ impl TuiViewData {
         return TuiViewData {
             filtered_rows: Vec::new(),
             search_expanded_packages: HashSet::new(),
+            search_package_selection: Selection::new(),
             current_scroll_offset: 0
-            // selected_row_index: 0
         };
     }
 }
@@ -71,7 +71,6 @@ impl App {
             workspace: app_data,
             expanded_packages: HashSet::new(),
             selection: Selection::new(),
-            old_selection: Selection::new(),
             search_input: Input::default(),
             running: true,
             focused_section: FocusedSection::Main
@@ -94,21 +93,82 @@ impl App {
         return operation;
     }
 
-    pub fn currently_searching(&self) -> bool {
+    fn toggle_expansion(&mut self) -> OperationResult {
+        let current_selection = self.get_current_selection();
+        let selected_package_id_wrapped = current_selection.row.get_package_id();
+
+        if selected_package_id_wrapped.is_none() {
+            return OperationResult::None;
+        }
+
+        let selected_package_id = selected_package_id_wrapped.unwrap();
+
+        let expanded_set = self.get_current_expanded_packages();
+
+        if expanded_set.contains(&selected_package_id) {
+            self.collapse_package(selected_package_id);
+            return OperationResult::PackageCollapsed;
+        } else {
+            self.expand_package(selected_package_id);
+            return OperationResult::PackageExpanded;
+        }
+    }
+
+    fn currently_searching(&self) -> bool {
         // return self.app_state.search_input.value().len() > 0;
         let empty = search_query_empty(&self.app_state.search_input.value());
         return !empty;
     }
 
-    fn update_selection_when_searching(&mut self) -> () {
-        if !self.tui_view_data.filtered_rows.is_empty() {
-            self.app_state.old_selection.row = self.app_state.selection.row.clone();
-            self.app_state.selection.row = self.tui_view_data.filtered_rows[0].clone();
+    // methods that are called during rendering
+    pub fn search_focused(&self) -> bool {
+        let search_focused = matches!(self.app_state.focused_section, FocusedSection::Search);
+        return search_focused;
+    }
+
+    pub fn get_current_selection(&self) -> &Selection {
+        if self.currently_searching() {
+            return &self.tui_view_data.search_package_selection;
+        }
+        return &self.app_state.selection;
+    }
+
+    pub fn set_current_selection(&mut self, new_selection: Selection) -> () {
+        if self.currently_searching() {
+            self.tui_view_data.search_package_selection = new_selection;
+        } else {
+            self.app_state.selection = new_selection;
         }
     }
 
-    fn restore_old_selection_after_searching(&mut self) -> () {
-        self.app_state.selection.row = self.app_state.old_selection.row.clone();
+    pub fn get_current_expanded_packages(&self) -> &HashSet<usize> {
+        if self.currently_searching() {
+            return &self.tui_view_data.search_expanded_packages;
+        }
+        return &self.app_state.expanded_packages;
+    }
+
+    // methods that edit app state fields
+    fn expand_package(&mut self, package_id: usize) -> () {
+        if self.currently_searching() {
+            self.tui_view_data.search_expanded_packages.insert(package_id);
+        } else {
+            self.app_state.expanded_packages.insert(package_id);
+        }
+    }
+
+    fn collapse_package(&mut self, package_id: usize) -> () {
+        if self.currently_searching() {
+            self.tui_view_data.search_expanded_packages.remove(&package_id);
+        } else {
+            self.app_state.expanded_packages.remove(&package_id);
+        }
+    }
+
+    fn reset_selection_on_search_update(&mut self) -> () {
+        if !self.tui_view_data.filtered_rows.is_empty() {
+            self.tui_view_data.search_package_selection.row = self.tui_view_data.filtered_rows[0].clone();
+        }
     }
 
     fn fill_searching_expanded_packages(&mut self) -> () {
@@ -144,7 +204,7 @@ impl App {
             },
 
             Operation::TogglePackageExpansion => {
-                let operation_result = toggle_expansion(self);
+                let operation_result = self.toggle_expansion();
                 return operation_result;
             },
 
@@ -162,13 +222,15 @@ impl App {
             Operation::CancelSearch => {
                 self.app_state.search_input.reset();
                 self.reset_searching_expanded_packages();
-                self.restore_old_selection_after_searching();
+                // resetting the search selection when canceling search should not be needed
+                // because the normal selection will be used 
+                // and the search selection is reset on search input update anyway
                 self.app_state.focused_section = FocusedSection::Main;
             },
 
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
-                self.update_selection_when_searching();
+                self.reset_selection_on_search_update();
                 self.fill_searching_expanded_packages();
                 self.app_state.search_input.handle(input_request);
             },
