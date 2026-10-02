@@ -18,6 +18,27 @@ fn handle_finding_workspace(global_arguments: GlobalArguments) -> Option<Workspa
     }
 }
 
+pub fn handle_list_packages(global_arguments: GlobalArguments) -> () {
+    let found_workspace = handle_finding_workspace(global_arguments);
+
+    if found_workspace.is_none() {
+        return;
+    }
+}
+
+pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String) -> () {
+    let found_workspace = handle_finding_workspace(global_arguments);
+
+    if found_workspace.is_none() {
+        return;
+    }
+
+    let mut searcher: PackageSearcher = PackageSearcher::new();
+    let packages = found_workspace.unwrap().packages;
+
+    let search_results = searcher.search(&packages, search_query);
+
+}
 
 pub fn handle_launching_tui(global_arguments: GlobalArguments) -> () {
     let found_workspace = handle_finding_workspace(global_arguments);
@@ -34,18 +55,4 @@ pub fn handle_launching_tui(global_arguments: GlobalArguments) -> () {
             return;
         }
     };
-}
-
-pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String) -> () {
-    let found_workspace = handle_finding_workspace(global_arguments);
-
-    if found_workspace.is_none() {
-        return;
-    }
-
-    let mut searcher: PackageSearcher = PackageSearcher::new();
-    let packages = found_workspace.unwrap().packages;
-
-    let search_results = searcher.search(&packages, search_query);
-
 }

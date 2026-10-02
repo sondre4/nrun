@@ -37,7 +37,11 @@ pub enum Command {
         /// The text to search for
         #[arg(short, long)]
         query: String,
-    }
+    },
+
+    /// List all packages and their scripts in a workspace
+    #[command(visible_alias = "l", visible_alias = "ls")]
+    List
 }
 
 pub struct GlobalArguments {
@@ -58,7 +62,11 @@ pub fn handle_command(input: Cli) -> () {
     let global_args = GlobalArguments::from(&input);
 
     match input.command {
-        Some(Tui) => {
+        Some(Command::List) => {
+            handlers::handle_list_packages(global_args);
+        },
+
+        Some(Command::Tui) => {
             handlers::handle_launching_tui(global_args);
         },
 
