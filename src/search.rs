@@ -117,3 +117,7 @@ impl PackageSearcher {
 // this field should be initialized to all packages when typing search query (in operation handler: Operation::SearchOperation(input_request))
 // this field should be cleared on search cancel
 // when rendering: check if search is active
+
+// TODO: fix search algorithm
+// fix not being able to expand rows while in search
+// store the old expanded_packages set, and edit the one that is used. when finished with search, replace main set with the old set

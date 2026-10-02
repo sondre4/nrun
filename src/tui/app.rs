@@ -27,6 +27,7 @@ pub struct AppState {
     pub workspace: Workspace,
     pub expanded_packages: HashSet<usize>,
     pub selection: Selection,
+    pub old_selection: Selection,
     pub search_input: Input,
     pub running: bool,
     pub focused_section: FocusedSection
@@ -70,6 +71,7 @@ impl App {
             workspace: app_data,
             expanded_packages: HashSet::new(),
             selection: Selection::new(),
+            old_selection: Selection::new(),
             search_input: Input::default(),
             running: true,
             focused_section: FocusedSection::Main
@@ -96,6 +98,27 @@ impl App {
         // return self.app_state.search_input.value().len() > 0;
         let empty = search_query_empty(&self.app_state.search_input.value());
         return !empty;
+    }
+
+    fn update_selection_when_searching(&mut self) -> () {
+        if !self.tui_view_data.filtered_rows.is_empty() {
+            self.app_state.old_selection.row = self.app_state.selection.row.clone();
+            self.app_state.selection.row = self.tui_view_data.filtered_rows[0].clone();
+        }
+    }
+
+    fn restore_old_selection_after_searching(&mut self) -> () {
+        self.app_state.selection.row = self.app_state.old_selection.row.clone();
+    }
+
+    fn fill_searching_expanded_packages(&mut self) -> () {
+        for package in &self.app_state.workspace.packages {
+            self.tui_view_data.search_expanded_packages.insert(package.id);
+        }
+    }
+
+    fn reset_searching_expanded_packages(&mut self) -> () {
+        self.tui_view_data.search_expanded_packages.clear();
     }
 
     pub fn handle_operation(&mut self, operation: Operation) -> OperationResult {
@@ -138,11 +161,15 @@ impl App {
 
             Operation::CancelSearch => {
                 self.app_state.search_input.reset();
+                self.reset_searching_expanded_packages();
+                self.restore_old_selection_after_searching();
                 self.app_state.focused_section = FocusedSection::Main;
             },
 
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
+                self.update_selection_when_searching();
+                self.fill_searching_expanded_packages();
                 self.app_state.search_input.handle(input_request);
             },
 
