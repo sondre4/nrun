@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::{style_border_of_area}, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, searching::filter_tui_rows};
+use crate::{tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::style_border_of_area, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}}, workspace::types::Package};
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -13,12 +13,12 @@ pub struct TuiView {
 }
 
 impl TuiView {
-    pub fn initialize_new(from_app: &App) -> TuiView {
-        let all_rows = build_tui_rows(from_app);
-        let filtered_rows = filter_tui_rows(all_rows, from_app.app_state.search_input.value());
+    pub fn initialize_new(app: &App, search_results: &Vec<Package>) -> TuiView {
+        let expanded_set = app.get_current_expanded_packages();
+        let rows = build_tui_rows(search_results, expanded_set);
 
         return TuiView {
-            filtered_rows: filtered_rows
+            filtered_rows: rows
         };
     }
 
@@ -119,9 +119,9 @@ impl TuiView {
             viewport_state.main_section_height
         );
 
-        let search_focused = matches!(app.app_state.focused_section, FocusedSection::Search);
+        let search_section_focused = app.search_focused();
 
-        render_search_bar(frame, styled_layout.search, &app.app_state.search_input, search_focused);
+        render_search_bar(frame, styled_layout.search, &app.app_state.search_input, search_section_focused);
         render_ui_rows(frame, styled_layout.main, app, &visible_rows);
     }
 

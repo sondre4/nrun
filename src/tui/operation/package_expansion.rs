@@ -1,24 +1,25 @@
 use std::cmp::{max, min};
 
-use crate::tui::{app::App, operation::OperationResult, rendering::tui_rows::TuiRow};
+use crate::tui::{rendering::tui_rows::TuiRow};
 
-pub fn toggle_expansion(app: &mut App) -> OperationResult {
-    let selected_package_id_wrapped = app.app_state.selection.row.get_package_id();
+// pub fn toggle_expansion(app: &mut App) -> OperationResult {
+//     let current_selection = app.get_current_selection();
+//     let selected_package_id_wrapped = current_selection.row.get_package_id();
 
-    if selected_package_id_wrapped.is_none() {
-        return OperationResult::None;
-    }
+//     if selected_package_id_wrapped.is_none() {
+//         return OperationResult::None;
+//     }
 
-    let selected_package_id = selected_package_id_wrapped.unwrap();
+//     let selected_package_id = selected_package_id_wrapped.unwrap();
 
-    if app.app_state.expanded_packages.contains(&selected_package_id) {
-        app.app_state.expanded_packages.remove(&selected_package_id);
-        return OperationResult::PackageCollapsed;
-    } else {
-        app.app_state.expanded_packages.insert(selected_package_id);
-        return OperationResult::PackageExpanded;
-    }
-}
+//     if app.app_state.expanded_packages.contains(&selected_package_id) {
+//         app.app_state.expanded_packages.remove(&selected_package_id);
+//         return OperationResult::PackageCollapsed;
+//     } else {
+//         app.app_state.expanded_packages.insert(selected_package_id);
+//         return OperationResult::PackageExpanded;
+//     }
+// }
 
 pub fn last_index_of_script_in_package(filtered_rows: &Vec<TuiRow>, selected_row_index: usize) -> usize {
     let start = selected_row_index + 1; // +1, otherwise enters package immediately in the match statement (matches the selected row (package))

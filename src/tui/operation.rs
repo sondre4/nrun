@@ -2,7 +2,7 @@ use tui_input::InputRequest;
 
 use crate::tui::{action::Action, app::App, rendering::tui_rows::TuiRow};
 
-pub mod change_selection;
+pub mod move_selection;
 pub mod package_expansion;
 
 pub enum Operation {
@@ -56,7 +56,7 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
 
         // Interaction
         Action::Activate => {
-            let currently_selected_row = &app.app_state.selection.row;
+            let currently_selected_row = &app.get_current_selection().row;
             match currently_selected_row {
                 TuiRow::Package { package_id: _ } => {
                     return Operation::TogglePackageExpansion;

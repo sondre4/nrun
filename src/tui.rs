@@ -6,8 +6,6 @@ pub mod events;
 pub mod operation;
 pub mod rendering;
 pub mod keybinds;
-// pub mod scrolling;
-pub mod searching;
 pub mod terminal;
 pub mod text_editing;
 pub mod ui;

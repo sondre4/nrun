@@ -13,14 +13,14 @@ pub enum PackageManager {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Script {
     pub id: usize,
     pub name: String,
     pub command: String
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Package {
     pub id: usize,
     pub name: String,
