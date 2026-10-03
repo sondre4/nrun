@@ -1,5 +1,13 @@
 use crate::{search::searcher::PackageSearcher, tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
 
+// TODO: refactor to:
+// 1. wait for event
+// 2. read/handle event
+// 3. update app state
+// 4. render
+
+// this should solve both 
+
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     // steps:

@@ -38,10 +38,11 @@ pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &Strin
     }
 
     let mut searcher: PackageSearcher = PackageSearcher::new();
-    searcher.enable_debug();
+    // searcher.enable_debug();
     let packages = found_workspace.unwrap().packages;
 
     let search_results = searcher.search(&packages, search_query);
+    display_packages(&search_results);
 }
 
 pub fn handle_launching_tui(global_arguments: GlobalArguments) -> () {
