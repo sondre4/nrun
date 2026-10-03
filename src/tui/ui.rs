@@ -37,8 +37,10 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             break;
         }
 
+        // Need to initialize the search expanded packages before updating filtered rows
+        app.prepare_searching_expanding_packages_if_needed(&last_operation_result);
         app.update_filtered_rows();
-        app.prepare_view_data_if_needed(&last_operation_result);
+        app.prepare_current_selection_if_needed(&last_operation_result);
 
 
         // Render after updating state
