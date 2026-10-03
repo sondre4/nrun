@@ -13,12 +13,12 @@ pub struct TuiView {
 }
 
 impl TuiView {
-    pub fn initialize_new(app: &App, search_results: &Vec<Package>) -> TuiView {
-        let expanded_set = app.get_current_expanded_packages();
-        let rows = build_tui_rows(search_results, expanded_set);
+    pub fn initialize_new(filtered_rows: Vec<TuiRow>) -> TuiView {
+        // let expanded_set = app.get_current_expanded_packages();
+        // let rows = build_tui_rows(search_results, expanded_set);
 
         return TuiView {
-            filtered_rows: rows
+            filtered_rows: filtered_rows
         };
     }
 
@@ -121,7 +121,7 @@ impl TuiView {
 
         let search_section_focused = app.search_focused();
 
-        render_search_bar(frame, styled_layout.search, &app.app_state.search_input, search_section_focused);
+        render_search_bar(frame, styled_layout.search, app.get_search_input(), search_section_focused);
         render_ui_rows(frame, styled_layout.main, app, &visible_rows);
     }
 

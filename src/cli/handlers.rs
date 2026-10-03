@@ -30,7 +30,7 @@ pub fn handle_list_packages(global_arguments: GlobalArguments) -> () {
     display_packages(&packages);
 }
 
-pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String) -> () {
+pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String, debug: bool) -> () {
     let found_workspace = handle_finding_workspace(global_arguments);
 
     if found_workspace.is_none() {
@@ -38,9 +38,11 @@ pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &Strin
     }
 
     let mut searcher: PackageSearcher = PackageSearcher::new();
-    // searcher.enable_debug();
-    let packages = found_workspace.unwrap().packages;
+    if debug {
+        searcher.enable_debug();
+    }
 
+    let packages = found_workspace.unwrap().packages;
     let search_results = searcher.search(&packages, search_query);
     display_packages(&search_results);
 }

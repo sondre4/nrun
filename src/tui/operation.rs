@@ -56,7 +56,7 @@ pub fn action_to_operation(app: &App, action: Action) -> Operation {
 
         // Interaction
         Action::Activate => {
-            let currently_selected_row = &app.get_current_selection().row;
+            let currently_selected_row = &app.get_current_view_data().selection.row;
             match currently_selected_row {
                 TuiRow::Package { package_id: _ } => {
                     return Operation::TogglePackageExpansion;

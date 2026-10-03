@@ -26,7 +26,7 @@ fn keybinds_to_action(keybind_map: &[Keybind], key_event: KeyEvent) -> Option<Ac
     return result_wrapped;
 }
 
-pub fn to_action(focused_section: FocusedSection, event: Event) -> Option<Action> {
+pub fn to_action(focused_section: &FocusedSection, event: Event) -> Option<Action> {
     let key_event = match event {
         Event::Key(matched_key_event) => matched_key_event,
         _ => {
