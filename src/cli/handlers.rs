@@ -24,7 +24,7 @@ pub fn handle_list_packages(global_arguments: GlobalArguments) -> () {
     if found_workspace.is_none() {
         return;
     }
-    
+
     let packages = found_workspace.unwrap().packages;
 
     display_packages(&packages);

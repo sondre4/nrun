@@ -5,6 +5,22 @@ use ratatui::{Terminal, backend::CrosstermBackend};
 
 pub type AppTerminal = Terminal<CrosstermBackend<io::Stdout>>;
 
+pub struct TerminalGuard;
+
+impl Drop for TerminalGuard {
+    fn drop(&mut self) -> () {
+        let result = restore_terminal();
+        match result {
+            Ok(_) => {
+                return;
+            },
+            Err(error) => {
+                println!("{error}");
+            }
+        }
+    }
+}
+
 // when starting TUI
 pub fn initialize_terminal() -> Result<AppTerminal, String> {
     let enabling_raw_result = enable_raw_mode();

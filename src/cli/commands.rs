@@ -3,7 +3,6 @@ use std::path::PathBuf;
 use clap::Parser;
 use clap::Subcommand;
 
-use crate::cli::commands::Command::Tui;
 use crate::cli::handlers;
 
 #[derive(Parser)]

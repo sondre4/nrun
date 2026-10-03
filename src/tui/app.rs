@@ -204,9 +204,12 @@ impl App {
         current_view_data.selection = new_selection;
     }
 
-    pub fn prepare_view_data_if_searching(&mut self) -> () {
-        // Only when searching and there are search results
-        if self.currently_searching() && self.tui_view_data.filtered_rows.len() >= 2 {
+    pub fn prepare_view_data_if_needed(&mut self, result: &OperationResult) -> () {
+        let needs_updating = matches!(result, OperationResult::UpdatedSearchQuery);
+        let enough_results = self.tui_view_data.filtered_rows.len() >= 2;
+        
+        // Only after updating search query and there are at least 2 rows
+        if needs_updating && self.currently_searching() && enough_results {
             let new_selected_row_after_searching = self.tui_view_data.filtered_rows[1].clone();
             let new_selection_after_searching: Selection = Selection {
                 row: new_selected_row_after_searching
@@ -284,6 +287,7 @@ impl App {
                     self.set_current_selection(new_selection.unwrap());
                 }
             },
+
             Operation::MoveDown => {
                 let current_view_data = self.get_current_view_data();
                 let new_selection = get_new_selection_after_move(
@@ -330,6 +334,7 @@ impl App {
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
                 self.app_state.search_input.handle(input_request);
+                return OperationResult::UpdatedSearchQuery;
             },
 
             _ => { }
