@@ -1,6 +1,6 @@
 use nucleo::{Matcher, pattern::Pattern};
 
-use crate::{search::{matching::match_find_score, scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_SCORE_MULTIPLIER, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript}}, workspace::types::{Package, Script}};
+use crate::{search::{matching::match_find_score, scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_WEIGHT, SCRIPT_COMMAND_WEIGHT, SCRIPT_NAME_WEIGHT, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript}}, workspace::types::{Package, Script}};
 
 pub fn get_scores_from_scored_scripts(scored_scripts: &Vec<ScoredScript>) -> Vec<f64> {
     let mut scores: Vec<f64> = Vec::new();
@@ -44,7 +44,7 @@ pub fn calculate_minimum_needed_score(scores: &Vec<f64>) -> f64 {
         let previous = scores[i - 1];
         let current = scores[i];
 
-        if previous <= 0.0 {
+        if previous < 0.0 {
             continue;
         }
 
@@ -80,8 +80,9 @@ pub fn sort_packages_by_score(packages: &mut Vec<ScoredPackage>) -> () {
     });
 }
 
-pub fn package_name_scored_most(scored_package: &ScoredPackage) -> bool {
-    let result = scored_package.package_name_score > scored_package.score;
+pub fn should_filter_package_scripts(scored_package: &ScoredPackage) -> bool {
+    // only filter scripts if one of the package's scripts was the reason it scored high
+    let result = scored_package.score > scored_package.package_name_score;
     return result;
 }
 
@@ -95,13 +96,15 @@ fn score_max(score1: f64, score2: f64) -> f64 {
 
 pub fn score_script(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &mut Matcher, script: &Script) -> ScoredScript {
     let name_score = match_find_score(pattern, utf32_buffer, matcher, &script.name);
-    let description_score = match_find_score(pattern, utf32_buffer, matcher, &script.command);
+    let command_score = match_find_score(pattern, utf32_buffer, matcher, &script.command);
+    let weighted_name_score = name_score * SCRIPT_NAME_WEIGHT;
+    let weighted_command_score = command_score * SCRIPT_COMMAND_WEIGHT;
 
     let scored_script: ScoredScript = ScoredScript {
         script: script.clone(),
-        script_name_score: name_score,
-        script_command_score: description_score,
-        score: score_max(name_score, description_score) // multiply with weights here?
+        script_name_score: weighted_name_score,
+        script_command_score: weighted_command_score,
+        score: score_max(weighted_name_score, weighted_command_score) // multiply with weights here?
     };
 
     return scored_script;
@@ -118,12 +121,13 @@ pub fn score_package(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &
     }
 
     let name_score = match_find_score(pattern, utf32_buffer, matcher, &package.name);
+    let weighted_package_name_score = name_score * PACKAGE_NAME_WEIGHT;
 
     let scored_package: ScoredPackage = ScoredPackage {
         package: package.clone(),
         scored_scripts: scored_scripts,
-        package_name_score: name_score * PACKAGE_NAME_SCORE_MULTIPLIER,
-        score: score_max(name_score, best_item_score) // multiply with weights here?
+        package_name_score: weighted_package_name_score,
+        score: score_max(weighted_package_name_score, best_item_score) // multiply with weights here?
     };
 
     return scored_package;

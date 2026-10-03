@@ -166,8 +166,11 @@ impl App {
     }
 
     fn reset_selection_on_search_update(&mut self) -> () {
-        if !self.tui_view_data.filtered_rows.is_empty() {
-            self.tui_view_data.search_package_selection.row = self.tui_view_data.filtered_rows[0].clone();
+        if self.tui_view_data.filtered_rows.len() >= 2 {
+            // println!("{}", "\n".repeat(30));
+            // println!("filtered row[0]: {:#?}", self.tui_view_data.filtered_rows[0]);
+            // println!("filtered row[1]: {:#?}", self.tui_view_data.filtered_rows[1]);
+            self.tui_view_data.search_package_selection.row = self.tui_view_data.filtered_rows[1].clone();
         }
     }
 

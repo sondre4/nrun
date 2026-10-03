@@ -4,7 +4,7 @@ use crate::workspace::{assembly::values::{get_next_package_id, initialize_values
 
 const ROOT_PACKAGE_ID: usize = 0;
 
-pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: Option<i32>) -> Result<Workspace, String> {
+pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u32) -> Result<Workspace, String> {
 
     // initial values
     let values = initialize_values(start_directory, search_depth)?;
