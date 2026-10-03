@@ -31,7 +31,8 @@ pub enum Operation {
 pub enum OperationResult {
     None,
     PackageExpanded,
-    PackageCollapsed
+    PackageCollapsed,
+    UpdatedSearchQuery
 }
 
 pub fn action_to_operation(app: &App, action: Action) -> Operation {

@@ -1,4 +1,4 @@
-use crate::{tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
+use crate::{tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::{TerminalGuard, initialize_terminal}}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
@@ -7,6 +7,8 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     // handle events
     // update app
     // render tui
+
+    let _guard = TerminalGuard;
 
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
@@ -35,8 +37,10 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             break;
         }
 
+        // Need to initialize the search expanded packages before updating filtered rows
+        app.prepare_searching_expanding_packages_if_needed(&last_operation_result);
         app.update_filtered_rows();
-        app.prepare_view_data_if_searching();
+        app.prepare_current_selection_if_needed(&last_operation_result);
 
 
         // Render after updating state

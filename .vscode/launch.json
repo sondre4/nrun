@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug project with lldb",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin",
+                    "nrun"
+                ]
+            },
+            "args": [
+                "-p",
+                "${env:USERPROFILE}/path/to/test/project"
+            ],
+            "cwd": "${workspaceFolder}",
+            "terminal": "external"
+        }
+    ]
+}

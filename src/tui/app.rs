@@ -204,18 +204,27 @@ impl App {
         current_view_data.selection = new_selection;
     }
 
-    pub fn prepare_view_data_if_searching(&mut self) -> () {
-        // Only when searching and there are search results
-        if self.currently_searching() && self.tui_view_data.filtered_rows.len() >= 2 {
+    pub fn prepare_searching_expanding_packages_if_needed(&mut self, result: &OperationResult) -> () {
+        let needs_updating = matches!(result, OperationResult::UpdatedSearchQuery);
+
+        if needs_updating && self.currently_searching() {
+            // All packages in search results are shown as expanded initially (search results are a subset of all packages)
+            self.fill_searching_expanded_packages();
+        }
+    }
+
+    pub fn prepare_current_selection_if_needed(&mut self, result: &OperationResult) -> () {
+        let needs_updating = matches!(result, OperationResult::UpdatedSearchQuery);
+        let enough_results = self.tui_view_data.filtered_rows.len() >= 2;
+
+        // Only after updating search query and there are at least 2 rows
+        if needs_updating && self.currently_searching() && enough_results {
             let new_selected_row_after_searching = self.tui_view_data.filtered_rows[1].clone();
             let new_selection_after_searching: Selection = Selection {
                 row: new_selected_row_after_searching
             };
 
             self.set_current_selection(new_selection_after_searching);
-
-            // All packages in search results are shown as expanded initially (search results are a subset of all packages)
-            self.fill_searching_expanded_packages();
         }
     }
 
@@ -245,6 +254,9 @@ impl App {
     }
 
     pub fn update_filtered_rows(&mut self) -> () {
+        if self.currently_searching() {
+            let a = 5;
+        }
         let original_packages = &self.app_state.workspace.packages;
         let search_results = self.searcher.search(original_packages, self.app_state.search_input.value());
         let current_expanded_packages = &self.get_current_view_data().expanded_set;
@@ -284,6 +296,7 @@ impl App {
                     self.set_current_selection(new_selection.unwrap());
                 }
             },
+
             Operation::MoveDown => {
                 let current_view_data = self.get_current_view_data();
                 let new_selection = get_new_selection_after_move(
@@ -320,7 +333,7 @@ impl App {
 
             Operation::CancelSearch => {
                 self.app_state.search_input.reset();
-                self.reset_searching_expanded_packages();
+                // self.reset_searching_expanded_packages();
                 // resetting the search selection when canceling search should not be needed
                 // because the normal selection will be used 
                 // and the search selection is reset on search input update anyway
@@ -330,6 +343,7 @@ impl App {
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
                 self.app_state.search_input.handle(input_request);
+                return OperationResult::UpdatedSearchQuery;
             },
 
             _ => { }

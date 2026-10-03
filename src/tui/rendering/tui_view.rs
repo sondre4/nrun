@@ -22,10 +22,6 @@ impl TuiView {
         };
     }
 
-    pub fn get_filtered_tui_rows(&mut self) -> Vec<TuiRow> {
-        return self.filtered_rows.clone();
-    }
-
     fn get_height_from_area(&mut self, area: Rect) -> usize {
         let available_space = height_of_area(area);
         return available_space;
