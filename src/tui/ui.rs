@@ -36,7 +36,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         }
 
         app.update_filtered_rows();
-        app.set_search_selection_to_first_script();
+        app.prepare_view_data_if_searching();
 
 
         // Render after updating state

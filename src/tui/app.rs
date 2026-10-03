@@ -6,8 +6,6 @@ use crate::{search::{matching::search_query_empty, searcher::PackageSearcher}, t
 
 #[derive(Debug, Clone)]
 pub struct Selection {
-    // pub package_id: usize,
-    // pub script_id: Option<usize>,
     pub row: TuiRow
 }
 
@@ -33,8 +31,6 @@ pub enum FocusedSection {
 
 pub struct AppState {
     workspace: Workspace,
-    // expanded_packages: HashSet<usize>,
-    // selection: Selection,
     search_input: Input,
     running: bool,
     focused_section: FocusedSection
@@ -61,10 +57,6 @@ pub struct TuiViewData {
     filtered_rows: Vec<TuiRow>,
     main_view_data: ViewData,
     searching_view_data: ViewData
-    // search_expanded_packages: HashSet<usize>,
-    // search_package_selection: Selection,
-    // pub current_scroll_offset: usize
-    // pub selected_row_index: usize
 }
 
 impl TuiViewData {
@@ -87,8 +79,6 @@ impl App {
     pub fn new(app_data: Workspace) -> App {
         let app_state: AppState = AppState {
             workspace: app_data,
-            // expanded_packages: HashSet::new(),
-            // selection: Selection::new(),
             search_input: Input::default(),
             running: true,
             focused_section: FocusedSection::Main
@@ -111,6 +101,7 @@ impl App {
     pub fn running(&self) -> bool {
         return self.app_state.running;
     }
+
 
     pub fn find_package_by_id(&self, package_id: usize) -> Option<Package> {
         let found_package = self.app_state.workspace.packages.iter().find(|p| {
@@ -137,7 +128,6 @@ impl App {
     }
 
 
-
     fn currently_searching(&self) -> bool {
         let empty = search_query_empty(&self.app_state.search_input.value());
         return !empty;
@@ -147,8 +137,8 @@ impl App {
         return &self.app_state.search_input;
     }
 
-    // View data
 
+    // View data
     pub fn get_current_view_data(&self) -> ViewData {
         if self.currently_searching() {
             return self.tui_view_data.searching_view_data.clone();
@@ -165,8 +155,8 @@ impl App {
         }
     }
 
-    // Package expansion/collapsing
 
+    // Package expansion/collapsing
     fn expand_package(&mut self, package_id: usize) -> () {
         let current_view_data = self.get_current_view_data_mut();
         current_view_data.expanded_set.insert(package_id);
@@ -207,14 +197,14 @@ impl App {
         self.tui_view_data.searching_view_data.expanded_set.clear();
     }
 
-    // Selection setters
 
+    // Selection setters
     pub fn set_current_selection(&mut self, new_selection: Selection) -> () {
         let current_view_data = self.get_current_view_data_mut();
         current_view_data.selection = new_selection;
     }
 
-    pub fn set_search_selection_to_first_script(&mut self) -> () {
+    pub fn prepare_view_data_if_searching(&mut self) -> () {
         // Only when searching and there are search results
         if self.currently_searching() && self.tui_view_data.filtered_rows.len() >= 2 {
             let new_selected_row_after_searching = self.tui_view_data.filtered_rows[1].clone();
@@ -223,18 +213,18 @@ impl App {
             };
 
             self.set_current_selection(new_selection_after_searching);
+
+            // All packages in search results are shown as expanded initially (search results are a subset of all packages)
+            self.fill_searching_expanded_packages();
         }
     }
 
-    // Scroll offset
 
+    // Scroll offset
     pub fn update_current_scroll_offset(&mut self, new_scroll_offset: usize) -> () {
         let current_view_data = self.get_current_view_data_mut();
         current_view_data.scroll_offset = new_scroll_offset;
     }
-
-
-
 
 
     // methods that are called during rendering
@@ -242,13 +232,6 @@ impl App {
         let search_focused = matches!(self.app_state.focused_section, FocusedSection::Search);
         return search_focused;
     }
-
-
-
-
-
-
-
 
 
     // filtered rows
@@ -271,10 +254,7 @@ impl App {
     }
 
 
-
-
     // Action/operation
-
     pub fn action_to_operation(&mut self, action: Action) -> Operation {
         let operation = action_to_operation(self, action);
         return operation;
@@ -350,8 +330,6 @@ impl App {
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
                 self.app_state.search_input.handle(input_request);
-                // self.reset_selection_on_search_update();
-                self.fill_searching_expanded_packages();
             },
 
             _ => { }
