@@ -2,13 +2,21 @@ use std::collections::HashSet;
 
 use tui_input::Input;
 
-use crate::{search::matching::search_query_empty, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::move_selection}, rendering::tui_rows::TuiRow}, workspace::types::Workspace};
+use crate::{search::{matching::search_query_empty, searcher::PackageSearcher}, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move}, rendering::{tui_rows::TuiRow, visibility::build_tui_rows}}, workspace::types::{Package, Script, Workspace}};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Selection {
     // pub package_id: usize,
     // pub script_id: Option<usize>,
     pub row: TuiRow
+}
+
+impl Selection {
+    pub fn new() -> Selection {
+        return Selection {
+            row: TuiRow::Script { package_id: 0, script_id: 0 } // initialize to first script, change later?
+        };
+    }
 }
 
 pub enum SelectionMovement {
@@ -24,19 +32,38 @@ pub enum FocusedSection {
 }
 
 pub struct AppState {
-    pub workspace: Workspace,
-    expanded_packages: HashSet<usize>,
-    selection: Selection,
-    pub search_input: Input,
-    pub running: bool,
-    pub focused_section: FocusedSection
+    workspace: Workspace,
+    // expanded_packages: HashSet<usize>,
+    // selection: Selection,
+    search_input: Input,
+    running: bool,
+    focused_section: FocusedSection
+}
+
+#[derive(Clone)]
+pub struct ViewData {
+    pub expanded_set: HashSet<usize>,
+    pub selection: Selection,
+    pub scroll_offset: usize
+}
+
+impl ViewData {
+    pub fn new() -> ViewData {
+        return ViewData {
+            expanded_set: HashSet::new(),
+            selection:  Selection::new(),
+            scroll_offset: 0
+        };
+    }
 }
 
 pub struct TuiViewData {
-    pub filtered_rows: Vec<TuiRow>,
-    search_expanded_packages: HashSet<usize>,
-    search_package_selection: Selection,
-    pub current_scroll_offset: usize
+    filtered_rows: Vec<TuiRow>,
+    main_view_data: ViewData,
+    searching_view_data: ViewData
+    // search_expanded_packages: HashSet<usize>,
+    // search_package_selection: Selection,
+    // pub current_scroll_offset: usize
     // pub selected_row_index: usize
 }
 
@@ -44,66 +71,122 @@ impl TuiViewData {
     fn default() -> TuiViewData {
         return TuiViewData {
             filtered_rows: Vec::new(),
-            search_expanded_packages: HashSet::new(),
-            search_package_selection: Selection::new(),
-            current_scroll_offset: 0
+            main_view_data: ViewData::new(),
+            searching_view_data: ViewData::new()
         };
     }
 }
 
 pub struct App {
-    pub app_state: AppState,
-    pub tui_view_data: TuiViewData
-}
-
-impl Selection {
-    pub fn new() -> Selection {
-
-        return Selection {
-            row: TuiRow::Script { package_id: 0, script_id: 0 } // initialize to first script, change later?
-        };
-    }
+    app_state: AppState,
+    tui_view_data: TuiViewData,
+    searcher: PackageSearcher
 }
 
 impl App {
     pub fn new(app_data: Workspace) -> App {
         let app_state: AppState = AppState {
             workspace: app_data,
-            expanded_packages: HashSet::new(),
-            selection: Selection::new(),
+            // expanded_packages: HashSet::new(),
+            // selection: Selection::new(),
             search_input: Input::default(),
             running: true,
             focused_section: FocusedSection::Main
         };
 
+        // Only created once
         let app: App = App {
             app_state: app_state,
-            tui_view_data: TuiViewData::default()
+            tui_view_data: TuiViewData::default(),
+            searcher: PackageSearcher::new()
         };
 
         return app;
     }
 
     pub fn initialize_expanded_packages(&mut self) -> () {
-        self.app_state.expanded_packages.insert(self.app_state.workspace.packages[0].id);
+        self.tui_view_data.main_view_data.expanded_set.insert(self.app_state.workspace.packages[0].id);
     }
 
-    pub fn action_to_operation(&mut self, action: Action) -> Operation {
-        let operation = action_to_operation(self, action);
-        return operation;
+    pub fn running(&self) -> bool {
+        return self.app_state.running;
+    }
+
+    pub fn find_package_by_id(&self, package_id: usize) -> Option<Package> {
+        let found_package = self.app_state.workspace.packages.iter().find(|p| {
+            p.id == package_id
+        });
+
+        return Some(found_package.unwrap().clone());
+    }
+
+    pub fn find_script_by_id(&self, package: Package, script_id: usize) -> Option<Script> {
+        let found_script = package.scripts.iter().find(|s| {
+            s.id == script_id
+        });
+
+        if found_script.is_none() {
+            return None;
+        }
+
+        return Some(found_script.unwrap().clone());
+    }
+
+    pub fn get_focused_section(&self) -> &FocusedSection {
+        return &self.app_state.focused_section;
+    }
+
+
+
+    fn currently_searching(&self) -> bool {
+        let empty = search_query_empty(&self.app_state.search_input.value());
+        return !empty;
+    }
+
+    pub fn get_search_input(&self) -> &Input {
+        return &self.app_state.search_input;
+    }
+
+    // View data
+
+    pub fn get_current_view_data(&self) -> ViewData {
+        if self.currently_searching() {
+            return self.tui_view_data.searching_view_data.clone();
+        } else {
+            return self.tui_view_data.main_view_data.clone();
+        }
+    }
+
+    fn get_current_view_data_mut(&mut self) -> &mut ViewData {
+        if self.currently_searching() {
+            return &mut self.tui_view_data.searching_view_data;
+        } else {
+            return &mut self.tui_view_data.main_view_data;
+        }
+    }
+
+    // Package expansion/collapsing
+
+    fn expand_package(&mut self, package_id: usize) -> () {
+        let current_view_data = self.get_current_view_data_mut();
+        current_view_data.expanded_set.insert(package_id);
+    }
+
+    fn collapse_package(&mut self, package_id: usize) -> () {
+        let current_view_data = self.get_current_view_data_mut();
+        current_view_data.expanded_set.remove(&package_id);
     }
 
     fn toggle_expansion(&mut self) -> OperationResult {
-        let current_selection = self.get_current_selection();
-        let selected_package_id_wrapped = current_selection.row.get_package_id();
+        let current_view_data = self.get_current_view_data();
+        let selected_package_id_wrapped = current_view_data.selection.row.get_package_id();
 
         if selected_package_id_wrapped.is_none() {
             return OperationResult::None;
         }
 
         let selected_package_id = selected_package_id_wrapped.unwrap();
-
-        let expanded_set = self.get_current_expanded_packages();
+        let expanded_set = &current_view_data.expanded_set;
 
         if expanded_set.contains(&selected_package_id) {
             self.collapse_package(selected_package_id);
@@ -114,11 +197,44 @@ impl App {
         }
     }
 
-    fn currently_searching(&self) -> bool {
-        // return self.app_state.search_input.value().len() > 0;
-        let empty = search_query_empty(&self.app_state.search_input.value());
-        return !empty;
+    fn fill_searching_expanded_packages(&mut self) -> () {
+        for package in &self.app_state.workspace.packages {
+            self.tui_view_data.searching_view_data.expanded_set.insert(package.id);
+        }
     }
+
+    fn reset_searching_expanded_packages(&mut self) -> () {
+        self.tui_view_data.searching_view_data.expanded_set.clear();
+    }
+
+    // Selection setters
+
+    pub fn set_current_selection(&mut self, new_selection: Selection) -> () {
+        let current_view_data = self.get_current_view_data_mut();
+        current_view_data.selection = new_selection;
+    }
+
+    pub fn set_search_selection_to_first_script(&mut self) -> () {
+        if self.currently_searching() {
+            let new_selected_row_after_searching = self.tui_view_data.filtered_rows[1].clone();
+            let new_selection_after_searching: Selection = Selection {
+                row: new_selected_row_after_searching
+            };
+
+            self.set_current_selection(new_selection_after_searching);
+        }
+    }
+
+    // Scroll offset
+
+    pub fn update_current_scroll_offset(&mut self, new_scroll_offset: usize) -> () {
+        let current_view_data = self.get_current_view_data_mut();
+        current_view_data.scroll_offset = new_scroll_offset;
+    }
+
+
+
+
 
     // methods that are called during rendering
     pub fn search_focused(&self) -> bool {
@@ -126,62 +242,41 @@ impl App {
         return search_focused;
     }
 
-    pub fn get_current_selection(&self) -> &Selection {
-        if self.currently_searching() {
-            return &self.tui_view_data.search_package_selection;
-        }
-        return &self.app_state.selection;
+
+
+
+
+
+
+
+
+    // filtered rows
+    // self.update_filtered_rows uses this setter
+    fn set_filtered_rows(&mut self, new_filtered_rows: Vec<TuiRow>) -> () {
+        self.tui_view_data.filtered_rows = new_filtered_rows;
     }
 
-    pub fn set_current_selection(&mut self, new_selection: Selection) -> () {
-        if self.currently_searching() {
-            self.tui_view_data.search_package_selection = new_selection;
-        } else {
-            self.app_state.selection = new_selection;
-        }
+    pub fn get_filtered_rows(&self) -> Vec<TuiRow> {
+        return self.tui_view_data.filtered_rows.clone();
     }
 
-    pub fn get_current_expanded_packages(&self) -> &HashSet<usize> {
-        if self.currently_searching() {
-            return &self.tui_view_data.search_expanded_packages;
-        }
-        return &self.app_state.expanded_packages;
+    pub fn update_filtered_rows(&mut self) -> () {
+        let original_packages = &self.app_state.workspace.packages;
+        let search_results = self.searcher.search(original_packages, self.app_state.search_input.value());
+        let current_expanded_packages = &self.get_current_view_data().expanded_set;
+        let all_filtered_rows = build_tui_rows(&search_results, &current_expanded_packages);
+
+        self.set_filtered_rows(all_filtered_rows);
     }
 
-    // methods that edit app state fields
-    fn expand_package(&mut self, package_id: usize) -> () {
-        if self.currently_searching() {
-            self.tui_view_data.search_expanded_packages.insert(package_id);
-        } else {
-            self.app_state.expanded_packages.insert(package_id);
-        }
-    }
 
-    fn collapse_package(&mut self, package_id: usize) -> () {
-        if self.currently_searching() {
-            self.tui_view_data.search_expanded_packages.remove(&package_id);
-        } else {
-            self.app_state.expanded_packages.remove(&package_id);
-        }
-    }
 
-    fn reset_selection_on_search_update(&mut self) -> () {
-        if self.tui_view_data.filtered_rows.len() >= 2 {
-            // println!("{}", "\n".repeat(30));
-            // println!("filtered row[0]: {:#?}", self.tui_view_data.filtered_rows[0]);
-            // println!("filtered row[1]: {:#?}", self.tui_view_data.filtered_rows[1]);
-            self.tui_view_data.search_package_selection.row = self.tui_view_data.filtered_rows[1].clone();
-        }
-    }
 
-    fn fill_searching_expanded_packages(&mut self) -> () {
-        for package in &self.app_state.workspace.packages {
-            self.tui_view_data.search_expanded_packages.insert(package.id);
-        }
-    }
+    // Action/operation
 
-    fn reset_searching_expanded_packages(&mut self) -> () {
-        self.tui_view_data.search_expanded_packages.clear();
+    pub fn action_to_operation(&mut self, action: Action) -> Operation {
+        let operation = action_to_operation(self, action);
+        return operation;
     }
 
     pub fn handle_operation(&mut self, operation: Operation) -> OperationResult {
@@ -194,11 +289,31 @@ impl App {
             },
 
             // Navigation
+            // Navigation is an event, this event does not need to update search + filtered rows,
+            // because those are updated in typing events
             Operation::MoveUp => {
-                move_selection(self, SelectionMovement::Up);
+                let current_view_data = self.get_current_view_data();
+                let new_selection = get_new_selection_after_move(
+                    &self.tui_view_data.filtered_rows,
+                    &current_view_data.selection,
+                    SelectionMovement::Up
+                );
+
+                if new_selection.is_some() {
+                    self.set_current_selection(new_selection.unwrap());
+                }
             },
             Operation::MoveDown => {
-                move_selection(self, SelectionMovement::Down);
+                let current_view_data = self.get_current_view_data();
+                let new_selection = get_new_selection_after_move(
+                    &self.tui_view_data.filtered_rows,
+                    &current_view_data.selection,
+                    SelectionMovement::Down
+                );
+
+                if new_selection.is_some() {
+                    self.set_current_selection(new_selection.unwrap());
+                }
             },
 
             // Interaction
@@ -233,9 +348,9 @@ impl App {
 
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
-                self.reset_selection_on_search_update();
-                self.fill_searching_expanded_packages();
                 self.app_state.search_input.handle(input_request);
+                // self.reset_selection_on_search_update();
+                self.fill_searching_expanded_packages();
             },
 
             _ => { }

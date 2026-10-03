@@ -107,25 +107,30 @@ fn render_vspace_row(frame: &mut Frame, area: Rect) -> () {
 fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () {
     match tui_row {
         TuiRow::Package { package_id } => {
-            let package_wrapped = app.app_state.workspace.packages.iter().find(|p| { p.id == *package_id });
+            let package_wrapped = app.find_package_by_id(*package_id);
 
-            if package_wrapped.is_some() {
-                let package = package_wrapped.unwrap();
-                let ui_style = get_package_row_style(tui_row, &app.get_current_selection());
-
-                let expanded = is_package_expanded(&package, app.get_current_expanded_packages());
-                render_package_row(frame, area, ui_style, package, expanded);
+            if package_wrapped.is_none() {
+                return;
             }
+
+            let current_view_data = app.get_current_view_data();
+            let package = package_wrapped.unwrap();
+            let ui_style = get_package_row_style(tui_row, &current_view_data.selection);
+
+            let expanded = is_package_expanded(&package, &current_view_data.expanded_set);
+            render_package_row(frame, area, ui_style, &package, expanded);
         },
+
         TuiRow::Script { package_id, script_id } => {
-            let package_wrapped = app.app_state.workspace.packages.iter().find(|p| { p.id == *package_id });
+            let package_wrapped = app.find_package_by_id(*package_id);
             if package_wrapped.is_none() {
                 // it is fine to return here, this returns from the function but there is nothing after the match statement
                 return;
             };
 
+            let current_view_data = app.get_current_view_data();
             let package = package_wrapped.unwrap();
-            let script_wrapped = package.scripts.iter().find(|s| { s.id == *script_id });
+            let script_wrapped = app.find_script_by_id(package, *script_id);
 
             if script_wrapped.is_none() {
                 return;
@@ -133,10 +138,10 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 
             let script = script_wrapped.unwrap();
 
-            let ui_style = get_script_row_style(tui_row, &app.get_current_selection());
-            render_script_row(frame, area, ui_style, script);
-
+            let ui_style = get_script_row_style(tui_row, &current_view_data.selection);
+            render_script_row(frame, area, ui_style, &script);
         },
+
         TuiRow::Vspace => {
             render_vspace_row(frame, area);
         }

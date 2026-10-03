@@ -61,23 +61,21 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
     return Some(new_selection);
 }
 
-pub fn move_selection(app: &mut App, direction: SelectionMovement) -> () {
-    let visible_rows = &app.tui_view_data.filtered_rows;
-
-    // app decides which selection is used, depending on which section is focused
-    let selection = app.get_current_selection();
-
-    let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(selection, &visible_rows);
+// app decides which selection is used, depending on which section is focused
+pub fn get_new_selection_after_move(current_filtered_rows: &Vec<TuiRow>, current_selection: &Selection, direction: SelectionMovement) -> Option<Selection> {
+    let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(current_selection, current_filtered_rows);
 
     if selected_visible_row_index_wrapped.is_none() {
-        return;
+        return None;
     }
 
     let current_index = selected_visible_row_index_wrapped.unwrap();
-    let new_selection = get_new_selection(&visible_rows, current_index, &direction);
+    let new_selection = get_new_selection(current_filtered_rows, current_index, &direction);
 
     if new_selection.is_some() {
         // app.app_state.selection = new_selection.unwrap();
-        app.set_current_selection(new_selection.unwrap());
+        return Some(new_selection.unwrap());
     }
+
+    return None;
 }
