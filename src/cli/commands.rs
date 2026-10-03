@@ -37,6 +37,10 @@ pub enum Command {
         /// The text to search for
         #[arg(short, long)]
         query: String,
+
+        /// Enable scoring/filtering debug output
+        #[arg(long, default_value_t = false)]
+        debug: bool
     },
 
     /// List all packages and their scripts in a workspace
@@ -70,8 +74,8 @@ pub fn handle_command(input: Cli) -> () {
             handlers::handle_launching_tui(global_args);
         },
 
-        Some(Command::Search { query }) => {
-            handlers::handle_cli_search(global_args, &query);
+        Some(Command::Search { query, debug }) => {
+            handlers::handle_cli_search(global_args, &query, debug);
         },
 
         None => {

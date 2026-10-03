@@ -1,22 +1,12 @@
-
-
-// TODO: refactor to:
-// 1. wait for event
-// 2. read/handle event
-// 3. update app state
-// 4. render
-
-// this should solve both 
-
 use crate::{tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::initialize_terminal}, workspace::types::Workspace};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     // steps:
-    // render tui
     // read events
     // handle events
     // update app
+    // render tui
 
     let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
@@ -28,23 +18,8 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     // main loop
     while app.running() {
 
-        // filter the data based on search query
-        // let packages = &app.app_state.workspace.packages;
-        // let search_results = searcher.search(packages, app.app_state.search_input.value());
-
-        // initialize tui_view
-        // let mut view: TuiView = TuiView::initialize_new(&app, &search_results);
-
-        // get a clone of the view's filtered rows and update app state filtered rows
-        // app state needs them for navigating handling
-        // let filtered_rows = view.get_filtered_tui_rows();
-        // app.tui_view_data.filtered_rows = filtered_rows;
-
-        //
-        // thread blocked
-        //
         // read events
-        let event = events::next()?;
+        let event = events::next()?; // blocks thread
 
         // event to action
         let new_action = events::to_action(app.get_focused_section(), event);
@@ -61,10 +36,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         }
 
         app.update_filtered_rows();
-        // app.update_selection_if_needed();
-
-
-
+        app.set_search_selection_to_first_script();
 
 
         // Render after updating state

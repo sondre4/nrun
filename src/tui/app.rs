@@ -215,7 +215,8 @@ impl App {
     }
 
     pub fn set_search_selection_to_first_script(&mut self) -> () {
-        if self.currently_searching() {
+        // Only when searching and there are search results
+        if self.currently_searching() && self.tui_view_data.filtered_rows.len() >= 2 {
             let new_selected_row_after_searching = self.tui_view_data.filtered_rows[1].clone();
             let new_selection_after_searching: Selection = Selection {
                 row: new_selected_row_after_searching
