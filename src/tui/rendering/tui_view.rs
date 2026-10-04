@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::{tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::style_border_of_area, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}}, workspace::types::Package};
+use crate::{tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, styling::{add_margin_to_area, style_border_of_area}, tui_keybinds::render_tui_keybinds, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}}, workspace::types::Package};
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -80,6 +80,9 @@ impl TuiView {
         // add border to main section
         tui_layout.main = style_border_of_area(frame, tui_layout.main, String::from("Scripts"), main_focused);
 
+        // add margin to keybind display section
+        tui_layout.keybind_display = add_margin_to_area(frame, tui_layout.keybind_display, 1, 1);
+
         return tui_layout;
     }
 
@@ -119,6 +122,7 @@ impl TuiView {
 
         render_search_bar(frame, styled_layout.search, app.get_search_input(), search_section_focused);
         render_ui_rows(frame, styled_layout.main, app, &visible_rows);
+        render_tui_keybinds(frame, styled_layout.keybind_display, app.get_focused_section());
     }
 
 }

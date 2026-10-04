@@ -10,7 +10,7 @@ struct DisplayedKeybindEntry {
     keys: Vec<String>
 }
 
-fn choose_keybind_set(focused_section: FocusedSection) -> Vec<&'static Keybind> {
+fn choose_keybind_set(focused_section: &FocusedSection) -> Vec<&'static Keybind> {
     let mut keybinds: Vec<&Keybind> = Vec::new();
 
     match focused_section {
@@ -72,7 +72,7 @@ fn build_keybind_display_data(keybind_map: &HashMap<Action, Vec<Keybind>>) -> Ve
     return entries;
 }
 
-pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: FocusedSection) -> () {
+pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &FocusedSection) -> () {
     let keybinds = choose_keybind_set(focused_section);
 
 }
