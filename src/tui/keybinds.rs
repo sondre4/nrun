@@ -2,6 +2,7 @@ use crossterm::event::{KeyCode, KeyModifiers};
 
 use crate::tui::{action::Action};
 
+#[derive(Clone)]
 pub struct Keybind {
     pub key_code: KeyCode,
     pub modifiers: KeyModifiers,
@@ -120,7 +121,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
 
 
 pub fn get_keybind_name(keybind: &Keybind) -> String {
-    let key = match keybind.key_code {
+    let mut key = match keybind.key_code {
         KeyCode::Up => "↑".to_string(),
         KeyCode::Down => "↓".to_string(),
         KeyCode::Left => "←".to_string(),
@@ -135,7 +136,11 @@ pub fn get_keybind_name(keybind: &Keybind) -> String {
     };
 
     if keybind.modifiers.contains(KeyModifiers::CONTROL) {
-        return format!("Ctrl+{key}");
+        key = format!("Ctrl+{key}");
+    }
+
+    if keybind.modifiers.contains(KeyModifiers::SHIFT) {
+        key = format!("Shift+{key}");
     }
 
     return key;
