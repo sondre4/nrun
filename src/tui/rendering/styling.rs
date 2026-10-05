@@ -17,6 +17,7 @@ pub struct VSpaceUiStyle {
 
 pub struct KeybindDisplayUiStyle {
     pub keybinds: Style,
+    pub separator: Style,
     pub description: Style
 }
 
@@ -87,7 +88,8 @@ impl Default for UiStyles {
         };
 
         let keybind_display_style: KeybindDisplayUiStyle = KeybindDisplayUiStyle {
-            keybinds: Style::default().fg(Color::LightCyan),
+            keybinds: Style::default().fg(Color::Cyan),
+            separator: Style::default().fg(Color::DarkGray),
             description: Style::default().fg(Color::LightCyan)
         };
 

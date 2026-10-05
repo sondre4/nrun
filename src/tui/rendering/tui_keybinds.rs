@@ -74,52 +74,61 @@ fn build_keybind_display_data(keybind_map: &HashMap<Action, Vec<Keybind>>) -> Ve
     return entries;
 }
 
-fn align_and_pad_strings(mut s1: String, mut s2: String, pad_length: usize) -> Vec<String> {
-    let max_length = max(s1.chars().count(), s2.chars().count());
+fn get_padding_spans(top_column_count: usize, bottom_column_count: usize, pad_length: usize) -> Vec<Span<'static>> {
+    let end_length = max(top_column_count, bottom_column_count) + pad_length;
 
-    while s1.chars().count() < max_length {
-        s1.push_str(" ");
-    }
+    let top_extra_length = end_length.saturating_sub(top_column_count);
+    let bottom_extra_length = end_length.saturating_sub(bottom_column_count);
 
-    while s2.chars().count() < max_length {
-        s2.push_str(" ");
-    }
+    let top_extra_span = Span::from(" ".repeat(top_extra_length));
+    let bottom_extra_span = Span::from(" ".repeat(bottom_extra_length));
 
-    s1.push_str(&" ".repeat(pad_length));
-    s2.push_str(&" ".repeat(pad_length));
+    let mut padding_spans: Vec<Span> = Vec::new();
+    padding_spans.push(top_extra_span);
+    padding_spans.push(bottom_extra_span);
 
-    let mut aligned_strings: Vec<String> = Vec::new();
-    aligned_strings.push(s1);
-    aligned_strings.push(s2);
-
-    return aligned_strings;
+    return padding_spans;
 }
 
 fn build_display_lines(display_entries: Vec<DisplayedKeybindEntry>) -> Vec<Line<'static>> {
+    let style = get_keybind_display_style();
+
     let mut display_lines: Vec<Line> = Vec::new();
     let mut top_line: Line = Line::default();
     let mut bottom_line: Line = Line::default();
 
+    let keycode_separator = " / ";
+
     for entry in display_entries {
-        let mut keybind_keys = String::new();
+        let mut new_colums_top_count: usize = 0;
+        let mut new_colums_bottom_count: usize = 0;
+        let padding_length: usize = 3;
 
         for i in 0..entry.keys.len() {
-            let key = &entry.keys[i];
+            let keycode_name = &entry.keys[i];
 
             if i != 0 {
-                keybind_keys.push_str(" / ");
+                // update count of how many columns have been added
+                new_colums_top_count = new_colums_top_count.saturating_add(keycode_separator.chars().count());
+                let keycode_separator_span = Span::from(keycode_separator).style(style.separator);
+                top_line.push_span(keycode_separator_span);
             }
 
-            keybind_keys.push_str(key);
+            // update count of how many columns have been added
+            new_colums_top_count = new_colums_top_count.saturating_add(keycode_name.chars().count());
+            let keycode_separator_span = Span::from(keycode_name.clone()).style(style.keybinds);
+            top_line.push_span(keycode_separator_span);
         }
 
-        let aligned_strings = align_and_pad_strings(keybind_keys, entry.description, 3);
+        // update count of how many columns have been added
+        new_colums_bottom_count = new_colums_bottom_count.saturating_add(entry.description.chars().count());
+        let description_span = Span::from(entry.description).style(style.description);
+        bottom_line.push_span(description_span);
 
-        let top_span = Span::from(aligned_strings[0].clone());
-        let bottom_span = Span::from(aligned_strings[1].clone());
+        let padding_spans = get_padding_spans(new_colums_top_count, new_colums_bottom_count, padding_length);
 
-        top_line.push_span(top_span);
-        bottom_line.push_span(bottom_span);
+        top_line.push_span(padding_spans[0].clone());
+        bottom_line.push_span(padding_spans[1].clone());
     }
 
     display_lines.push(top_line);
@@ -134,8 +143,6 @@ pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &Focu
     let keybind_display_data = build_keybind_display_data(&keybind_map);
     let display_lines = build_display_lines(keybind_display_data);
 
-    let style = get_keybind_display_style();
-
     let [keybind_name_row, description_row] = Layout::vertical(
         [
             Constraint::Length(1),
@@ -143,13 +150,8 @@ pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &Focu
         ]
     ).areas(area);
 
-    // let mut styled_display_lines: Vec<Line> = Vec::new();
-    // styled_display_lines.push(display_lines[0].clone().style(style.keybinds));
-    // styled_display_lines.push(display_lines[1].clone().style(style.description));
-
-
-    let display_name_row = Paragraph::new(display_lines[0].clone().style(style.keybinds));
-    let display_description = Paragraph::new(display_lines[1].clone().style(style.description));
+    let display_name_row = Paragraph::new(display_lines[0].clone());
+    let display_description = Paragraph::new(display_lines[1].clone());
 
     frame.render_widget(display_name_row, keybind_name_row);
     frame.render_widget(display_description, description_row);
