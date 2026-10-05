@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-use crate::{tui::{app::Selection, rendering::tui_rows::TuiRow}, workspace::types::{Package, Script}};
+use crate::tui::{app::Selection, rendering::tui_rows::TuiRow};
 
 pub struct PackageUiStyle {
     pub name: Style
@@ -15,10 +15,16 @@ pub struct VSpaceUiStyle {
     pub style: Style
 }
 
+pub struct KeybindDisplayUiStyle {
+    pub keybinds: Style,
+    pub description: Style
+}
+
 pub enum UiStyle {
     PackageStyle(PackageUiStyle),
     ScriptStyle(ScriptUiStyle),
-    VspaceStyle(VSpaceUiStyle)
+    VspaceStyle(VSpaceUiStyle),
+    KeybindDisplayStyle(KeybindDisplayUiStyle)
 }
 
 pub struct UiStyles {
@@ -32,7 +38,8 @@ pub struct UiStyles {
     unselected_package: UiStyle,
     selected_script: UiStyle,
     unselected_script: UiStyle,
-    vspace_style: UiStyle
+    vspace_style: UiStyle,
+    keybind_display: UiStyle
 }
 
 impl Default for UiStyles {
@@ -79,13 +86,19 @@ impl Default for UiStyles {
             style: Style::default().fg(Color::Black).bg(Color::Black)
         };
 
+        let keybind_display_style: KeybindDisplayUiStyle = KeybindDisplayUiStyle {
+            keybinds: Style::default().fg(Color::LightCyan),
+            description: Style::default().fg(Color::LightCyan)
+        };
+
         let ui_styles: UiStyles = UiStyles {
             selected_package: UiStyle::PackageStyle(selected_package_style),
             relevant_package: UiStyle::PackageStyle(relevant_package_style),
             unselected_package: UiStyle::PackageStyle(unselected_package_style),
             selected_script: UiStyle::ScriptStyle(script_selected),
             unselected_script: UiStyle::ScriptStyle(script_unselected),
-            vspace_style: UiStyle::VspaceStyle(vspace_style)
+            vspace_style: UiStyle::VspaceStyle(vspace_style),
+            keybind_display: UiStyle::KeybindDisplayStyle(keybind_display_style)
         };
 
         return ui_styles;
@@ -185,6 +198,16 @@ pub fn get_vspace_row_style(visible_row: &TuiRow, selection: &Selection) -> VSpa
             return vspace_ui_style;
         },
         _ => unreachable!("Row style should not be other than style for vspace row")
+    };
+}
+
+pub fn get_keybind_display_style() -> KeybindDisplayUiStyle {
+    let style = UiStyles::default().keybind_display;
+    match style {
+        UiStyle::KeybindDisplayStyle(keybind_display_style) => {
+            return keybind_display_style;
+        },
+        _ => unreachable!("Keybind display style should not be other than style for keybind display")
     };
 }
 

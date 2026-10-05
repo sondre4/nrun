@@ -13,7 +13,7 @@ fn create_layout(area: Rect) -> TuiLayout {
         .constraints([
             Constraint::Length(3),
             Constraint::Min(1),
-            Constraint::Length(3)
+            Constraint::Length(4)
         ]).split(area);
 
     let layout = TuiLayout {

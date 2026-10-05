@@ -17,21 +17,21 @@ pub const SEARCH_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
-        description: "Finish search"
+        description: "Focus Scripts"
     },
 
     Keybind {
         key_code: KeyCode::Esc,
         modifiers: KeyModifiers::NONE,
         action: Action::CancelSearch,
-        description: "Cancel search"
+        description: "Cancel Search"
     },
 
     Keybind {
         key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
-        description: "Exit search"
+        description: "Focus Scripts"
     },
 
     Keybind {
@@ -91,8 +91,8 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
     },
 
     Keybind {
-        key_code: KeyCode::Char('7'),
-        modifiers: KeyModifiers::SHIFT,
+        key_code: KeyCode::Char('f'),
+        modifiers: KeyModifiers::CONTROL,
         action: Action::FocusSearch,
         description: "Focus Search"
     },
@@ -101,7 +101,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
-        description: "Focus search"
+        description: "Focus Search"
     },
 
     // Quit

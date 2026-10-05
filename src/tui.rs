@@ -7,7 +7,6 @@ pub mod operation;
 pub mod rendering;
 pub mod keybinds;
 pub mod terminal;
-pub mod text_editing;
 pub mod ui;
 
 pub fn launch_tui(data: Workspace) -> Result<(), String> {
