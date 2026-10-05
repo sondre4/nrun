@@ -30,6 +30,45 @@ fn choose_keybind_set(focused_section: &FocusedSection) -> Vec<&'static Keybind>
     return keybinds;
 }
 
+fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindEntry> {
+    let mut entries: Vec<DisplayedKeybindEntry> = Vec::new();
+    let mut completed_keybind_actions: Vec<Action> = Vec::new();
+    let keybind_count = keybinds.len();
+
+    // Squared time complexity is ok here because there are not many keybinds
+    for outer_index in 0..keybind_count {
+        let keybind = &keybinds[outer_index];
+        let current_action = keybind.action;
+
+        if completed_keybind_actions.contains(&current_action) {
+            continue;
+        }
+
+        let mut keybind_names: Vec<String> = Vec::new();
+
+        for inner_index in 0..keybind_count {
+            let inner_keybind = &keybinds[inner_index];
+
+            if inner_keybind.action == current_action {
+                let key_name = get_keybind_name(inner_keybind);
+                keybind_names.push(key_name);
+            }
+        }
+
+        completed_keybind_actions.push(current_action);
+
+        let keybind_entry: DisplayedKeybindEntry = DisplayedKeybindEntry {
+            action: current_action,
+            description: keybind.description.to_string(),
+            keys: keybind_names,
+        };
+
+        entries.push(keybind_entry);
+    }
+
+    return entries;
+}
+
 fn build_keybind_map(keybinds: Vec<&Keybind>) -> HashMap<Action, Vec<Keybind>> {
     let mut keybind_map: HashMap<Action, Vec<Keybind>> = HashMap::new();
 
@@ -139,8 +178,7 @@ fn build_display_lines(display_entries: Vec<DisplayedKeybindEntry>) -> Vec<Line<
 
 pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &FocusedSection) -> () {
     let keybinds = choose_keybind_set(focused_section);
-    let keybind_map = build_keybind_map(keybinds);
-    let keybind_display_data = build_keybind_display_data(&keybind_map);
+    let keybind_display_data = keybinds_to_display_entries(keybinds);
     let display_lines = build_display_lines(keybind_display_data);
 
     let [keybind_name_row, description_row] = Layout::vertical(

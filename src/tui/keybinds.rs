@@ -79,7 +79,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::Activate,
-        description: "Expand"
+        description: "Select"
     },
 
     // Switch focus to Search
