@@ -6,6 +6,7 @@ pub mod events;
 pub mod operation;
 pub mod rendering;
 pub mod keybinds;
+pub mod styles;
 pub mod terminal;
 pub mod ui;
 

@@ -1,6 +1,6 @@
-use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
+use ratatui::{Frame, layout::{Constraint, Layout, Rect}, text::{Line, Span}, widgets::Paragraph};
 
-use crate::{tui::{app::App, rendering::{styling::{PackageUiStyle, ScriptUiStyle, get_package_row_style, get_script_row_style}, visibility::is_package_expanded}}, workspace::types::{Package, Script}};
+use crate::{tui::{app::App, rendering::{style_elements::{get_package_row_style, get_script_row_style}, visibility::is_package_expanded}, styles::ui_style::{PackageUiStyle, ScriptUiStyle}}, workspace::types::{Package, Script}};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TuiRow {
@@ -69,10 +69,14 @@ fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiSty
     ).areas(area);
 
     let expanded_indicator = if expanded { "▼" } else { "▶" };
-    let displayed_package_name = format!("{expanded_indicator} ({}) {}", package.id, package.name);
+    let package_name_span = Span::from(format!("{expanded_indicator} {}", package.name)).style(package_style.name);
+    let script_count_span = Span::from(format!(" ({})", package.scripts.len())).style(package_style.script_count);
 
-    let package_name_widget = Paragraph::new(displayed_package_name)
-        .style(package_style.name);
+    let mut display_content: Line = Line::default();
+    display_content.push_span(package_name_span);
+    display_content.push_span(script_count_span);
+
+    let package_name_widget = Paragraph::new(display_content);
 
     frame.render_widget(package_name_widget, name_column_area);
 }
@@ -86,7 +90,7 @@ fn render_script_row(frame: &mut Frame, area: Rect, script_style: ScriptUiStyle,
 
     // script name
     let displayed_script_name = format!("{}", script.name);
-    let script_name_widget = Paragraph::new(format!("({}) {displayed_script_name}", script.id))
+    let script_name_widget = Paragraph::new(format!("{displayed_script_name}"))
         .style(script_style.name);
 
     frame.render_widget(script_name_widget, name_column_area);
@@ -115,7 +119,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 
             let current_view_data = app.get_current_view_data();
             let package = package_wrapped.unwrap();
-            let ui_style = get_package_row_style(tui_row, &current_view_data.selection);
+            let ui_style = get_package_row_style(tui_row, &current_view_data.selection, app.get_styles());
 
             let expanded = is_package_expanded(&package, &current_view_data.expanded_set);
             render_package_row(frame, area, ui_style, &package, expanded);
@@ -138,7 +142,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
 
             let script = script_wrapped.unwrap();
 
-            let ui_style = get_script_row_style(tui_row, &current_view_data.selection);
+            let ui_style = get_script_row_style(tui_row, &current_view_data.selection, app.get_styles());
             render_script_row(frame, area, ui_style, &script);
         },
 

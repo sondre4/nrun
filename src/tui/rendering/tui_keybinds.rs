@@ -2,7 +2,7 @@ use std::{cmp::max, collections::HashMap};
 
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, text::{Line, Span}, widgets::Paragraph};
 
-use crate::tui::{action::Action, app::FocusedSection, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name}, rendering::styling::get_keybind_display_style};
+use crate::tui::{action::Action, app::FocusedSection, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name}, rendering::style_elements::get_keybind_display_style, styles::ui_style::KeybindDisplayUiStyle};
 
 struct DisplayedKeybindEntry {
     action: Action,
@@ -129,9 +129,7 @@ fn get_padding_spans(top_column_count: usize, bottom_column_count: usize, pad_le
     return padding_spans;
 }
 
-fn build_display_lines(display_entries: Vec<DisplayedKeybindEntry>) -> Vec<Line<'static>> {
-    let style = get_keybind_display_style();
-
+fn build_display_lines(display_entries: Vec<DisplayedKeybindEntry>, style: &KeybindDisplayUiStyle) -> Vec<Line<'static>> {
     let mut display_lines: Vec<Line> = Vec::new();
     let mut top_line: Line = Line::default();
     let mut bottom_line: Line = Line::default();
@@ -176,10 +174,10 @@ fn build_display_lines(display_entries: Vec<DisplayedKeybindEntry>) -> Vec<Line<
     return display_lines;
 }
 
-pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &FocusedSection) -> () {
+pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &FocusedSection, style: &KeybindDisplayUiStyle) -> () {
     let keybinds = choose_keybind_set(focused_section);
     let keybind_display_data = keybinds_to_display_entries(keybinds);
-    let display_lines = build_display_lines(keybind_display_data);
+    let display_lines = build_display_lines(keybind_display_data, style);
 
     let [keybind_name_row, description_row] = Layout::vertical(
         [
