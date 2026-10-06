@@ -1,5 +1,7 @@
 use crate::cli::commands::GlobalArguments;
+use crate::cli::display_json::display_json;
 use crate::cli::display_packages::display_packages;
+use crate::cli::json_representation::WorkspaceRepresentation;
 use crate::search::searcher::PackageSearcher;
 use crate::tui::launch_tui;
 use crate::workspace::find_workspace;
@@ -18,19 +20,27 @@ fn handle_finding_workspace(global_arguments: GlobalArguments) -> Option<Workspa
     }
 }
 
-pub fn handle_list_packages(global_arguments: GlobalArguments) -> () {
+pub fn handle_list_packages(global_arguments: GlobalArguments, json_output_format: bool) -> () {
     let found_workspace = handle_finding_workspace(global_arguments);
 
     if found_workspace.is_none() {
         return;
     }
 
-    let packages = found_workspace.unwrap().packages;
+    let workspace = found_workspace.unwrap();
+    let packages = &workspace.packages;
 
+    if json_output_format {
+        let representation = WorkspaceRepresentation::from(&workspace);
+        display_json(&representation);
+        return;
+    }
+
+    // Display normally if format is not JSON
     display_packages(&packages);
 }
 
-pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String, debug: bool) -> () {
+pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String, debug: bool, json_output_format: bool) -> () {
     let found_workspace = handle_finding_workspace(global_arguments);
 
     if found_workspace.is_none() {
@@ -42,8 +52,21 @@ pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &Strin
         searcher.enable_debug();
     }
 
-    let packages = found_workspace.unwrap().packages;
-    let search_results = searcher.search(&packages, search_query);
+    let mut workspace = found_workspace.unwrap();
+    let packages = &workspace.packages;
+    let search_results = searcher.search(packages, search_query);
+
+    if json_output_format {
+
+        // Overwrite old packages with search results before writing to stdout
+        workspace.packages = search_results;
+
+        let representation = WorkspaceRepresentation::from(&workspace);
+        display_json(&representation);
+        return;
+    }
+
+    // Display normally if format is not JSON
     display_packages(&search_results);
 }
 

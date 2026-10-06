@@ -3,7 +3,7 @@ use std::{fs, path::Path};
 use serde::Deserialize;
 use serde_yaml::Deserializer;
 
-use crate::workspace::{parsers::file_exists::file_exists, types::LockfileConfig};
+use crate::workspace::parsers::{config_types::LockfileConfig, file_exists::file_exists};
 
 pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Result<Vec<LockfileConfig>, String> {
     file_exists(path)?;

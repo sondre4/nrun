@@ -1,6 +1,6 @@
 use owo_colors::OwoColorize;
 
-use crate::workspace::types::Package;
+use crate::workspace::types::{Package, Workspace};
 
 const HEADER_START: usize = 2;
 // const VERTICAL_BAR_OFFSET: usize = 2;

@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use crate::workspace::{config::Project, parsers::file_exists::file_exists, types::WorkspaceConfig};
+use crate::workspace::{config::Project, parsers::{config_types::WorkspaceConfig, file_exists::file_exists}};
 
 fn parse_pnpm_workspace_from_path(path: &Path) -> Result<WorkspaceConfig, String> {
     file_exists(path)?;
