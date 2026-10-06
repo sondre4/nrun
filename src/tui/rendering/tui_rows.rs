@@ -1,4 +1,4 @@
-use ratatui::{Frame, layout::{Constraint, Layout, Rect}, widgets::Paragraph};
+use ratatui::{Frame, layout::{Constraint, Layout, Rect}, text::{Line, Span}, widgets::Paragraph};
 
 use crate::{tui::{app::App, rendering::{style_elements::{get_package_row_style, get_script_row_style}, visibility::is_package_expanded}, styles::ui_style::{PackageUiStyle, ScriptUiStyle}}, workspace::types::{Package, Script}};
 
@@ -69,10 +69,14 @@ fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiSty
     ).areas(area);
 
     let expanded_indicator = if expanded { "▼" } else { "▶" };
-    let displayed_package_name = format!("{expanded_indicator} {}", package.name);
+    let package_name_span = Span::from(format!("{expanded_indicator} {}", package.name)).style(package_style.name);
+    let script_count_span = Span::from(format!(" ({})", package.scripts.len())).style(package_style.script_count);
 
-    let package_name_widget = Paragraph::new(displayed_package_name)
-        .style(package_style.name);
+    let mut display_content: Line = Line::default();
+    display_content.push_span(package_name_span);
+    display_content.push_span(script_count_span);
+
+    let package_name_widget = Paragraph::new(display_content);
 
     frame.render_widget(package_name_widget, name_column_area);
 }

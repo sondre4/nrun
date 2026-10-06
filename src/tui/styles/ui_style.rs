@@ -4,7 +4,8 @@ use crate::tui::styles::colors::ColorPalette;
 
 #[derive(Clone, Copy)]
 pub struct PackageUiStyle {
-    pub name: Style
+    pub name: Style,
+    pub script_count: Style
 }
 
 #[derive(Clone, Copy)]
@@ -47,25 +48,26 @@ pub struct UiStyles {
 impl UiStyles {
     pub fn from_palette(palette: &ColorPalette) -> Self {
 
-        // TODO: once focused_section is set, set variables to be different colors depending on FocusedSection enum
-        // could be implemented with a focused bool?
-
         // package styles
         let unselected_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default().fg(palette.package),
+            script_count: Style::default().fg(palette.muted)
         };
 
         let relevant_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default()
                 .fg(palette.selected_fg)
-                .add_modifier(Modifier::BOLD)
+                .add_modifier(Modifier::BOLD),
+            script_count: Style::default().fg(palette.muted)
         };
 
         let selected_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default()
                 .fg(palette.selected_fg)
                 .bg(palette.selected_package_bg)
-                .add_modifier(Modifier::BOLD)
+                .add_modifier(Modifier::BOLD),
+
+            script_count: Style::default().fg(palette.muted)
         };
 
         // script styles
