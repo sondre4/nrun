@@ -1,6 +1,6 @@
 use tui_input::InputRequest;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Action {
     Nothing,
 

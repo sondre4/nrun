@@ -2,6 +2,7 @@ use crossterm::event::{KeyCode, KeyModifiers};
 
 use crate::tui::{action::Action};
 
+#[derive(Clone)]
 pub struct Keybind {
     pub key_code: KeyCode,
     pub modifiers: KeyModifiers,
@@ -16,21 +17,21 @@ pub const SEARCH_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
-        description: "Finish search"
+        description: "Focus Scripts"
     },
 
     Keybind {
         key_code: KeyCode::Esc,
         modifiers: KeyModifiers::NONE,
         action: Action::CancelSearch,
-        description: "Cancel search"
+        description: "Cancel Search"
     },
 
     Keybind {
         key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
-        description: "Exit search"
+        description: "Focus Scripts"
     },
 
     Keybind {
@@ -78,7 +79,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::Activate,
-        description: "Expand"
+        description: "Select"
     },
 
     // Switch focus to Search
@@ -90,8 +91,8 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
     },
 
     Keybind {
-        key_code: KeyCode::Char('7'),
-        modifiers: KeyModifiers::SHIFT,
+        key_code: KeyCode::Char('f'),
+        modifiers: KeyModifiers::CONTROL,
         action: Action::FocusSearch,
         description: "Focus Search"
     },
@@ -100,7 +101,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
-        description: "Focus search"
+        description: "Focus Search"
     },
 
     // Quit
@@ -120,7 +121,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
 
 
 pub fn get_keybind_name(keybind: &Keybind) -> String {
-    let key = match keybind.key_code {
+    let mut key = match keybind.key_code {
         KeyCode::Up => "↑".to_string(),
         KeyCode::Down => "↓".to_string(),
         KeyCode::Left => "←".to_string(),
@@ -135,7 +136,11 @@ pub fn get_keybind_name(keybind: &Keybind) -> String {
     };
 
     if keybind.modifiers.contains(KeyModifiers::CONTROL) {
-        return format!("Ctrl+{key}");
+        key = format!("Ctrl+{key}");
+    }
+
+    if keybind.modifiers.contains(KeyModifiers::SHIFT) {
+        key = format!("Shift+{key}");
     }
 
     return key;
