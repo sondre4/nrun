@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use tui_input::Input;
 
-use crate::{search::{matching::search_query_empty, searcher::PackageSearcher}, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move}, rendering::{tui_rows::TuiRow, visibility::build_tui_rows}}, workspace::types::{Package, Script, Workspace}};
+use crate::{search::{matching::search_query_empty, searcher::PackageSearcher}, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move}, rendering::{tui_rows::TuiRow, visibility::build_tui_rows}, styles::{colors::{ColorPalette, detect_color_capability}, ui_style::UiStyles}}, workspace::types::{Package, Script, Workspace}};
 
 #[derive(Debug, Clone)]
 pub struct Selection {
@@ -33,7 +33,8 @@ pub struct AppState {
     workspace: Workspace,
     search_input: Input,
     running: bool,
-    focused_section: FocusedSection
+    focused_section: FocusedSection,
+    styles: UiStyles
 }
 
 #[derive(Clone)]
@@ -77,11 +78,18 @@ pub struct App {
 
 impl App {
     pub fn new(app_data: Workspace) -> App {
+
+        // initialize the style
+        let color_capability = detect_color_capability();
+        let palette = ColorPalette::from_capability(color_capability);
+        let ui_styles = UiStyles::from_palette(palette);
+
         let app_state: AppState = AppState {
             workspace: app_data,
             search_input: Input::default(),
             running: true,
-            focused_section: FocusedSection::Main
+            focused_section: FocusedSection::Main,
+            styles: ui_styles
         };
 
         // Only created once
@@ -92,6 +100,10 @@ impl App {
         };
 
         return app;
+    }
+
+    pub fn get_styles(&self) -> &UiStyles {
+        return &self.app_state.styles;
     }
 
     pub fn initialize_expanded_packages(&mut self) -> () {

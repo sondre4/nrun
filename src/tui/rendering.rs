@@ -9,7 +9,7 @@
 //       add displaying the keybinds available
 
 pub mod search_bar;
-pub mod styling;
+pub mod style_elements;
 pub mod tui_keybinds;
 pub mod tui_layout;
 pub mod tui_rows;
