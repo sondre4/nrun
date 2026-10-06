@@ -45,7 +45,7 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
     // add root package to workspace vector
     let root_package: Package = Package {
         id: ROOT_PACKAGE_ID,
-        name: root_package_json.name.unwrap_or("Project root".to_string()),
+        name: root_package_json.name.unwrap_or(workspace.root_path.clone().to_string_lossy().to_string()),
         path: workspace.root_path.clone(),
         scripts: root_package_json_scripts,
     };

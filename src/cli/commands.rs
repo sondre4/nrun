@@ -8,6 +8,7 @@ use crate::cli::handlers;
 #[derive(Parser)]
 #[command(
     name = "nrun",
+    version,
     about = "Calling 'nrun' without a command/subcommand launches the TUI",
     long_about = "about2",
     after_help = "about3",
