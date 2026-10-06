@@ -82,11 +82,14 @@ fn render_package_row(frame: &mut Frame, area: Rect, package_style: PackageUiSty
 }
 
 fn render_script_row(frame: &mut Frame, area: Rect, script_style: ScriptUiStyle, script: &Script) -> () {
-    let [_indent_column, name_column_area, command_column_area] = Layout::horizontal([
+    let [indent_column, name_column_area, command_column_area] = Layout::horizontal([
         Constraint::Percentage(3),
         Constraint::Percentage(32),
         Constraint::Percentage(65)
     ]).areas(area);
+
+    // render column for whole line background when selected
+    frame.render_widget(Paragraph::new("").style(script_style.name), indent_column);
 
     // script name
     let displayed_script_name = format!("{}", script.name);
