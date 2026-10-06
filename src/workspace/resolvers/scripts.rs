@@ -1,4 +1,4 @@
-use crate::workspace::types::{PackageJson, Script};
+use crate::workspace::{parsers::config_types::PackageJson, types::Script};
 
 pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String> {
     let script_map_option = &package_json.scripts;

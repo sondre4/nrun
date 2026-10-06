@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use crate::workspace::{config::Project, parsers::file_exists::file_exists, types::PackageJson};
+use crate::workspace::{config::Project, parsers::{config_types::PackageJson, file_exists::file_exists}};
 
 fn parse_package_json(path: &Path) -> Result<PackageJson, String> {
     file_exists(path)?;

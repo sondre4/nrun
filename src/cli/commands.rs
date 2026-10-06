@@ -37,6 +37,10 @@ pub enum Command {
         #[arg(short, long)]
         query: String,
 
+        /// Output to stdout in JSON format
+        #[arg(short, long, default_value_t = false)]
+        json: bool,
+
         /// Enable scoring/filtering debug output
         #[arg(long, default_value_t = false)]
         debug: bool
@@ -44,7 +48,12 @@ pub enum Command {
 
     /// List all packages and their scripts in a workspace
     #[command(visible_alias = "l", visible_alias = "ls")]
-    List
+    List {
+
+        /// Output to stdout in JSON format
+        #[arg(short, long, default_value_t = false)]
+        json: bool
+    }
 }
 
 pub struct GlobalArguments {
@@ -65,16 +74,16 @@ pub fn handle_command(input: Cli) -> () {
     let global_args = GlobalArguments::from(&input);
 
     match input.command {
-        Some(Command::List) => {
-            handlers::handle_list_packages(global_args);
+        Some(Command::List { json }) => {
+            handlers::handle_list_packages(global_args, json);
         },
 
         Some(Command::Tui) => {
             handlers::handle_launching_tui(global_args);
         },
 
-        Some(Command::Search { query, debug }) => {
-            handlers::handle_cli_search(global_args, &query, debug);
+        Some(Command::Search { query, debug,  json }) => {
+            handlers::handle_cli_search(global_args, &query, debug, json);
         },
 
         None => {
