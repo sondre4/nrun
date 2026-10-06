@@ -53,7 +53,8 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
             // initialize layout
             let mut layout = view.get_tui_layout(frame);
-            layout = view.style_tui_layout(frame, layout, current_focused_section);
+            let color_palette = app.get_color_palette();
+            layout = view.style_tui_layout(frame, layout, current_focused_section, color_palette);
 
             // calculate viewport values
             let viewport_state = view.calculate_viewport_state(

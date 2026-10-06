@@ -45,43 +45,44 @@ pub struct UiStyles {
 }
 
 impl UiStyles {
-    pub fn from_palette(palette: ColorPalette) -> Self {
+    pub fn from_palette(palette: &ColorPalette) -> Self {
 
         // TODO: once focused_section is set, set variables to be different colors depending on FocusedSection enum
         // could be implemented with a focused bool?
 
         // package styles
         let unselected_package_style: PackageUiStyle = PackageUiStyle {
-            name: Style::default(),
+            name: Style::default().fg(palette.package),
         };
 
         let relevant_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default()
-                .fg(Color::LightCyan)
-                .bg(Color::DarkGray)
+                .fg(palette.selected_fg)
+                .add_modifier(Modifier::BOLD)
         };
 
         let selected_package_style: PackageUiStyle = PackageUiStyle {
             name: Style::default()
-                .fg(Color::Blue)
-                .bg(Color::White)
+                .fg(palette.selected_fg)
+                .bg(palette.selected_package_bg)
                 .add_modifier(Modifier::BOLD)
         };
 
         // script styles
         let script_unselected: ScriptUiStyle = ScriptUiStyle {
-            name: Style::default(),
-            command: Style::default().fg(Color::DarkGray)
+            name: Style::default().fg(palette.text),
+            command: Style::default().fg(palette.muted)
         };
 
         let script_selected: ScriptUiStyle = ScriptUiStyle {
             name: Style::default()
-                .fg(Color::Blue)
-                .bg(Color::White),
+                .fg(palette.selected_fg)
+                .bg(palette.selected_bg)
+                .add_modifier(Modifier::BOLD),
 
             command: Style::default()
-                .fg(Color::DarkGray)
-                .bg(Color::White)
+                .fg(palette.selected_fg)
+                .bg(palette.selected_bg)
         };
 
         let vspace_style: VSpaceUiStyle = VSpaceUiStyle {
@@ -89,9 +90,9 @@ impl UiStyles {
         };
 
         let keybind_display_style: KeybindDisplayUiStyle = KeybindDisplayUiStyle {
-            keybinds: Style::default().fg(Color::Cyan),
-            separator: Style::default().fg(Color::DarkGray),
-            description: Style::default().fg(Color::LightCyan)
+            keybinds: Style::default().fg(palette.secondary),
+            separator: Style::default().fg(palette.border),
+            description: Style::default().fg(palette.primary)
         };
 
         let ui_styles: UiStyles = UiStyles {

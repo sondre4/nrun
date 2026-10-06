@@ -10,11 +10,13 @@ pub enum ColorCapability {
 pub struct ColorPalette {
     pub text: Color,
     pub muted: Color,
-    pub group: Color,
-    pub accent: Color,
+    pub package: Color,
+    pub primary: Color,
+    pub secondary: Color,
     pub selected_fg: Color,
     pub selected_bg: Color,
-    pub border: Color,
+    pub selected_package_bg: Color,
+    pub border: Color
 }
 
 impl ColorPalette {
@@ -22,43 +24,49 @@ impl ColorPalette {
         match capability {
             ColorCapability::Ansi16 => Self::ansi16(),
             ColorCapability::Ansi256 => Self::ansi256(),
-            ColorCapability::TrueColor => Self::truecolor(),
+            ColorCapability::TrueColor => Self::truecolor()
         }
     }
 
     fn ansi16() -> Self {
         Self {
-            text: Color::White,
+            text: Color::Gray,
             muted: Color::DarkGray,
-            group: Color::Gray,
-            accent: Color::Cyan,
-            selected_fg: Color::Black,
-            selected_bg: Color::Cyan,
+            package: Color::White,
+            primary: Color::Cyan,
+            secondary: Color::LightCyan,
+            selected_fg: Color::White,
+            selected_bg: Color::DarkGray,
+            selected_package_bg: Color::DarkGray,
             border: Color::DarkGray,
         }
     }
 
     fn ansi256() -> Self {
         Self {
-            text: Color::Indexed(253),
-            muted: Color::Indexed(243),
-            group: Color::Indexed(250),
-            accent: Color::Indexed(117),
-            selected_fg: Color::Indexed(16),
-            selected_bg: Color::Indexed(75),
-            border: Color::Indexed(239),
+            text: Color::Indexed(250),
+            muted: Color::Indexed(242),
+            package: Color::Indexed(255),
+            primary: Color::Indexed(43),
+            secondary: Color::Indexed(123),
+            selected_fg: Color::Indexed(255),
+            selected_bg: Color::Indexed(238),
+            selected_package_bg: Color::Indexed(236),
+            border: Color::Indexed(240)
         }
     }
 
     fn truecolor() -> Self {
         Self {
-            text: Color::Rgb(205, 214, 244),
-            muted: Color::Rgb(127, 132, 156),
-            group: Color::Rgb(166, 173, 200),
-            accent: Color::Rgb(137, 180, 250),
-            selected_fg: Color::Rgb(20, 20, 30),
-            selected_bg: Color::Rgb(69, 71, 90),
-            border: Color::Rgb(88, 91, 112),
+            text: Color::Rgb(190, 194, 198),
+            muted: Color::Rgb(110, 115, 120),
+            package: Color::Rgb(225, 228, 231),
+            primary: Color::Rgb(70, 190, 180),
+            secondary: Color::Rgb(145, 220, 218),
+            selected_fg: Color::Rgb(235, 237, 239),
+            selected_bg: Color::Rgb(55, 59, 63),
+            selected_package_bg: Color::Rgb(43, 48, 51),
+            border: Color::Rgb(75, 80, 84)
         }
     }
 }
@@ -89,10 +97,10 @@ pub fn detect_color_capability() -> ColorCapability {
     }
 
     if supports_truecolor() {
-        ColorCapability::TrueColor
+        return ColorCapability::TrueColor;
     } else if supports_ansi256() {
-        ColorCapability::Ansi256
+        return ColorCapability::Ansi256;
     } else {
-        ColorCapability::Ansi16
+        return ColorCapability::Ansi16;
     }
 }

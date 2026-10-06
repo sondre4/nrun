@@ -45,20 +45,6 @@ pub const SEARCH_KEYBINDS: &[Keybind] = &[
 pub const MAIN_KEYBINDS: &[Keybind] = &[
 
     // Navigation
-    // Up
-    Keybind {
-        key_code: KeyCode::Up,
-        modifiers: KeyModifiers::NONE,
-        action: Action::MoveUp,
-        description: "Move up"
-    },
-    Keybind {
-        key_code: KeyCode::Char('k'),
-        modifiers: KeyModifiers::NONE,
-        action: Action::MoveUp,
-        description: "Move up"
-    },
-
     // Down
     Keybind {
         key_code: KeyCode::Down,
@@ -71,6 +57,20 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         modifiers: KeyModifiers::NONE,
         action: Action::MoveDown,
         description: "Move down"
+    },
+
+    // Up
+    Keybind {
+        key_code: KeyCode::Up,
+        modifiers: KeyModifiers::NONE,
+        action: Action::MoveUp,
+        description: "Move up"
+    },
+    Keybind {
+        key_code: KeyCode::Char('k'),
+        modifiers: KeyModifiers::NONE,
+        action: Action::MoveUp,
+        description: "Move up"
     },
 
     // user interaction

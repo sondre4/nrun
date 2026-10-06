@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::{tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, style_elements::{add_margin_to_area, get_keybind_display_style, style_border_of_area}, tui_keybinds::render_tui_keybinds, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}}, workspace::types::Package};
+use crate::{tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, style_elements::{add_margin_to_area, get_keybind_display_style, style_border_of_area}, tui_keybinds::render_tui_keybinds, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, styles::colors::ColorPalette}, workspace::types::Package};
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -70,15 +70,15 @@ impl TuiView {
         return tui_layout;
     }
 
-    pub fn style_tui_layout(&mut self, frame: &mut Frame, mut tui_layout: TuiLayout, focused_section: &FocusedSection) -> TuiLayout {
+    pub fn style_tui_layout(&mut self, frame: &mut Frame, mut tui_layout: TuiLayout, focused_section: &FocusedSection, color_palette: &ColorPalette) -> TuiLayout {
         let search_focused = matches!(focused_section, FocusedSection::Search);
         let main_focused = matches!(focused_section, FocusedSection::Main);
 
         // add border to search section
-        tui_layout.search = style_border_of_area(frame, tui_layout.search, String::from("Search"), search_focused);
+        tui_layout.search = style_border_of_area(frame, tui_layout.search, String::from("Search"), search_focused, color_palette);
 
         // add border to main section
-        tui_layout.main = style_border_of_area(frame, tui_layout.main, String::from("Scripts"), main_focused);
+        tui_layout.main = style_border_of_area(frame, tui_layout.main, String::from("Scripts"), main_focused, color_palette);
 
         // add margin to keybind display section
         tui_layout.keybind_display = add_margin_to_area(frame, tui_layout.keybind_display, 1, 1);

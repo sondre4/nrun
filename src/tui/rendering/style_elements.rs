@@ -1,6 +1,6 @@
 use ratatui::{Frame, layout::{Margin, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders}};
 
-use crate::tui::{app::Selection, rendering::tui_rows::TuiRow, styles::ui_style::{KeybindDisplayUiStyle, PackageUiStyle, ScriptUiStyle, UiStyle, UiStyles, VSpaceUiStyle}};
+use crate::tui::{app::Selection, rendering::tui_rows::TuiRow, styles::{colors::ColorPalette, ui_style::{KeybindDisplayUiStyle, PackageUiStyle, ScriptUiStyle, UiStyle, UiStyles, VSpaceUiStyle}}};
 
 fn get_row_style(visible_row: &TuiRow, selection: &Selection, styles: &UiStyles) -> UiStyle {
     // 5 cases:
@@ -112,11 +112,11 @@ pub fn add_margin_to_area(frame: &mut Frame, area: Rect, margin_x: u16, margin_y
     return inner;
 }
 
-pub fn style_border_of_area(frame: &mut Frame, area: Rect, title: String, focused: bool) -> Rect {
+pub fn style_border_of_area(frame: &mut Frame, area: Rect, title: String, focused: bool, color_palette: &ColorPalette) -> Rect {
     let style: Style = if focused {
-        Style::new().fg(Color::Cyan)
+        Style::new().fg(color_palette.primary)
     } else {
-        Style::new().fg(Color::DarkGray)
+        Style::new().fg(color_palette.border)
     };
 
     // add border on area

@@ -34,6 +34,7 @@ pub struct AppState {
     search_input: Input,
     running: bool,
     focused_section: FocusedSection,
+    color_palette: ColorPalette,
     styles: UiStyles
 }
 
@@ -82,13 +83,14 @@ impl App {
         // initialize the style
         let color_capability = detect_color_capability();
         let palette = ColorPalette::from_capability(color_capability);
-        let ui_styles = UiStyles::from_palette(palette);
+        let ui_styles = UiStyles::from_palette(&palette);
 
         let app_state: AppState = AppState {
             workspace: app_data,
             search_input: Input::default(),
             running: true,
             focused_section: FocusedSection::Main,
+            color_palette: palette,
             styles: ui_styles
         };
 
@@ -104,6 +106,10 @@ impl App {
 
     pub fn get_styles(&self) -> &UiStyles {
         return &self.app_state.styles;
+    }
+
+    pub fn get_color_palette(&self) -> &ColorPalette {
+        return &self.app_state.color_palette;
     }
 
     pub fn initialize_expanded_packages(&mut self) -> () {
@@ -203,10 +209,6 @@ impl App {
         for package in &self.app_state.workspace.packages {
             self.tui_view_data.searching_view_data.expanded_set.insert(package.id);
         }
-    }
-
-    fn reset_searching_expanded_packages(&mut self) -> () {
-        self.tui_view_data.searching_view_data.expanded_set.clear();
     }
 
 
