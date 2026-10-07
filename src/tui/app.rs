@@ -386,8 +386,8 @@ impl App {
                 }
 
                 let package = found_package.unwrap();
-                let package_path = package.path.clone();
-                let found_script = self.find_script_by_id(package, found_script_id.unwrap());
+                // let package_path = package.path.clone();
+                let found_script = self.find_script_by_id(package.clone(), found_script_id.unwrap());
 
                 if found_script.is_none() {
                     return Err(format!("Could not find script"));
@@ -395,7 +395,7 @@ impl App {
 
                 let config = ScriptConfig::from_config_data(
                     &found_script.unwrap(),
-                    &package_path,
+                    &package,
                     &self.app_state.workspace.package_manager
                 )?;
 

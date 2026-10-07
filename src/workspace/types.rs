@@ -1,6 +1,4 @@
-use std::{collections::HashMap, path::PathBuf};
-
-use serde::Deserialize;
+use std::{fmt, path::PathBuf};
 
 // for workspace metadata
 
@@ -10,6 +8,17 @@ pub enum PackageManager {
     Pnpm,
     Bun,
     Yarn
+}
+
+impl fmt::Display for PackageManager {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PackageManager::Npm => write!(f, "npm"),
+            PackageManager::Pnpm => write!(f, "pnpm"),
+            PackageManager::Yarn => write!(f, "yarn"),
+            PackageManager::Bun => write!(f, "bun"),
+        }
+    }
 }
 
 

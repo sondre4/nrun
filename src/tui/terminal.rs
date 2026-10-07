@@ -110,13 +110,7 @@ pub fn restore_terminal(stdout_backend: &mut CrosstermBackend<io::Stdout>) -> Re
         }
     }
 
-    let leave_result = execute!(
-        stdout_backend,
-        LeaveAlternateScreen,
-        cursor::Show,
-        cursor::MoveToColumn(0),
-        cursor::MoveToNextLine(1)
-    );
+    let leave_result = execute!(stdout_backend, LeaveAlternateScreen);
 
     match leave_result {
         Ok(_result) => { },

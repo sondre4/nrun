@@ -1,9 +1,12 @@
 use std::{ffi::OsString, path::PathBuf};
 
-use crate::{command::script_caller::{ScriptCaller, ScriptCallerError}, workspace::types::{PackageManager, Script}};
+use crate::{command::script_caller::{ScriptCaller, ScriptCallerError}, workspace::types::{Package, PackageManager, Script}};
 
 #[derive(Debug)]
 pub struct ScriptConfig {
+    pub package_manager: String,
+    pub package_name: String,
+    pub script_name: String,
     pub package_path: PathBuf,
     pub caller: ScriptCaller,
     pub caller_arguments: Vec<OsString>
@@ -35,23 +38,20 @@ impl ScriptConfig {
             }
         }
 
-        // if !script_args.is_empty() {
-        //     args.push(OsString::from("--"));
-        //     args.extend_from_slice(script_args);
-        // }
-
         return args;
     }
 
-    pub fn from_config_data(script: &Script, package_path: &PathBuf, workspace_package_manager: &PackageManager) -> Result<Self, String> {
-        // let caller = Self::to_script_caller(workspace_package_manager);
+    pub fn from_config_data(script: &Script, package: &Package, workspace_package_manager: &PackageManager) -> Result<Self, String> {
         let script_caller = ScriptCaller::from_package_manager(workspace_package_manager);
         match script_caller {
             Ok(caller) => {
-                let mut arguments = Self::build_caller_arguments(workspace_package_manager, &script.name);
+                let arguments = Self::build_caller_arguments(workspace_package_manager, &script.name);
 
                 let config: ScriptConfig = ScriptConfig {
-                    package_path: package_path.clone(),
+                    package_manager: workspace_package_manager.to_string(),
+                    package_name: package.name.clone(),
+                    script_name: script.name.clone(),
+                    package_path: package.path.clone(),
                     caller: caller, 
                     caller_arguments: arguments
                 };

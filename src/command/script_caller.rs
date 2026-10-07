@@ -18,13 +18,6 @@ pub enum ScriptCallerError {
     Io(io::Error)
 }
 
-#[derive(Debug)]
-pub struct ScriptConfig {
-    pub package_path: PathBuf,
-    pub script_caller_path: ScriptCaller,
-    pub caller_arguments: Vec<String>
-}
-
 impl ScriptCaller {
     pub fn from_package_manager(package_manager: &PackageManager) -> Result<Self, ScriptCallerError> {
         let path = Self::resolve_caller_path(package_manager)?;
