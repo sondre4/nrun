@@ -268,9 +268,6 @@ impl App {
     }
 
     pub fn update_filtered_rows(&mut self) -> () {
-        if self.currently_searching() {
-            let a = 5;
-        }
         let original_packages = &self.app_state.workspace.packages;
         let search_results = self.searcher.search(original_packages, self.app_state.search_input.value());
         let current_expanded_packages = &self.get_current_view_data().expanded_set;

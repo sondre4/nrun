@@ -23,5 +23,9 @@ pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String
         current_script_id += 1;
     }
 
+    scripts.sort_by(|script_a, script_b| {
+        return script_a.name.cmp(&script_b.name);
+    });
+
     return Ok(scripts);
 }
