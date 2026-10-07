@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use tui_input::Input;
 
-use crate::{search::{matching::search_query_empty, searcher::PackageSearcher}, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move}, rendering::{tui_rows::TuiRow, visibility::build_tui_rows}, styles::{colors::{ColorPalette, detect_color_capability}, ui_style::UiStyles}}, workspace::types::{Package, Script, Workspace}};
+use crate::{command::{command_caller::CommandCaller, script_config::ScriptConfig}, search::{matching::search_query_empty, searcher::PackageSearcher}, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move}, rendering::{tui_rows::TuiRow, visibility::build_tui_rows}, styles::{colors::{ColorPalette, detect_color_capability}, ui_style::UiStyles}}, workspace::types::{Package, Script, Workspace}};
 
 #[derive(Debug, Clone)]
 pub struct Selection {
@@ -327,6 +327,8 @@ impl App {
             // Interaction
             Operation::ConfirmSelection => {
                 // script has been selected
+                self.app_state.running = false;
+                return OperationResult::ScriptCalled;
             },
 
             Operation::TogglePackageExpansion => {
@@ -364,5 +366,46 @@ impl App {
         }
 
         return OperationResult::None;
+    }
+
+    pub fn handle_operation_result(&self, result: &OperationResult) -> Result<(), String> {
+        match result {
+            OperationResult::ScriptCalled => {
+                let current_view_data = self.get_current_view_data();
+                let found_package_id = current_view_data.selection.row.get_package_id();
+                let found_script_id = current_view_data.selection.row.get_script_id();
+
+                if found_package_id.is_none() || found_script_id.is_none() {
+                    return Err(format!("Missing package or script id"));
+                }
+
+                let found_package = self.find_package_by_id(found_package_id.unwrap());
+
+                if found_package.is_none() {
+                    return Err(format!("Could not find package"));
+                }
+
+                let package = found_package.unwrap();
+                let package_path = package.path.clone();
+                let found_script = self.find_script_by_id(package, found_script_id.unwrap());
+
+                if found_script.is_none() {
+                    return Err(format!("Could not find script"));
+                }
+
+                let config = ScriptConfig::from_config_data(
+                    &found_script.unwrap(),
+                    &package_path,
+                    &self.app_state.workspace.package_manager
+                )?;
+
+                // println!("{config:#?}");
+
+                CommandCaller::call(config)?;
+                return Ok(());
+            },
+
+            _ => return Ok(())
+        }
     }
 }

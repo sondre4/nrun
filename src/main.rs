@@ -1,4 +1,5 @@
 mod cli;
+mod command;
 mod search;
 mod tui;
 mod workspace;
