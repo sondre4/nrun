@@ -8,9 +8,11 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
     // update app
     // render tui
 
-    let _guard = TerminalGuard;
+    // initialize terminal
+    let terminal = initialize_terminal()?;
+    let mut terminal_guard = TerminalGuard::new(terminal);
+    let terminal_mut_ref = terminal_guard.get_terminal_mut();
 
-    let mut terminal = initialize_terminal()?;
     let mut app = App::new(workspace);
     let mut last_operation_result: OperationResult = OperationResult::None;
     // let mut searcher: PackageSearcher = PackageSearcher::new();
@@ -47,7 +49,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         let current_filtered_rows = app.get_filtered_rows();
         let mut view: TuiView = TuiView::initialize_new(current_filtered_rows);
 
-        let render_result = terminal.draw(|frame| {
+        let render_result = terminal_mut_ref.draw(|frame| {
             let current_view_data = app.get_current_view_data();
             let current_focused_section = app.get_focused_section();
 
@@ -73,13 +75,15 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         match render_result {
             Ok(_result) => (),
             Err(error) => {
-                tui::terminal::restore_terminal()?;
+                terminal_guard.restore();
                 return Err(format!("Error whilst rendering: {error}"));
             }
         }
     }
 
-    tui::terminal::restore_terminal()?;
+    terminal_guard.restore();
+
+    app.handle_operation_result(&last_operation_result)?;
 
     return Ok(());
 }
