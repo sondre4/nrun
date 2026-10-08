@@ -67,7 +67,9 @@ impl UiStyles {
                 .bg(palette.selected_package_bg)
                 .add_modifier(Modifier::BOLD),
 
-            script_count: Style::default().fg(palette.muted)
+            script_count: Style::default()
+                .fg(palette.selected_fg)
+                .bg(palette.selected_package_bg)
         };
 
         // script styles

@@ -81,7 +81,7 @@ pub fn handle_launching_tui(global_arguments: GlobalArguments) -> () {
     match launch_tui_result {
         Ok(result) => result,
         Err(error) => {
-            println!("nrun: Error whilst launching tui: {error}");
+            println!("nrun: Encountered an error whilst running TUI: {error}");
             return;
         }
     };

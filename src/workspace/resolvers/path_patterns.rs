@@ -55,7 +55,7 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String, start_package
             
             let resolved_package: Package = Package {
                 id: current_package_id,
-                name: package_json.name.unwrap_or(format!("Package {}", current_package_id)),
+                name: package_json.name.unwrap_or(format!("{}", found_path.clone().to_string_lossy().to_string())),
                 path: found_path,
                 scripts: read_scripts,
             };
