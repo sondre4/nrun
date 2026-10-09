@@ -143,6 +143,14 @@ impl App {
         return Some(found_script.unwrap().clone());
     }
 
+    pub fn find_search_result_package_by_id(&self, package_id: usize) -> Option<&Package> {
+        let found_package =  self.tui_view_data.search_results.iter().find(|p| {
+            p.id == package_id
+        });
+
+        return Some(found_package.unwrap());
+    }
+
     pub fn get_focused_section(&self) -> &FocusedSection {
         return &self.app_state.focused_section;
     }
