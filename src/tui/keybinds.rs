@@ -73,15 +73,6 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         description: "Move up"
     },
 
-    // user interaction
-    // activate row
-    Keybind {
-        key_code: KeyCode::Enter,
-        modifiers: KeyModifiers::NONE,
-        action: Action::Activate,
-        description: "Select"
-    },
-
     // Switch focus to Search
     Keybind {
         key_code: KeyCode::Char('/'),
@@ -102,6 +93,15 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
         description: "Focus Search"
+    },
+
+    // user interaction
+    // activate row
+    Keybind {
+        key_code: KeyCode::Enter,
+        modifiers: KeyModifiers::NONE,
+        action: Action::Activate,
+        description: "Select"
     },
 
     // Quit
