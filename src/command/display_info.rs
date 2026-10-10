@@ -1,6 +1,7 @@
 use crate::command::script_config::ScriptConfig;
+use crossterm::terminal::{self, WindowSize};
 use owo_colors::OwoColorize;
-use std::{ffi::OsString, fmt::Display};
+use std::{cmp::min, ffi::OsString, fmt::Display};
 
 
 fn info<T: Display>(text: T) -> String {
@@ -23,8 +24,8 @@ fn separator<T: Display>(text: T) -> String {
     return text.to_string().bright_black().to_string();
 }
 
-fn print_separator() -> () {
-    let line = "-".repeat(20);
+fn print_separator(length: usize) -> () {
+    let line = "-".repeat(length);
     let separator = separator(&line);
     println!("{separator}");
 }
@@ -32,7 +33,7 @@ fn print_separator() -> () {
 pub fn display_command_call_info(config: &ScriptConfig) -> () {
 
         // title
-        println!("{}", text("Nrun"));
+        println!("{}", separator("Nrun"));
         // print_separator();
         // println!();
 
@@ -48,11 +49,14 @@ pub fn display_command_call_info(config: &ScriptConfig) -> () {
         let running_in_line = format!("{} {}", info(&config.package_name), text_important(&config.script_name));
         println!("{} {}\n", separator(">"), running_in_line);
 
-        print_separator();
-
-        // Script line
+        // Script name (stored as command args)
         let arguments_string = config.caller_arguments.join(OsString::from(" ").as_ref());
         let arguments_display = arguments_string.display();
         let script_line = format!("{} {}", info(&config.package_manager), info(arguments_display));
+
+        // Print line
+        print_separator(20);
+
+        // Print script line
         println!("{} {}\n", separator(">"), script_line);
 }

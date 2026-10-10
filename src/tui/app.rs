@@ -57,6 +57,7 @@ impl ViewData {
 
 pub struct TuiViewData {
     filtered_rows: Vec<TuiRow>,
+    search_results: Vec<Package>,
     main_view_data: ViewData,
     searching_view_data: ViewData
 }
@@ -65,6 +66,7 @@ impl TuiViewData {
     fn default() -> TuiViewData {
         return TuiViewData {
             filtered_rows: Vec::new(),
+            search_results: Vec::new(),
             main_view_data: ViewData::new(),
             searching_view_data: ViewData::new()
         };
@@ -139,6 +141,14 @@ impl App {
         }
 
         return Some(found_script.unwrap().clone());
+    }
+
+    pub fn find_search_result_package_by_id(&self, package_id: usize) -> Option<Package> {
+        let found_package = self.tui_view_data.search_results.iter().find(|p| {
+            p.id == package_id
+        });
+
+        return Some(found_package.unwrap().clone());
     }
 
     pub fn get_focused_section(&self) -> &FocusedSection {
@@ -270,6 +280,7 @@ impl App {
     pub fn update_filtered_rows(&mut self) -> () {
         let original_packages = &self.app_state.workspace.packages;
         let search_results = self.searcher.search(original_packages, self.app_state.search_input.value());
+        self.tui_view_data.search_results = search_results.clone();
         let current_expanded_packages = &self.get_current_view_data().expanded_set;
         let all_filtered_rows = build_tui_rows(&search_results, &current_expanded_packages);
 

@@ -114,7 +114,7 @@ fn render_vspace_row(frame: &mut Frame, area: Rect) -> () {
 fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () {
     match tui_row {
         TuiRow::Package { package_id } => {
-            let package_wrapped = app.find_package_by_id(*package_id);
+            let package_wrapped = app.find_search_result_package_by_id(*package_id);
 
             if package_wrapped.is_none() {
                 return;
@@ -129,7 +129,7 @@ fn render_row(frame: &mut Frame, area: Rect, app: &App, tui_row: &TuiRow) -> () 
         },
 
         TuiRow::Script { package_id, script_id } => {
-            let package_wrapped = app.find_package_by_id(*package_id);
+            let package_wrapped = app.find_search_result_package_by_id(*package_id);
             if package_wrapped.is_none() {
                 // it is fine to return here, this returns from the function but there is nothing after the match statement
                 return;
