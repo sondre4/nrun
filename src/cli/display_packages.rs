@@ -2,20 +2,20 @@ use owo_colors::OwoColorize;
 
 use crate::workspace::types::{Package, Workspace};
 
-const HEADER_START: usize = 2;
+const HEADER_START: usize = 7;
 // const VERTICAL_BAR_OFFSET: usize = 2;
-const ID_WIDTH: usize = 5;
+// const ID_WIDTH: usize = 5;
 const SCRIPT_NAME_WIDTH: usize = 25;
 const SCRIPT_COMMAND_WIDTH: usize = 60;
 
 fn display_header() {
-    println!("{}{:<ID_WIDTH$} {:<NAME_WIDTH$} {}{}", " ".repeat(HEADER_START), "(id)".dimmed(), "Script", "│ ".dimmed(), "Command", ID_WIDTH = (ID_WIDTH + 4), NAME_WIDTH = SCRIPT_NAME_WIDTH);
-    println!("{}", ("-".repeat(ID_WIDTH + SCRIPT_NAME_WIDTH + SCRIPT_COMMAND_WIDTH + 2)).dimmed());
+    println!("{}{:<NAME_WIDTH$} {}{}", " ".repeat(HEADER_START), "Script", "│ ".dimmed(), "Command", NAME_WIDTH = SCRIPT_NAME_WIDTH);
+    println!("{}", ("-".repeat(HEADER_START + SCRIPT_NAME_WIDTH + SCRIPT_COMMAND_WIDTH + 2)).dimmed());
 }
 
 fn display_package(packages: &Package) {
     // packages
-    println!("{} {} {}", "v".cyan().bold(), format!("({})",  packages.id).dimmed(), packages.name.bold().cyan());
+    println!("{} {} {}", "v".cyan().bold(), packages.name.bold().cyan(), format!("({})",  packages.scripts.len()).dimmed());
 
     // scripts
     for (index, script) in packages.scripts.iter().enumerate() {
@@ -29,13 +29,11 @@ fn display_package(packages: &Package) {
         let script_command = truncate(&script.command, SCRIPT_COMMAND_WIDTH);
 
         println!(
-            "   {} {:<ID_WIDTH$} {:<NAME_WIDTH$} {} {}",
+            "   {}  {:<NAME_WIDTH$} {} {}",
             branch.dimmed(),
-            format!("({})", script.id).dimmed(),
             script_name.bold(),
             "│".dimmed(),
             script_command,
-            ID_WIDTH = ID_WIDTH,
             NAME_WIDTH = SCRIPT_NAME_WIDTH
         );
     }
