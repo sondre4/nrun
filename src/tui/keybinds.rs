@@ -14,6 +14,13 @@ pub struct Keybind {
 
 pub const SEARCH_KEYBINDS: &[Keybind] = &[
     Keybind {
+        key_code: KeyCode::Tab,
+        modifiers: KeyModifiers::NONE,
+        action: Action::FinishSearch,
+        description: "Focus Scripts"
+    },
+
+    Keybind {
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
@@ -25,13 +32,6 @@ pub const SEARCH_KEYBINDS: &[Keybind] = &[
         modifiers: KeyModifiers::NONE,
         action: Action::CancelSearch,
         description: "Cancel Search"
-    },
-
-    Keybind {
-        key_code: KeyCode::Tab,
-        modifiers: KeyModifiers::NONE,
-        action: Action::FinishSearch,
-        description: "Focus Scripts"
     },
 
     Keybind {
@@ -75,7 +75,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
 
     // Switch focus to Search
     Keybind {
-        key_code: KeyCode::Char('/'),
+        key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
         description: "Focus Search"
@@ -89,7 +89,7 @@ pub const MAIN_KEYBINDS: &[Keybind] = &[
     },
 
     Keybind {
-        key_code: KeyCode::Tab,
+        key_code: KeyCode::Char('/'),
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
         description: "Focus Search"
