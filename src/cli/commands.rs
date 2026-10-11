@@ -11,7 +11,7 @@ use crate::cli::handlers;
     version,
     about = "Calling 'nrun' without a command/subcommand launches the TUI (Default behavior is interactive)",
     long_about = "about2",
-    after_help = "about3",
+    after_help = "about3"
 )]
 pub struct Cli {
     #[command(subcommand)]
@@ -32,7 +32,7 @@ pub struct Cli {
 
     /// Optional: specify how far out of the starting directory nrun should search for a workspace root
     #[arg(short, long, global = true, default_value_t = 7)] // default depth is 7
-    depth: u32
+    depth: u32,
 }
 
 #[derive(Subcommand)]
@@ -52,24 +52,23 @@ pub enum Command {
 
         /// Enable scoring/filtering debug output
         #[arg(long, default_value_t = false)]
-        debug: bool
+        debug: bool,
     },
 
     /// List all packages and their scripts in a workspace
     #[command(visible_alias = "l", visible_alias = "ls")]
     List {
-
         /// Output to stdout in JSON format
         #[arg(short, long, default_value_t = false)]
-        json: bool
-    }
+        json: bool,
+    },
 }
 
 pub struct GlobalArguments {
     pub package: Option<String>,
     pub script: Option<String>,
     pub workspace: Option<PathBuf>,
-    pub depth: u32
+    pub depth: u32,
 }
 
 impl GlobalArguments {
@@ -78,7 +77,7 @@ impl GlobalArguments {
             package: input.package.clone(),
             script: input.script.clone(),
             workspace: input.workspace.clone(),
-            depth: input.depth.clone()
+            depth: input.depth,
         };
     }
 }
@@ -87,17 +86,23 @@ pub fn handle_command(input: Cli) -> () {
     let global_args = GlobalArguments::from(&input);
 
     match input.command {
-        Some(Command::List { json }) => {
+        Some(Command::List {
+            json,
+        }) => {
             handlers::handle_list_packages(global_args, json);
-        },
+        }
 
         Some(Command::Tui) => {
             handlers::handle_cli_default(global_args);
-        },
+        }
 
-        Some(Command::Search { query, debug,  json }) => {
+        Some(Command::Search {
+            query,
+            debug,
+            json,
+        }) => {
             handlers::handle_cli_search(global_args, &query, debug, json);
-        },
+        }
 
         // Default
         None => {

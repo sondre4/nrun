@@ -1,6 +1,9 @@
 use std::{fs, path::Path};
 
-use crate::workspace::{config::Project, parsers::{config_types::WorkspaceConfig, file_exists::file_exists}};
+use crate::workspace::{
+    config::Project,
+    parsers::{config_types::WorkspaceConfig, file_exists::file_exists},
+};
 
 fn parse_pnpm_workspace_from_path(path: &Path) -> Result<WorkspaceConfig, String> {
     file_exists(path)?;
@@ -14,7 +17,7 @@ fn parse_pnpm_workspace_from_path(path: &Path) -> Result<WorkspaceConfig, String
 
     match parsed_yaml_result {
         Ok(config) => return Ok(config),
-        Err(error) => return Err(format!("Error whilst parsing {debug_out_path}: {error}"))
+        Err(error) => return Err(format!("Error whilst parsing {debug_out_path}: {error}")),
     }
 }
 
@@ -24,7 +27,6 @@ fn read_pnpm_workspace_config(project: &Project) -> Result<WorkspaceConfig, Stri
     return Ok(read_config);
 }
 
-
 pub fn find_pnpm_package_path_patterns(project: &Project) -> Result<Vec<String>, String> {
     let workspace_config = read_pnpm_workspace_config(project)?;
 
@@ -33,7 +35,7 @@ pub fn find_pnpm_package_path_patterns(project: &Project) -> Result<Vec<String>,
     if package_path_patterns_option.is_none() {
         // return error message
         // equivalent patterns should be available in PackageJson.workspaces for other package managers than npm
-        return Err(format!("No package path patterns found in pnpm workspace"));
+        return Err("No package path patterns found in pnpm workspace".to_string());
         // fallback to lockfile?
     }
 

@@ -1,0 +1,17 @@
+# Main config
+max_width = 180
+tab_spaces = 4
+hard_tabs = false
+
+# keeping expressions on one line if it fits
+use_small_heuristics = "Max"
+
+# keeps function parameters on one line if it fits
+fn_params_layout = "Compressed"
+
+# multiline for objects
+struct_lit_width = 0
+
+# For not including trailing comma if needed in the future
+# unstable_features = true
+# trailing_comma = "Never"

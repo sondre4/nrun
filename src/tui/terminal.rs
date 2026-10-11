@@ -1,20 +1,23 @@
-use std::io::{self, Write};
+use std::io::{self};
 
-use crossterm::{cursor, execute, terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode}};
+use crossterm::{
+    execute,
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+};
 use ratatui::{Terminal, backend::CrosstermBackend};
 
 pub type AppTerminal = Terminal<CrosstermBackend<io::Stdout>>;
 
 pub struct TerminalGuard {
     terminal: Option<Terminal<CrosstermBackend<io::Stdout>>>,
-    terminal_restored: bool
+    terminal_restored: bool,
 }
 
 impl TerminalGuard {
     pub fn new(terminal: Terminal<CrosstermBackend<io::Stdout>>) -> Self {
         return TerminalGuard {
             terminal: Some(terminal),
-            terminal_restored: false
+            terminal_restored: false,
         };
     }
 
@@ -34,7 +37,7 @@ impl TerminalGuard {
             Ok(_) => {
                 self.terminal_restored = true;
                 return;
-            },
+            }
             Err(error) => {
                 println!("{error}");
             }
@@ -59,7 +62,7 @@ impl Drop for TerminalGuard {
         match result {
             Ok(_) => {
                 return;
-            },
+            }
             Err(error) => {
                 println!("{error}");
             }
@@ -71,7 +74,7 @@ impl Drop for TerminalGuard {
 pub fn initialize_terminal() -> Result<AppTerminal, String> {
     let enabling_raw_result = enable_raw_mode();
     match enabling_raw_result {
-        Ok(_result) => { },
+        Ok(_result) => {}
         Err(error) => {
             return Err(format!("Error whilst enabling raw terminal: {error}"));
         }
@@ -81,7 +84,7 @@ pub fn initialize_terminal() -> Result<AppTerminal, String> {
 
     let enter_result = execute!(stdout, EnterAlternateScreen);
     match enter_result {
-        Ok(_result) => { },
+        Ok(_result) => {}
         Err(error) => {
             return Err(format!("Error whilst entering alternate screen: {error}"));
         }
@@ -113,7 +116,7 @@ pub fn restore_terminal(stdout_backend: &mut CrosstermBackend<io::Stdout>) -> Re
     let leave_result = execute!(stdout_backend, LeaveAlternateScreen);
 
     match leave_result {
-        Ok(_result) => { },
+        Ok(_result) => {}
         Err(error) => {
             return Err(format!("Error whilst leaving alternate screen: {error}"));
         }

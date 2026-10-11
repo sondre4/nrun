@@ -4,11 +4,9 @@
 //
 //
 
-
 // use std::path::{Path, PathBuf};
 
 // use crate::workspace::{config::{PNPM_CONFIG, Project}, parsers::{package_json::parse_package_json, pnpm_lockfile::parse_pnpm_lockfile_yaml, pnpm_workspace::parse_pnpm_workspace}, types::{Package, PackageJson, Script, Workspace}};
-
 
 // pub fn get_pnpm_workspace(project: &Project, root_package_json_schema: &PackageJson) -> Result<Workspace, String> {
 
@@ -25,7 +23,6 @@
 //         println!("Error whilst parsing workspace file '{printable_workspace_path}'");
 //         // return;
 //     }
-
 
 //     // pnpm lockfile
 //     let parsed_lockfiles_yaml = parse_pnpm_lockfile_yaml(&lockfile_path);
@@ -63,7 +60,6 @@
 
 //         found_pnpm_packages.push(package);
 //     }
-
 
 //     let workspace: Workspace = Workspace {
 //         root_path: project.root_path.clone(),

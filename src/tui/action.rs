@@ -2,8 +2,6 @@ use tui_input::InputRequest;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Action {
-    Nothing,
-
     // Exit program
     Quit,
 
@@ -15,10 +13,10 @@ pub enum Action {
     Activate,
 
     // Searching
-    FocusSearch, // '/'
+    FocusSearch,  // '/'
     FinishSearch, // Enter
     CancelSearch, // Esc
 
     // SearchAction
-    SearchAction(InputRequest)
+    SearchAction(InputRequest),
 }

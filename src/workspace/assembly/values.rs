@@ -12,7 +12,7 @@ pub fn initialize_values(initial_directory: Option<PathBuf>, initial_search_dept
 
     let initial_values: SearchValues = SearchValues {
         directory: start_directory,
-        depth: initial_search_depth
+        depth: initial_search_depth,
     };
 
     return Ok(initial_values);

@@ -1,8 +1,14 @@
 use nucleo::{Matcher, pattern::Pattern};
 
-use crate::{search::{matching::match_find_score, scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_WEIGHT, SCRIPT_COMMAND_WEIGHT, SCRIPT_NAME_WEIGHT, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript}}, workspace::types::{Package, Script}};
+use crate::{
+    search::{
+        matching::match_find_score,
+        scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_WEIGHT, SCRIPT_COMMAND_WEIGHT, SCRIPT_NAME_WEIGHT, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript},
+    },
+    workspace::types::{Package, Script},
+};
 
-pub fn get_scores_from_scored_scripts(scored_scripts: &Vec<ScoredScript>) -> Vec<f64> {
+pub fn get_scores_from_scored_scripts(scored_scripts: &[ScoredScript]) -> Vec<f64> {
     let mut scores: Vec<f64> = Vec::new();
 
     for script in scored_scripts {
@@ -12,7 +18,7 @@ pub fn get_scores_from_scored_scripts(scored_scripts: &Vec<ScoredScript>) -> Vec
     return scores;
 }
 
-pub fn get_scores_from_scored_packages(scored_packages: &Vec<ScoredPackage>) -> Vec<f64> {
+pub fn get_scores_from_scored_packages(scored_packages: &[ScoredPackage]) -> Vec<f64> {
     let mut scores: Vec<f64> = Vec::new();
 
     for package in scored_packages {
@@ -23,7 +29,7 @@ pub fn get_scores_from_scored_packages(scored_packages: &Vec<ScoredPackage>) -> 
 }
 
 // packages with a score lower than this will not be included
-pub fn calculate_minimum_needed_score(scores: &Vec<f64>) -> f64 {
+pub fn calculate_minimum_needed_score(scores: &[f64]) -> f64 {
     if scores.is_empty() {
         return 0.0;
     }
@@ -65,19 +71,14 @@ pub fn calculate_minimum_needed_score(scores: &Vec<f64>) -> f64 {
     return best_score * MINIMUM_RELATIVE_SCORE_FACTOR;
 }
 
-
 // descending: largest first
-pub fn sort_scripts_by_score(scripts: &mut Vec<ScoredScript>) -> () {
-    scripts.sort_by(|a, b| {
-        b.score.total_cmp(&a.score)
-    });
+pub fn sort_scripts_by_score(scripts: &mut [ScoredScript]) -> () {
+    scripts.sort_by(|a, b| b.score.total_cmp(&a.score));
 }
 
 // descending: largest first
-pub fn sort_packages_by_score(packages: &mut Vec<ScoredPackage>) -> () {
-    packages.sort_by(|a, b| {
-        b.score.total_cmp(&a.score)
-    });
+pub fn sort_packages_by_score(packages: &mut [ScoredPackage]) -> () {
+    packages.sort_by(|a, b| b.score.total_cmp(&a.score));
 }
 
 pub fn should_filter_package_scripts(scored_package: &ScoredPackage) -> bool {
@@ -104,7 +105,7 @@ pub fn score_script(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &m
         script: script.clone(),
         script_name_score: weighted_name_score,
         script_command_score: weighted_command_score,
-        score: score_max(weighted_name_score, weighted_command_score) // multiply with weights here?
+        score: score_max(weighted_name_score, weighted_command_score), // multiply with weights here?
     };
 
     return scored_script;
@@ -127,7 +128,7 @@ pub fn score_package(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &
         package: package.clone(),
         scored_scripts: scored_scripts,
         package_name_score: weighted_package_name_score,
-        score: score_max(weighted_package_name_score, best_item_score) // multiply with weights here?
+        score: score_max(weighted_package_name_score, best_item_score), // multiply with weights here?
     };
 
     return scored_package;

@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyModifiers};
 
-use crate::tui::{action::Action};
+use crate::tui::action::Action;
 
 #[derive(Clone)]
 pub struct Keybind {
@@ -8,8 +8,7 @@ pub struct Keybind {
     pub modifiers: KeyModifiers,
     pub action: Action,
     // pub limited_to_row: Option<TuiRow>, // moved to handler, actions should be general
-    pub description: &'static str,
-    // pub available_in: FocusedSection // not needed with separate keybinds for each FocusedSection enum
+    pub description: &'static str, // pub available_in: FocusedSection // not needed with separate keybinds for each FocusedSection enum
 }
 
 pub const SEARCH_KEYBINDS: &[Keybind] = &[
@@ -17,108 +16,97 @@ pub const SEARCH_KEYBINDS: &[Keybind] = &[
         key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
-        description: "Focus Scripts"
+        description: "Focus Scripts",
     },
-
     Keybind {
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::FinishSearch,
-        description: "Focus Scripts"
+        description: "Focus Scripts",
     },
-
     Keybind {
         key_code: KeyCode::Esc,
         modifiers: KeyModifiers::NONE,
         action: Action::CancelSearch,
-        description: "Cancel Search"
+        description: "Cancel Search",
     },
-
     Keybind {
         key_code: KeyCode::Char('c'),
         modifiers: KeyModifiers::CONTROL,
         action: Action::Quit,
-        description: "Quit"
-    }
+        description: "Quit",
+    },
 ];
 
 pub const MAIN_KEYBINDS: &[Keybind] = &[
-
     // Navigation
     // Down
     Keybind {
         key_code: KeyCode::Down,
         modifiers: KeyModifiers::NONE,
         action: Action::MoveDown,
-        description: "Move down"
+        description: "Move down",
     },
     Keybind {
         key_code: KeyCode::Char('j'),
         modifiers: KeyModifiers::NONE,
         action: Action::MoveDown,
-        description: "Move down"
+        description: "Move down",
     },
-
     // Up
     Keybind {
         key_code: KeyCode::Up,
         modifiers: KeyModifiers::NONE,
         action: Action::MoveUp,
-        description: "Move up"
+        description: "Move up",
     },
     Keybind {
         key_code: KeyCode::Char('k'),
         modifiers: KeyModifiers::NONE,
         action: Action::MoveUp,
-        description: "Move up"
+        description: "Move up",
     },
-
     // Switch focus to Search
     Keybind {
         key_code: KeyCode::Tab,
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
-        description: "Focus Search"
+        description: "Focus Search",
     },
-
     Keybind {
         key_code: KeyCode::Char('f'),
         modifiers: KeyModifiers::CONTROL,
         action: Action::FocusSearch,
-        description: "Focus Search"
+        description: "Focus Search",
     },
-
     Keybind {
         key_code: KeyCode::Char('/'),
         modifiers: KeyModifiers::NONE,
         action: Action::FocusSearch,
-        description: "Focus Search"
+        description: "Focus Search",
     },
-
     // user interaction
     // activate row
     Keybind {
         key_code: KeyCode::Enter,
         modifiers: KeyModifiers::NONE,
         action: Action::Activate,
-        description: "Select"
+        description: "Select",
     },
-
     // Quit
     Keybind {
         key_code: KeyCode::Char('q'),
         modifiers: KeyModifiers::NONE,
         action: Action::Quit,
-        description: "Quit"
+        description: "Quit",
     },
     Keybind {
         key_code: KeyCode::Char('c'),
         modifiers: KeyModifiers::CONTROL,
         action: Action::Quit,
-        description: "Quit"
-    }
+        description: "Quit",
+    },
 ];
-
 
 pub fn get_keybind_name(keybind: &Keybind) -> String {
     let mut key = match keybind.key_code {

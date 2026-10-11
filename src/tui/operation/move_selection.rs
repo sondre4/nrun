@@ -1,4 +1,7 @@
-use crate::tui::{app::{App, Selection, SelectionMovement}, rendering::{tui_rows::TuiRow, visibility::{find_index_of_selection_in_visible_rows}}};
+use crate::tui::{
+    app::{Selection, SelectionMovement},
+    rendering::{tui_rows::TuiRow, visibility::find_index_of_selection_in_visible_rows},
+};
 
 fn get_new_index(old_index: usize, change: i64) -> usize {
     return (old_index as i64 + change) as usize;
@@ -8,7 +11,7 @@ fn get_selection_change(direction: &SelectionMovement) -> i64 {
     match direction {
         SelectionMovement::Up => {
             return -1;
-        },
+        }
         SelectionMovement::Down => {
             return 1;
         }
@@ -28,14 +31,11 @@ fn change_within_bounds(collection_length: usize, current_index: usize, change: 
     return true;
 }
 
-fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
-    let mut running = true;
+fn get_new_selection(rows: &[TuiRow], selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
     let row_collection_length = rows.len();
     let mut new_index = selected_row_index;
 
-    let move_to_row: TuiRow;
-    
-    while running {
+    loop {
         let change = get_selection_change(direction);
         if !change_within_bounds(row_collection_length, new_index, change) {
             return None;
@@ -46,23 +46,21 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
         if matches!(rows[new_index], TuiRow::Vspace) {
             continue;
         }
-        running = false;
         break;
     }
 
     let new_row = &rows[new_index];
-
-    move_to_row = new_row.clone();
+    let move_to_row: TuiRow = new_row.clone();
 
     let new_selection: Selection = Selection {
-        row: move_to_row
+        row: move_to_row,
     };
 
     return Some(new_selection);
 }
 
 // app decides which selection is used, depending on which section is focused
-pub fn get_new_selection_after_move(current_filtered_rows: &Vec<TuiRow>, current_selection: &Selection, direction: SelectionMovement) -> Option<Selection> {
+pub fn get_new_selection_after_move(current_filtered_rows: &[TuiRow], current_selection: &Selection, direction: SelectionMovement) -> Option<Selection> {
     let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(current_selection, current_filtered_rows);
 
     if selected_visible_row_index_wrapped.is_none() {

@@ -1,6 +1,9 @@
 use std::{ffi::OsString, path::PathBuf};
 
-use crate::{command::script_caller::{ScriptCaller, ScriptCallerError}, workspace::types::{Package, PackageManager, Script}};
+use crate::{
+    command::script_caller::{ScriptCaller, ScriptCallerError},
+    workspace::types::{Package, PackageManager, Script},
+};
 
 #[derive(Debug)]
 pub struct ScriptConfig {
@@ -9,7 +12,7 @@ pub struct ScriptConfig {
     pub script_name: String,
     pub package_path: PathBuf,
     pub caller: ScriptCaller,
-    pub caller_arguments: Vec<OsString>
+    pub caller_arguments: Vec<OsString>,
 }
 
 impl ScriptConfig {
@@ -20,17 +23,17 @@ impl ScriptConfig {
             PackageManager::Npm => {
                 args.push(OsString::from("run"));
                 args.push(OsString::from(script_name));
-            },
+            }
 
             PackageManager::Pnpm => {
                 args.push(OsString::from("run"));
                 args.push(OsString::from(script_name));
-            },
+            }
 
             PackageManager::Yarn => {
                 args.push(OsString::from("run"));
                 args.push(OsString::from(script_name));
-            },
+            }
 
             PackageManager::Bun => {
                 args.push(OsString::from("run"));
@@ -52,25 +55,26 @@ impl ScriptConfig {
                     package_name: package.name.clone(),
                     script_name: script.name.clone(),
                     package_path: package.path.clone(),
-                    caller: caller, 
-                    caller_arguments: arguments
+                    caller: caller,
+                    caller_arguments: arguments,
                 };
-                
+
                 return Ok(config);
-            },
-            Err(error) => {
-                match error {
-                    ScriptCallerError::PackageManagerNotFound { package_manager, searched_names } => {
-                        return Err(format!("Package manager not found. Paths tried: {}", searched_names));
-                    },
-                    ScriptCallerError::PathNotSet => {
-                        return Err(format!("Path not set"));
-                    },
-                    ScriptCallerError::Io(io_error) => {
-                        return Err(format!("IO Error: {}", io_error));
-                    }
-                }
             }
+            Err(error) => match error {
+                // ScriptCallerError::PackageManagerNotFound {
+                //     package_manager: _,
+                //     searched_names,
+                // } => {
+                //     return Err(format!("Package manager not found. Paths tried: {}", searched_names));
+                // }
+                ScriptCallerError::PathNotSet => {
+                    return Err("Path not set".to_string());
+                }
+                ScriptCallerError::Io(io_error) => {
+                    return Err(format!("IO Error: {}", io_error));
+                }
+            },
         }
     }
 }

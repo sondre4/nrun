@@ -12,6 +12,7 @@ pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String
 
     let mut current_script_id: usize = 0;
 
+    #[allow(clippy::explicit_counter_loop)]
     for (script_name, script_command) in script_map {
         let script: Script = Script {
             id: current_script_id,

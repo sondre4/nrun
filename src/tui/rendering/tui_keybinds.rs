@@ -1,13 +1,22 @@
-use std::{cmp::max, collections::HashMap};
+use std::cmp::max;
 
-use ratatui::{Frame, layout::{Constraint, Layout, Rect}, text::{Line, Span}, widgets::Paragraph};
+use ratatui::{
+    Frame,
+    layout::{Constraint, Layout, Rect},
+    text::{Line, Span},
+    widgets::Paragraph,
+};
 
-use crate::tui::{action::Action, app::FocusedSection, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name}, rendering::style_elements::get_keybind_display_style, styles::ui_style::KeybindDisplayUiStyle};
+use crate::tui::{
+    action::Action,
+    app::FocusedSection,
+    keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name},
+    styles::ui_style::KeybindDisplayUiStyle,
+};
 
 struct DisplayedKeybindEntry {
-    action: Action,
     description: String,
-    keys: Vec<String>
+    keys: Vec<String>,
 }
 
 fn choose_keybind_set(focused_section: &FocusedSection) -> Vec<&'static Keybind> {
@@ -18,7 +27,7 @@ fn choose_keybind_set(focused_section: &FocusedSection) -> Vec<&'static Keybind>
             for keybind in MAIN_KEYBINDS {
                 keybinds.push(keybind);
             }
-        },
+        }
 
         FocusedSection::Search => {
             for keybind in SEARCH_KEYBINDS {
@@ -46,6 +55,7 @@ fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindE
 
         let mut keybind_names: Vec<String> = Vec::new();
 
+        #[allow(clippy::needless_range_loop)]
         for inner_index in 0..keybind_count {
             let inner_keybind = &keybinds[inner_index];
 
@@ -58,7 +68,6 @@ fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindE
         completed_keybind_actions.push(current_action);
 
         let keybind_entry: DisplayedKeybindEntry = DisplayedKeybindEntry {
-            action: current_action,
             description: keybind.description.to_string(),
             keys: keybind_names,
         };
@@ -69,50 +78,7 @@ fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindE
     return entries;
 }
 
-fn build_keybind_map(keybinds: Vec<&Keybind>) -> HashMap<Action, Vec<Keybind>> {
-    let mut keybind_map: HashMap<Action, Vec<Keybind>> = HashMap::new();
-
-    for keybind in keybinds {
-        let action = keybind.action;
-
-        let keybind_collection = keybind_map.entry(action).or_default();
-        keybind_collection.push(keybind.clone());
-    }
-
-    return keybind_map;
-}
-
-fn build_keybind_display_data(keybind_map: &HashMap<Action, Vec<Keybind>>) -> Vec<DisplayedKeybindEntry> {
-    let mut entries: Vec<DisplayedKeybindEntry> = Vec::new();
-
-    for (action, keybinds) in keybind_map {
-        let main_keybind_description: String = String::from(keybinds[0].description);
-        let mut keybind_description: String = main_keybind_description.clone();
-        let mut keybind_keys: Vec<String> = Vec::new();
-
-        for keybind in keybinds {
-            let key_name = get_keybind_name(keybind);
-            keybind_keys.push(key_name);
-
-            let description = String::from(keybind.description);
-
-            if description != main_keybind_description {
-                keybind_description.push_str(format!("/{}", description).as_str());
-            }
-        }
-
-        let entry: DisplayedKeybindEntry = DisplayedKeybindEntry {
-            action: *action,
-            description: keybind_description,
-            keys: keybind_keys
-        };
-
-        entries.push(entry);
-    }
-
-    return entries;
-}
-
+#[allow(clippy::vec_init_then_push)]
 fn get_padding_spans(top_column_count: usize, bottom_column_count: usize, pad_length: usize) -> Vec<Span<'static>> {
     let end_length = max(top_column_count, bottom_column_count) + pad_length;
 
@@ -179,12 +145,7 @@ pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &Focu
     let keybind_display_data = keybinds_to_display_entries(keybinds);
     let display_lines = build_display_lines(keybind_display_data, style);
 
-    let [keybind_name_row, description_row] = Layout::vertical(
-        [
-            Constraint::Length(1),
-            Constraint::Length(1)
-        ]
-    ).areas(area);
+    let [keybind_name_row, description_row] = Layout::vertical([Constraint::Length(1), Constraint::Length(1)]).areas(area);
 
     let display_name_row = Paragraph::new(display_lines[0].clone());
     let display_description = Paragraph::new(display_lines[1].clone());

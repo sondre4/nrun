@@ -1,15 +1,28 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::{tui::{app::{App, FocusedSection, Selection}, operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding}, rendering::{search_bar::render_search_bar, style_elements::{add_margin_to_area, get_keybind_display_style, style_border_of_area}, tui_keybinds::render_tui_keybinds, tui_layout::{TuiLayout, get_ui_layout, height_of_area}, tui_rows::{TuiRow, render_ui_rows}, visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows}}, styles::colors::ColorPalette}, workspace::types::Package};
+use crate::tui::{
+    app::{App, FocusedSection, Selection},
+    operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding},
+    rendering::{
+        search_bar::render_search_bar,
+        style_elements::{add_margin_to_area, get_keybind_display_style, style_border_of_area},
+        tui_keybinds::render_tui_keybinds,
+        tui_layout::{TuiLayout, get_ui_layout, height_of_area},
+        tui_rows::{TuiRow, render_ui_rows},
+        visibility::{find_index_of_selection_in_visible_rows, to_visible_rows},
+    },
+    styles::colors::ColorPalette,
+};
 
+#[allow(dead_code)] // TODO: store currently selected index instead of searching the rows for the index each time
 pub struct TuiViewportState {
     pub main_section_height: usize,
     pub selected_index: usize,
-    pub scroll_offset: usize
+    pub scroll_offset: usize,
 }
 
 pub struct TuiView {
-    filtered_rows: Vec<TuiRow>
+    filtered_rows: Vec<TuiRow>,
 }
 
 impl TuiView {
@@ -18,7 +31,7 @@ impl TuiView {
         // let rows = build_tui_rows(search_results, expanded_set);
 
         return TuiView {
-            filtered_rows: filtered_rows
+            filtered_rows: filtered_rows,
         };
     }
 
@@ -45,17 +58,13 @@ impl TuiView {
         return old_scroll_offset;
     }
 
-    fn adjust_scroll_offset(&mut self, calculated_scroll_offset: usize, selected_row: &TuiRow, selected_row_index: usize, main_height: usize, operation_result: &OperationResult) -> usize {
+    fn adjust_scroll_offset(
+        &mut self, calculated_scroll_offset: usize, selected_row: &TuiRow, selected_row_index: usize, main_height: usize, operation_result: &OperationResult,
+    ) -> usize {
         match operation_result {
             OperationResult::PackageExpanded => {
-                return new_scroll_offset_after_expanding(
-                    &self.filtered_rows,
-                    selected_row,
-                    selected_row_index,
-                    calculated_scroll_offset,
-                    main_height
-                );
-            },
+                return new_scroll_offset_after_expanding(&self.filtered_rows, selected_row, selected_row_index, calculated_scroll_offset, main_height);
+            }
 
             _ => {
                 return calculated_scroll_offset;
@@ -81,42 +90,33 @@ impl TuiView {
         tui_layout.main = style_border_of_area(frame, tui_layout.main, String::from("Scripts"), main_focused, color_palette);
 
         // add margin to keybind display section
-        tui_layout.keybind_display = add_margin_to_area(frame, tui_layout.keybind_display, 1, 1);
+        tui_layout.keybind_display = add_margin_to_area(tui_layout.keybind_display, 1, 1);
 
         return tui_layout;
     }
 
-    pub fn calculate_viewport_state(&mut self, styled_layout: &TuiLayout, current_selection: &Selection, previous_scroll_offset: usize, last_operation_result: &OperationResult) -> TuiViewportState {
+    pub fn calculate_viewport_state(
+        &mut self, styled_layout: &TuiLayout, current_selection: &Selection, previous_scroll_offset: usize, last_operation_result: &OperationResult,
+    ) -> TuiViewportState {
         let main_section_height = self.get_height_from_area(styled_layout.main);
         let selected_index_wrapped = find_index_of_selection_in_visible_rows(current_selection, &self.filtered_rows);
         let selected_index = selected_index_wrapped.unwrap_or(0);
         let calculated_scroll_offset = self.calculate_new_scroll_offset(main_section_height, selected_index, previous_scroll_offset);
 
-        let new_scroll_offset = self.adjust_scroll_offset(
-            calculated_scroll_offset,
-            &current_selection.row,
-            selected_index,
-            main_section_height,
-            last_operation_result
-        );
+        let new_scroll_offset = self.adjust_scroll_offset(calculated_scroll_offset, &current_selection.row, selected_index, main_section_height, last_operation_result);
 
         return TuiViewportState {
             main_section_height: main_section_height,
             selected_index: selected_index,
-            scroll_offset: new_scroll_offset
+            scroll_offset: new_scroll_offset,
         };
     }
 
     // TODO: for adding highlighting of where the user is focused, pass focused_section enum to this function and
     // add a match statement in the function (for FocusedSection::Main, highlight border of main section)
     pub fn render(self, frame: &mut Frame, styled_layout: TuiLayout, viewport_state: TuiViewportState, app: &App) -> () {
-
         // get only the filtered tui rows that are visible (within the area height)
-        let visible_rows = to_visible_rows(
-            self.filtered_rows,
-            viewport_state.scroll_offset,
-            viewport_state.main_section_height
-        );
+        let visible_rows = to_visible_rows(self.filtered_rows, viewport_state.scroll_offset, viewport_state.main_section_height);
 
         let search_section_focused = app.search_focused();
 
@@ -126,5 +126,4 @@ impl TuiView {
         let display_keybinds_style = get_keybind_display_style(app.get_styles());
         render_tui_keybinds(frame, styled_layout.keybind_display, app.get_focused_section(), &display_keybinds_style);
     }
-
 }

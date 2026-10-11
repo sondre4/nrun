@@ -15,3 +15,13 @@ serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 serde_yaml = "0.9.34"
 tui-input = "0.15.5"
+
+[lints.clippy]
+needless_return = "allow"
+collapsible_if = "allow"
+enum_variant_names = "allow"
+let_and_return = "allow"
+unused_unit = "allow"
+redundant_field_names = "allow"
+question_mark = "allow"
+unnecessary_unwrap = "allow"
