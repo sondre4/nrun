@@ -112,13 +112,13 @@ fn render_script_row(frame: &mut Frame, area: Rect, script_style: ScriptUiStyle,
     frame.render_widget(Paragraph::new("").style(script_style.name), indent_column);
 
     // script name
-    let displayed_script_name = format!("{}", script.name);
-    let script_name_widget = Paragraph::new(format!("{displayed_script_name}")).style(script_style.name);
+    let displayed_script_name = script.name.to_string();
+    let script_name_widget = Paragraph::new(displayed_script_name.to_string()).style(script_style.name);
 
     frame.render_widget(script_name_widget, name_column_area);
 
     // script command
-    let displayed_script_command = format!("{}", script.command);
+    let displayed_script_command = script.command.to_string();
     let script_command_widget = Paragraph::new(displayed_script_command).style(script_style.command);
 
     frame.render_widget(script_command_widget, command_column_area);

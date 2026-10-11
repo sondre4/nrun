@@ -14,11 +14,11 @@ pub fn select_non_interactive(global_arguments: &GlobalArguments) -> bool {
 
 pub fn handle_non_interactive_call(workspace: Workspace, global_arguments: GlobalArguments) -> Result<(), String> {
     if global_arguments.package.is_none() {
-        return Err(format!("Argument 'package' is not present"));
+        return Err("Argument 'package' is not present".to_string());
     }
 
     if global_arguments.script.is_none() {
-        return Err(format!("Argument 'script' is not present"));
+        return Err("Argument 'script' is not present".to_string());
     }
 
     let package_name = global_arguments.package.unwrap();

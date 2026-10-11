@@ -77,7 +77,7 @@ impl GlobalArguments {
             package: input.package.clone(),
             script: input.script.clone(),
             workspace: input.workspace.clone(),
-            depth: input.depth.clone(),
+            depth: input.depth,
         };
     }
 }

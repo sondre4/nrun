@@ -47,7 +47,7 @@ impl PackageSearcher {
     }
 
     fn filter_scored_packages(&mut self, sorted_scored_packages: &mut Vec<ScoredPackage>) -> () {
-        let scored_package_scores = get_scores_from_scored_packages(&sorted_scored_packages);
+        let scored_package_scores = get_scores_from_scored_packages(sorted_scored_packages);
         let minimum_needed_score = calculate_minimum_needed_score(&scored_package_scores);
 
         if self.display_debug_info {
@@ -82,7 +82,7 @@ impl PackageSearcher {
         }
 
         // check if scored package's scripts need to be filtered
-        let filter_package_scripts = should_filter_package_scripts(&scored_package);
+        let filter_package_scripts = should_filter_package_scripts(scored_package);
 
         if self.display_debug_info {
             println!("\n------------\nfilter package scripts: {}", filter_package_scripts);
@@ -163,7 +163,7 @@ impl PackageSearcher {
 
     fn debug_display_package_scores(&self, scored_packages: &Vec<ScoredPackage>) -> () {
         for package in scored_packages {
-            println!("total_score: {:<6.2} | name_score: {:<6.2} | package: {}", &package.score, &package.package_name_score, &package.package.name);
+            println!("total_score: {:<6.2} | name_score: {:<6.2} | package: {}", package.score, package.package_name_score, package.package.name);
         }
     }
 
@@ -171,7 +171,7 @@ impl PackageSearcher {
         for script in scored_scripts {
             println!(
                 "total_score: {:<6.2} | name_score: {:<6.2} command_score: {:<6.2} | script_name: {}",
-                &script.score, &script.script_name_score, &script.script_command_score, &script.script.name
+                script.score, script.script_name_score, script.script_command_score, script.script.name
             );
         }
     }

@@ -79,7 +79,7 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
 
     // Find packages from path patterns
     for path_pattern in &extra_patterns {
-        let found_packages = resolve_packages(&monorepo, &path_pattern, package_start_id)?;
+        let found_packages = resolve_packages(&monorepo, path_pattern, package_start_id)?;
 
         for found_package in found_packages {
             workspace.packages.push(found_package);

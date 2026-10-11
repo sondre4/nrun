@@ -1,6 +1,5 @@
 use crate::{
     tui::{
-        self,
         app::App,
         events,
         operation::OperationResult,

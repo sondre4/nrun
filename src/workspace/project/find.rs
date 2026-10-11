@@ -2,7 +2,6 @@ use std::path::{Path, PathBuf};
 
 use crate::workspace::{
     config::{BUN_CONFIG, NPM_CONFIG, PNPM_CONFIG, Project, YARN_CONFIG},
-    project::paths::get_start_directory,
     types::PackageManager,
 };
 
@@ -51,7 +50,7 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Resul
     // const DEPTH: i32 = 7;
     let mut directory = start_directory;
 
-    for i in 0..depth {
+    for _i in 0..depth {
         if is_npm_project_root(&directory) {
             let project: Project = Project {
                 package_manager: PackageManager::Npm,
@@ -93,7 +92,7 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Resul
         }
 
         let pop_successfully = directory.pop();
-        if pop_successfully == false {
+        if !pop_successfully {
             return Err("Unable to find project: Reached top level directory".to_string());
         }
     }

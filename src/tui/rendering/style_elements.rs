@@ -1,7 +1,7 @@
 use ratatui::{
     Frame,
     layout::{Margin, Rect},
-    style::{Color, Modifier, Style},
+    style::Style,
     widgets::{Block, Borders},
 };
 
@@ -119,7 +119,7 @@ pub fn get_keybind_display_style(styles: &UiStyles) -> KeybindDisplayUiStyle {
     };
 }
 
-pub fn add_margin_to_area(frame: &mut Frame, area: Rect, margin_x: u16, margin_y: u16) -> Rect {
+pub fn add_margin_to_area(area: Rect, margin_x: u16, margin_y: u16) -> Rect {
     let inner = area.inner(Margin {
         horizontal: margin_x,
         vertical: margin_y,
@@ -136,6 +136,6 @@ pub fn style_border_of_area(frame: &mut Frame, area: Rect, title: String, focuse
     frame.render_widget(border, area);
 
     // let inner_area = area.inner(Margin { vertical: 1, horizontal: 1 });
-    let inner_area = add_margin_to_area(frame, area, 1, 1);
+    let inner_area = add_margin_to_area(area, 1, 1);
     return inner_area;
 }

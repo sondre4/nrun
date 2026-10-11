@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 use crate::{
     tui::{
-        app::{App, Selection},
+        app::Selection,
         rendering::tui_rows::TuiRow,
     },
     workspace::types::Package,

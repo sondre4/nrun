@@ -20,7 +20,7 @@ impl ScriptCaller {
         let path = Self::resolve_caller_path(package_manager)?;
 
         return Ok(ScriptCaller {
-            packager_manager: package_manager.clone(),
+            packager_manager: *package_manager,
             program_path: path,
         });
     }

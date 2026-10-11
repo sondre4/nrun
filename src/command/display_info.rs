@@ -1,7 +1,6 @@
 use crate::command::script_config::ScriptConfig;
-use crossterm::terminal::{self, WindowSize};
 use owo_colors::OwoColorize;
-use std::{cmp::min, ffi::OsString, fmt::Display};
+use std::{ffi::OsString, fmt::Display};
 
 fn info<T: Display>(text: T) -> String {
     return text.to_string().bright_cyan().to_string();
@@ -37,7 +36,7 @@ pub fn display_command_call_info(config: &ScriptConfig) -> () {
 
     // Using ... line
     let using_line_content =
-        format!("{} {} {} {}", text("Using"), info(&config.package_manager), text("from"), info_strong(&config.caller.program_path.display()));
+        format!("{} {} {} {}", text("Using"), info(&config.package_manager), text("from"), info_strong(config.caller.program_path.display()));
     println!("{} {}", separator(">"), using_line_content);
 
     // Running script in ... line

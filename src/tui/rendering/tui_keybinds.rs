@@ -11,7 +11,6 @@ use crate::tui::{
     action::Action,
     app::FocusedSection,
     keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name},
-    rendering::style_elements::get_keybind_display_style,
     styles::ui_style::KeybindDisplayUiStyle,
 };
 

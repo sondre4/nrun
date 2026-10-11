@@ -1,5 +1,5 @@
 use crate::tui::{
-    app::{App, Selection, SelectionMovement},
+    app::{Selection, SelectionMovement},
     rendering::{tui_rows::TuiRow, visibility::find_index_of_selection_in_visible_rows},
 };
 
@@ -36,8 +36,6 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
     let row_collection_length = rows.len();
     let mut new_index = selected_row_index;
 
-    let move_to_row: TuiRow;
-
     while running {
         let change = get_selection_change(direction);
         if !change_within_bounds(row_collection_length, new_index, change) {
@@ -54,8 +52,7 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
     }
 
     let new_row = &rows[new_index];
-
-    move_to_row = new_row.clone();
+    let move_to_row: TuiRow = new_row.clone();
 
     let new_selection: Selection = Selection {
         row: move_to_row,

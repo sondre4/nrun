@@ -35,7 +35,7 @@ pub fn find_pnpm_package_path_patterns(project: &Project) -> Result<Vec<String>,
     if package_path_patterns_option.is_none() {
         // return error message
         // equivalent patterns should be available in PackageJson.workspaces for other package managers than npm
-        return Err(format!("No package path patterns found in pnpm workspace"));
+        return Err("No package path patterns found in pnpm workspace".to_string());
         // fallback to lockfile?
     }
 

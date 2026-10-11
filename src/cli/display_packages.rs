@@ -1,6 +1,6 @@
 use owo_colors::OwoColorize;
 
-use crate::workspace::types::{Package, Workspace};
+use crate::workspace::types::Package;
 
 const HEADER_START: usize = 7;
 // const VERTICAL_BAR_OFFSET: usize = 2;
@@ -9,7 +9,7 @@ const SCRIPT_NAME_WIDTH: usize = 25;
 const SCRIPT_COMMAND_WIDTH: usize = 60;
 
 fn display_header() {
-    println!("{}{:<NAME_WIDTH$} {}{}", " ".repeat(HEADER_START), "Script", "│ ".dimmed(), "Command", NAME_WIDTH = SCRIPT_NAME_WIDTH);
+    println!("{}{:<NAME_WIDTH$} {}Command", " ".repeat(HEADER_START), "Script", "│ ".dimmed(), NAME_WIDTH = SCRIPT_NAME_WIDTH);
     println!("{}", ("-".repeat(HEADER_START + SCRIPT_NAME_WIDTH + SCRIPT_COMMAND_WIDTH + 2)).dimmed());
 }
 

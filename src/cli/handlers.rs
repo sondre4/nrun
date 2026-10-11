@@ -38,7 +38,7 @@ pub fn handle_list_packages(global_arguments: GlobalArguments, json_output_forma
     }
 
     // Display normally if format is not JSON
-    display_packages(&packages);
+    display_packages(packages);
 }
 
 pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String, debug: bool, json_output_format: bool) -> () {

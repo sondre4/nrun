@@ -4,9 +4,9 @@ use glob::glob;
 
 use crate::workspace::{
     config::Project,
-    parsers::package_json::{read_package_json, read_package_json_from_path},
+    parsers::package_json::read_package_json_from_path,
     resolvers::scripts::resolve_scripts,
-    types::{Package, PackageManager},
+    types::Package,
 };
 
 fn path_is_package(monorepo: &Project, path: &Path) -> bool {
@@ -18,7 +18,7 @@ fn resolve_pattern(root_path: &Path, path_pattern: &String) -> Result<Vec<PathBu
     let combined_pattern = root_path.join(path_pattern);
     let path_matches_result = glob(combined_pattern.to_str().unwrap());
 
-    let debug_out_path = combined_pattern.to_string_lossy();
+    let _debug_out_path = combined_pattern.to_string_lossy();
     // println!("Trying path pattern: {debug_out_path}");
 
     let path_matches = match path_matches_result {
@@ -57,7 +57,7 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String, start_package
 
             let resolved_package: Package = Package {
                 id: current_package_id,
-                name: package_json.name.unwrap_or(format!("{}", found_path.clone().to_string_lossy().to_string())),
+                name: package_json.name.unwrap_or(format!("{}", found_path.clone().to_string_lossy())),
                 path: found_path,
                 scripts: read_scripts,
             };

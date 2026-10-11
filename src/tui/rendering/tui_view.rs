@@ -1,7 +1,6 @@
 use ratatui::{Frame, layout::Rect};
 
-use crate::{
-    tui::{
+use crate::tui::{
         app::{App, FocusedSection, Selection},
         operation::{OperationResult, package_expansion::new_scroll_offset_after_expanding},
         rendering::{
@@ -10,12 +9,10 @@ use crate::{
             tui_keybinds::render_tui_keybinds,
             tui_layout::{TuiLayout, get_ui_layout, height_of_area},
             tui_rows::{TuiRow, render_ui_rows},
-            visibility::{build_tui_rows, find_index_of_selection_in_visible_rows, to_visible_rows},
+            visibility::{find_index_of_selection_in_visible_rows, to_visible_rows},
         },
         styles::colors::ColorPalette,
-    },
-    workspace::types::Package,
-};
+    };
 
 pub struct TuiViewportState {
     pub main_section_height: usize,
@@ -101,7 +98,7 @@ impl TuiView {
         tui_layout.main = style_border_of_area(frame, tui_layout.main, String::from("Scripts"), main_focused, color_palette);
 
         // add margin to keybind display section
-        tui_layout.keybind_display = add_margin_to_area(frame, tui_layout.keybind_display, 1, 1);
+        tui_layout.keybind_display = add_margin_to_area(tui_layout.keybind_display, 1, 1);
 
         return tui_layout;
     }

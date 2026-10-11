@@ -15,7 +15,7 @@ fn parse_package_json(path: &Path) -> Result<PackageJson, String> {
     let json_file = fs::read_to_string(path).unwrap();
     let parsed_json_result: Result<PackageJson, serde_json::Error> = serde_json::from_str(&json_file);
 
-    match (parsed_json_result) {
+    match parsed_json_result {
         Ok(value) => return Ok(value),
         Err(error) => return Err(format!("Failed to parse '{debug_out_path}': {error}")),
     };

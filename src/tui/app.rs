@@ -163,7 +163,7 @@ impl App {
     }
 
     fn currently_searching(&self) -> bool {
-        let empty = search_query_empty(&self.app_state.search_input.value());
+        let empty = search_query_empty(self.app_state.search_input.value());
         return !empty;
     }
 
@@ -282,7 +282,7 @@ impl App {
         let search_results = self.searcher.search(original_packages, self.app_state.search_input.value());
         self.tui_view_data.search_results = search_results.clone();
         let current_expanded_packages = &self.get_current_view_data().expanded_set;
-        let all_filtered_rows = build_tui_rows(&search_results, &current_expanded_packages);
+        let all_filtered_rows = build_tui_rows(&search_results, current_expanded_packages);
 
         self.set_filtered_rows(all_filtered_rows);
     }
@@ -377,13 +377,13 @@ impl App {
                 let found_script_id = current_view_data.selection.row.get_script_id();
 
                 if found_package_id.is_none() || found_script_id.is_none() {
-                    return Err(format!("Missing package or script id"));
+                    return Err("Missing package or script id".to_string());
                 }
 
                 let found_package = self.find_package_by_id(found_package_id.unwrap());
 
                 if found_package.is_none() {
-                    return Err(format!("Could not find package"));
+                    return Err("Could not find package".to_string());
                 }
 
                 let package = found_package.unwrap();
@@ -391,7 +391,7 @@ impl App {
                 let found_script = self.find_script_by_id(package.clone(), found_script_id.unwrap());
 
                 if found_script.is_none() {
-                    return Err(format!("Could not find script"));
+                    return Err("Could not find script".to_string());
                 }
 
                 let config = ScriptConfig::from_config_data(&found_script.unwrap(), &package, &self.app_state.workspace.package_manager)?;

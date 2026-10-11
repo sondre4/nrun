@@ -63,13 +63,13 @@ impl ScriptConfig {
             }
             Err(error) => match error {
                 ScriptCallerError::PackageManagerNotFound {
-                    package_manager,
+                    package_manager: _,
                     searched_names,
                 } => {
                     return Err(format!("Package manager not found. Paths tried: {}", searched_names));
                 }
                 ScriptCallerError::PathNotSet => {
-                    return Err(format!("Path not set"));
+                    return Err("Path not set".to_string());
                 }
                 ScriptCallerError::Io(io_error) => {
                     return Err(format!("IO Error: {}", io_error));
