@@ -15,27 +15,16 @@ fn display_header() {
 
 fn display_package(packages: &Package) {
     // packages
-    println!("{} {} {}", "v".cyan().bold(), packages.name.bold().cyan(), format!("({})",  packages.scripts.len()).dimmed());
+    println!("{} {} {}", "v".cyan().bold(), packages.name.bold().cyan(), format!("({})", packages.scripts.len()).dimmed());
 
     // scripts
     for (index, script) in packages.scripts.iter().enumerate() {
-        let branch = if index == packages.scripts.len() - 1 {
-            "└─"
-        } else {
-            "├─"
-        };
+        let branch = if index == packages.scripts.len() - 1 { "└─" } else { "├─" };
 
         let script_name = truncate(&script.name, SCRIPT_NAME_WIDTH);
         let script_command = truncate(&script.command, SCRIPT_COMMAND_WIDTH);
 
-        println!(
-            "   {}  {:<NAME_WIDTH$} {} {}",
-            branch.dimmed(),
-            script_name.bold(),
-            "│".dimmed(),
-            script_command,
-            NAME_WIDTH = SCRIPT_NAME_WIDTH
-        );
+        println!("   {}  {:<NAME_WIDTH$} {} {}", branch.dimmed(), script_name.bold(), "│".dimmed(), script_command, NAME_WIDTH = SCRIPT_NAME_WIDTH);
     }
 }
 

@@ -15,10 +15,10 @@ pub enum Action {
     Activate,
 
     // Searching
-    FocusSearch, // '/'
+    FocusSearch,  // '/'
     FinishSearch, // Enter
     CancelSearch, // Esc
 
     // SearchAction
-    SearchAction(InputRequest)
+    SearchAction(InputRequest),
 }

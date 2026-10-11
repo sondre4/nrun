@@ -9,7 +9,7 @@ pub enum PackageManagerRepresentation {
     Npm,
     Pnpm,
     Bun,
-    Yarn
+    Yarn,
 }
 
 impl From<&PackageManager> for PackageManagerRepresentation {
@@ -18,7 +18,7 @@ impl From<&PackageManager> for PackageManagerRepresentation {
             PackageManager::Npm => return PackageManagerRepresentation::Npm,
             PackageManager::Pnpm => return PackageManagerRepresentation::Pnpm,
             PackageManager::Bun => return PackageManagerRepresentation::Bun,
-            PackageManager::Yarn => return PackageManagerRepresentation::Yarn
+            PackageManager::Yarn => return PackageManagerRepresentation::Yarn,
         }
     }
 }
@@ -26,14 +26,14 @@ impl From<&PackageManager> for PackageManagerRepresentation {
 #[derive(Serialize)]
 pub struct ScriptRepresentation {
     pub name: String,
-    pub command: String
+    pub command: String,
 }
 
 impl From<&Script> for ScriptRepresentation {
     fn from(script: &Script) -> Self {
         return Self {
             name: script.name.clone(),
-            command: script.command.clone()
+            command: script.command.clone(),
         };
     }
 }
@@ -42,7 +42,7 @@ impl From<&Script> for ScriptRepresentation {
 pub struct PackageRepresentation {
     pub name: String,
     pub path: PathBuf,
-    pub scripts: Vec<ScriptRepresentation>
+    pub scripts: Vec<ScriptRepresentation>,
 }
 
 impl From<&Package> for PackageRepresentation {
@@ -50,7 +50,7 @@ impl From<&Package> for PackageRepresentation {
         let mut representation: PackageRepresentation = PackageRepresentation {
             name: package.name.clone(),
             path: package.path.clone(),
-            scripts: Vec::new()
+            scripts: Vec::new(),
         };
 
         for script in &package.scripts {
@@ -66,7 +66,7 @@ impl From<&Package> for PackageRepresentation {
 pub struct WorkspaceRepresentation {
     pub root_path: PathBuf,
     pub package_manager: PackageManagerRepresentation,
-    pub packages: Vec<PackageRepresentation>
+    pub packages: Vec<PackageRepresentation>,
 }
 
 impl From<&Workspace> for WorkspaceRepresentation {

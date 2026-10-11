@@ -1,4 +1,4 @@
-use std::{process::{Command, Stdio}};
+use std::process::{Command, Stdio};
 
 use crate::command::{display_info::display_command_call_info, script_config::ScriptConfig};
 
@@ -19,9 +19,9 @@ impl CommandCaller {
         match process_result {
             Ok(_result) => {
                 return Ok(());
-            },
+            }
 
-            Err(error) => return Err(format!("Error whilst calling script: {error}"))
+            Err(error) => return Err(format!("Error whilst calling script: {error}")),
         }
     }
 }

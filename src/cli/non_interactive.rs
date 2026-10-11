@@ -1,4 +1,8 @@
-use crate::{cli::commands::GlobalArguments, command::{command_caller::CommandCaller, script_config::ScriptConfig}, workspace::types::Workspace};
+use crate::{
+    cli::commands::GlobalArguments,
+    command::{command_caller::CommandCaller, script_config::ScriptConfig},
+    workspace::types::Workspace,
+};
 
 pub fn select_non_interactive(global_arguments: &GlobalArguments) -> bool {
     if global_arguments.package.is_some() && global_arguments.script.is_some() {
@@ -18,7 +22,7 @@ pub fn handle_non_interactive_call(workspace: Workspace, global_arguments: Globa
     }
 
     let package_name = global_arguments.package.unwrap();
-    let script_name =  global_arguments.script.unwrap();
+    let script_name = global_arguments.script.unwrap();
 
     let found_package = workspace.packages.iter().find(|p| {
         return p.name == package_name;
@@ -41,11 +45,7 @@ pub fn handle_non_interactive_call(workspace: Workspace, global_arguments: Globa
     let script = found_script.unwrap();
 
     // Found package and script: call script
-    let config = ScriptConfig::from_config_data(
-        script,
-        package,
-        &workspace.package_manager
-    )?;
+    let config = ScriptConfig::from_config_data(script, package, &workspace.package_manager)?;
 
     CommandCaller::call(config)?;
     return Ok(());

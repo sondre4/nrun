@@ -2,31 +2,46 @@ use std::collections::HashSet;
 
 use tui_input::Input;
 
-use crate::{command::{command_caller::CommandCaller, script_config::ScriptConfig}, search::{matching::search_query_empty, searcher::PackageSearcher}, tui::{action::Action, operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move}, rendering::{tui_rows::TuiRow, visibility::build_tui_rows}, styles::{colors::{ColorPalette, detect_color_capability}, ui_style::UiStyles}}, workspace::types::{Package, Script, Workspace}};
+use crate::{
+    command::{command_caller::CommandCaller, script_config::ScriptConfig},
+    search::{matching::search_query_empty, searcher::PackageSearcher},
+    tui::{
+        action::Action,
+        operation::{Operation, OperationResult, action_to_operation, move_selection::get_new_selection_after_move},
+        rendering::{tui_rows::TuiRow, visibility::build_tui_rows},
+        styles::{
+            colors::{ColorPalette, detect_color_capability},
+            ui_style::UiStyles,
+        },
+    },
+    workspace::types::{Package, Script, Workspace},
+};
 
 #[derive(Debug, Clone)]
 pub struct Selection {
-    pub row: TuiRow
+    pub row: TuiRow,
 }
 
 impl Selection {
     pub fn new() -> Selection {
         return Selection {
-            row: TuiRow::Script { package_id: 0, script_id: 0 } // initialize to first script, change later?
+            row: TuiRow::Script {
+                package_id: 0,
+                script_id: 0,
+            }, // initialize to first script, change later?
         };
     }
 }
 
 pub enum SelectionMovement {
     Up,
-    Down
+    Down,
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FocusedSection {
     Main,
-    Search
+    Search,
 }
 
 pub struct AppState {
@@ -35,22 +50,22 @@ pub struct AppState {
     running: bool,
     focused_section: FocusedSection,
     color_palette: ColorPalette,
-    styles: UiStyles
+    styles: UiStyles,
 }
 
 #[derive(Clone)]
 pub struct ViewData {
     pub expanded_set: HashSet<usize>,
     pub selection: Selection,
-    pub scroll_offset: usize
+    pub scroll_offset: usize,
 }
 
 impl ViewData {
     pub fn new() -> ViewData {
         return ViewData {
             expanded_set: HashSet::new(),
-            selection:  Selection::new(),
-            scroll_offset: 0
+            selection: Selection::new(),
+            scroll_offset: 0,
         };
     }
 }
@@ -59,7 +74,7 @@ pub struct TuiViewData {
     filtered_rows: Vec<TuiRow>,
     search_results: Vec<Package>,
     main_view_data: ViewData,
-    searching_view_data: ViewData
+    searching_view_data: ViewData,
 }
 
 impl TuiViewData {
@@ -68,7 +83,7 @@ impl TuiViewData {
             filtered_rows: Vec::new(),
             search_results: Vec::new(),
             main_view_data: ViewData::new(),
-            searching_view_data: ViewData::new()
+            searching_view_data: ViewData::new(),
         };
     }
 }
@@ -76,12 +91,11 @@ impl TuiViewData {
 pub struct App {
     app_state: AppState,
     tui_view_data: TuiViewData,
-    searcher: PackageSearcher
+    searcher: PackageSearcher,
 }
 
 impl App {
     pub fn new(app_data: Workspace) -> App {
-
         // initialize the style
         let color_capability = detect_color_capability();
         let palette = ColorPalette::from_capability(color_capability);
@@ -93,14 +107,14 @@ impl App {
             running: true,
             focused_section: FocusedSection::Main,
             color_palette: palette,
-            styles: ui_styles
+            styles: ui_styles,
         };
 
         // Only created once
         let app: App = App {
             app_state: app_state,
             tui_view_data: TuiViewData::default(),
-            searcher: PackageSearcher::new()
+            searcher: PackageSearcher::new(),
         };
 
         return app;
@@ -122,19 +136,14 @@ impl App {
         return self.app_state.running;
     }
 
-
     pub fn find_package_by_id(&self, package_id: usize) -> Option<Package> {
-        let found_package = self.app_state.workspace.packages.iter().find(|p| {
-            p.id == package_id
-        });
+        let found_package = self.app_state.workspace.packages.iter().find(|p| p.id == package_id);
 
         return Some(found_package.unwrap().clone());
     }
 
     pub fn find_script_by_id(&self, package: Package, script_id: usize) -> Option<Script> {
-        let found_script = package.scripts.iter().find(|s| {
-            s.id == script_id
-        });
+        let found_script = package.scripts.iter().find(|s| s.id == script_id);
 
         if found_script.is_none() {
             return None;
@@ -144,9 +153,7 @@ impl App {
     }
 
     pub fn find_search_result_package_by_id(&self, package_id: usize) -> Option<Package> {
-        let found_package = self.tui_view_data.search_results.iter().find(|p| {
-            p.id == package_id
-        });
+        let found_package = self.tui_view_data.search_results.iter().find(|p| p.id == package_id);
 
         return Some(found_package.unwrap().clone());
     }
@@ -154,7 +161,6 @@ impl App {
     pub fn get_focused_section(&self) -> &FocusedSection {
         return &self.app_state.focused_section;
     }
-
 
     fn currently_searching(&self) -> bool {
         let empty = search_query_empty(&self.app_state.search_input.value());
@@ -164,7 +170,6 @@ impl App {
     pub fn get_search_input(&self) -> &Input {
         return &self.app_state.search_input;
     }
-
 
     // View data
     pub fn get_current_view_data(&self) -> ViewData {
@@ -182,7 +187,6 @@ impl App {
             return &mut self.tui_view_data.main_view_data;
         }
     }
-
 
     // Package expansion/collapsing
     fn expand_package(&mut self, package_id: usize) -> () {
@@ -221,7 +225,6 @@ impl App {
         }
     }
 
-
     // Selection setters
     pub fn set_current_selection(&mut self, new_selection: Selection) -> () {
         let current_view_data = self.get_current_view_data_mut();
@@ -245,13 +248,12 @@ impl App {
         if needs_updating && self.currently_searching() && enough_results {
             let new_selected_row_after_searching = self.tui_view_data.filtered_rows[1].clone();
             let new_selection_after_searching: Selection = Selection {
-                row: new_selected_row_after_searching
+                row: new_selected_row_after_searching,
             };
 
             self.set_current_selection(new_selection_after_searching);
         }
     }
-
 
     // Scroll offset
     pub fn update_current_scroll_offset(&mut self, new_scroll_offset: usize) -> () {
@@ -259,13 +261,11 @@ impl App {
         current_view_data.scroll_offset = new_scroll_offset;
     }
 
-
     // methods that are called during rendering
     pub fn search_focused(&self) -> bool {
         let search_focused = matches!(self.app_state.focused_section, FocusedSection::Search);
         return search_focused;
     }
-
 
     // filtered rows
     // self.update_filtered_rows uses this setter
@@ -287,7 +287,6 @@ impl App {
         self.set_filtered_rows(all_filtered_rows);
     }
 
-
     // Action/operation
     pub fn action_to_operation(&mut self, action: Action) -> Operation {
         let operation = action_to_operation(self, action);
@@ -296,81 +295,75 @@ impl App {
 
     pub fn handle_operation(&mut self, operation: Operation) -> OperationResult {
         match operation {
-            Operation::Nothing => { },
+            Operation::Nothing => {}
 
             // Exit program
             Operation::Quit => {
                 self.app_state.running = false;
-            },
+            }
 
             // Navigation
             // Navigation is an event, this event does not need to update search + filtered rows,
             // because those are updated in typing events
             Operation::MoveUp => {
                 let current_view_data = self.get_current_view_data();
-                let new_selection = get_new_selection_after_move(
-                    &self.tui_view_data.filtered_rows,
-                    &current_view_data.selection,
-                    SelectionMovement::Up
-                );
+                let new_selection =
+                    get_new_selection_after_move(&self.tui_view_data.filtered_rows, &current_view_data.selection, SelectionMovement::Up);
 
                 if new_selection.is_some() {
                     self.set_current_selection(new_selection.unwrap());
                 }
-            },
+            }
 
             Operation::MoveDown => {
                 let current_view_data = self.get_current_view_data();
-                let new_selection = get_new_selection_after_move(
-                    &self.tui_view_data.filtered_rows,
-                    &current_view_data.selection,
-                    SelectionMovement::Down
-                );
+                let new_selection =
+                    get_new_selection_after_move(&self.tui_view_data.filtered_rows, &current_view_data.selection, SelectionMovement::Down);
 
                 if new_selection.is_some() {
                     self.set_current_selection(new_selection.unwrap());
                 }
-            },
+            }
 
             // Interaction
             Operation::ConfirmSelection => {
                 // script has been selected
                 self.app_state.running = false;
                 return OperationResult::ScriptCalled;
-            },
+            }
 
             Operation::TogglePackageExpansion => {
                 let operation_result = self.toggle_expansion();
                 return operation_result;
-            },
+            }
 
             // Searching
             Operation::FocusSearch => {
                 self.app_state.focused_section = FocusedSection::Search;
-            },
+            }
 
             // finish search and exit search are logically similar operations
             // while focused in search, both Enter and Esc will switch focus back to main
             Operation::FinishSearch => {
                 self.app_state.focused_section = FocusedSection::Main;
-            },
+            }
 
             Operation::CancelSearch => {
                 self.app_state.search_input.reset();
                 // self.reset_searching_expanded_packages();
                 // resetting the search selection when canceling search should not be needed
-                // because the normal selection will be used 
+                // because the normal selection will be used
                 // and the search selection is reset on search input update anyway
                 self.app_state.focused_section = FocusedSection::Main;
-            },
+            }
 
             // tui-input handles text editing
             Operation::SearchOperation(input_request) => {
                 self.app_state.search_input.handle(input_request);
                 return OperationResult::UpdatedSearchQuery;
-            },
+            }
 
-            _ => { }
+            _ => {}
         }
 
         return OperationResult::None;
@@ -401,19 +394,15 @@ impl App {
                     return Err(format!("Could not find script"));
                 }
 
-                let config = ScriptConfig::from_config_data(
-                    &found_script.unwrap(),
-                    &package,
-                    &self.app_state.workspace.package_manager
-                )?;
+                let config = ScriptConfig::from_config_data(&found_script.unwrap(), &package, &self.app_state.workspace.package_manager)?;
 
                 // println!("{config:#?}");
 
                 CommandCaller::call(config)?;
                 return Ok(());
-            },
+            }
 
-            _ => return Ok(())
+            _ => return Ok(()),
         }
     }
 }

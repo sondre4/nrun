@@ -2,7 +2,12 @@ use std::path::{Path, PathBuf};
 
 use glob::glob;
 
-use crate::workspace::{config::Project, parsers::package_json::{read_package_json, read_package_json_from_path}, resolvers::scripts::resolve_scripts, types::{Package, PackageManager}};
+use crate::workspace::{
+    config::Project,
+    parsers::package_json::{read_package_json, read_package_json_from_path},
+    resolvers::scripts::resolve_scripts,
+    types::{Package, PackageManager},
+};
 
 fn path_is_package(monorepo: &Project, path: &Path) -> bool {
     let potential_package_path = path.join(monorepo.config.manifest_name);
@@ -27,9 +32,7 @@ fn resolve_pattern(root_path: &Path, path_pattern: &String) -> Result<Vec<PathBu
 
     for path_match in path_matches {
         match path_match {
-            Ok(path) => {
-                found_paths.push(path)
-            }
+            Ok(path) => found_paths.push(path),
 
             Err(error) => {
                 return Err(format!("Error whilst collecting path pattern matches: {error}"));
@@ -47,12 +50,11 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String, start_package
     let mut current_package_id = start_package_id;
 
     for found_path in found_paths {
-
         if path_is_package(monorepo, &found_path) {
             let package_json_path = found_path.join(monorepo.config.manifest_name);
             let package_json = read_package_json_from_path(&package_json_path)?;
             let read_scripts = resolve_scripts(&package_json)?;
-            
+
             let resolved_package: Package = Package {
                 id: current_package_id,
                 name: package_json.name.unwrap_or(format!("{}", found_path.clone().to_string_lossy().to_string())),

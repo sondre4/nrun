@@ -1,9 +1,14 @@
-use ratatui::{Frame, layout::{Position, Rect}, widgets::Paragraph};
+use ratatui::{
+    Frame,
+    layout::{Position, Rect},
+    widgets::Paragraph,
+};
 use tui_input::Input;
 
-pub fn render_search_bar(frame: &mut Frame, search_bar_section: Rect, input: &Input, mut render_cursor: bool) -> () { // TODO: add style parameter
+pub fn render_search_bar(frame: &mut Frame, search_bar_section: Rect, input: &Input, mut render_cursor: bool) -> () {
+    // TODO: add style parameter
     let search_widget = Paragraph::new(input.value());
-    
+
     let section_x = search_bar_section.x;
     let section_y = search_bar_section.y;
     let cursor_x_display_columns = u16::try_from(input.visual_cursor());

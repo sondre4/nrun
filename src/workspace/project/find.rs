@@ -1,13 +1,17 @@
 use std::path::{Path, PathBuf};
 
-use crate::workspace::{config::{BUN_CONFIG, NPM_CONFIG, PNPM_CONFIG, Project, YARN_CONFIG}, project::paths::get_start_directory, types::PackageManager};
+use crate::workspace::{
+    config::{BUN_CONFIG, NPM_CONFIG, PNPM_CONFIG, Project, YARN_CONFIG},
+    project::paths::get_start_directory,
+    types::PackageManager,
+};
 
 fn is_npm_project_root(path: &Path) -> bool {
     let workspace_filepath = path.join(NPM_CONFIG.manifest_name);
     let lockfile_filepath = path.join(NPM_CONFIG.lockfile_name);
 
     if workspace_filepath.exists() && lockfile_filepath.exists() {
-        return true
+        return true;
     }
     return false;
 }
@@ -17,7 +21,7 @@ fn is_yarn_project_root(path: &Path) -> bool {
     let lockfile_filepath = path.join(YARN_CONFIG.lockfile_name);
 
     if workspace_filepath.exists() && lockfile_filepath.exists() {
-        return true
+        return true;
     }
     return false;
 }
@@ -27,7 +31,7 @@ fn is_bun_project_root(path: &Path) -> bool {
     let lockfile_filepath = path.join(BUN_CONFIG.lockfile_name);
 
     if workspace_filepath.exists() && lockfile_filepath.exists() {
-        return true
+        return true;
     }
     return false;
 }
@@ -37,11 +41,10 @@ fn is_pnpm_project_root(path: &Path) -> bool {
     let manifest_filepath = path.join(PNPM_CONFIG.manifest_name);
     let lockfile_filepath = path.join(PNPM_CONFIG.lockfile_name);
     if workspace_filepath.exists() && manifest_filepath.exists() && lockfile_filepath.exists() {
-        return true
+        return true;
     }
     return false;
 }
-
 
 // TODO: add depth option in command
 fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Result<Project, String> {
@@ -97,7 +100,6 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Resul
 
     return Err(format!("Unable to find project: Did not find monorepo root within depth: {depth}").to_string());
 }
-
 
 pub fn find_monorepo_project(start_directory: PathBuf, search_depth: u32) -> Result<Project, String> {
     let found_monorepo = find_monorepo_project_metadata(start_directory, search_depth)?;

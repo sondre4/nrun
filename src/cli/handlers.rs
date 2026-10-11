@@ -13,7 +13,7 @@ fn handle_finding_workspace(global_arguments: &GlobalArguments) -> Option<Worksp
     match workspace_result {
         Ok(result) => {
             return Some(result);
-        },
+        }
         Err(error) => {
             println!("nrun: Unable to find workspace: {error}");
             return None;
@@ -58,7 +58,6 @@ pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &Strin
     let search_results = searcher.search(packages, search_query);
 
     if json_output_format {
-
         // Overwrite old packages with search results before writing to stdout
         workspace.packages = search_results;
 
@@ -83,7 +82,7 @@ pub fn handle_cli_default(global_arguments: GlobalArguments) -> () {
         match non_interactive_result {
             Ok(_result) => {
                 return;
-            },
+            }
 
             Err(error) => {
                 println!("nrun: Error whilst running command: {error}");

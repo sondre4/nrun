@@ -4,7 +4,7 @@ use ratatui::style::Color;
 pub enum ColorCapability {
     Ansi16,
     Ansi256,
-    TrueColor
+    TrueColor,
 }
 
 pub struct ColorPalette {
@@ -16,7 +16,7 @@ pub struct ColorPalette {
     pub selected_fg: Color,
     pub selected_bg: Color,
     pub selected_package_bg: Color,
-    pub border: Color
+    pub border: Color,
 }
 
 impl ColorPalette {
@@ -24,7 +24,7 @@ impl ColorPalette {
         match capability {
             ColorCapability::Ansi16 => Self::ansi16(),
             ColorCapability::Ansi256 => Self::ansi256(),
-            ColorCapability::TrueColor => Self::truecolor()
+            ColorCapability::TrueColor => Self::truecolor(),
         }
     }
 
@@ -52,7 +52,7 @@ impl ColorPalette {
             selected_fg: Color::Indexed(255),
             selected_bg: Color::Indexed(238),
             selected_package_bg: Color::Indexed(236),
-            border: Color::Indexed(240)
+            border: Color::Indexed(240),
         }
     }
 
@@ -66,29 +66,21 @@ impl ColorPalette {
             selected_fg: Color::Rgb(235, 237, 239),
             selected_bg: Color::Rgb(55, 59, 63),
             selected_package_bg: Color::Rgb(43, 48, 51),
-            border: Color::Rgb(75, 80, 84)
+            border: Color::Rgb(75, 80, 84),
         }
     }
 }
 
 fn is_dumb_terminal() -> bool {
-    matches!(
-        std::env::var("TERM").as_deref(),
-        Ok("dumb") | Ok("")
-    )
+    matches!(std::env::var("TERM").as_deref(), Ok("dumb") | Ok(""))
 }
 
 fn supports_truecolor() -> bool {
-    matches!(
-        std::env::var("COLORTERM").as_deref(),
-        Ok("truecolor") | Ok("24bit")
-    )
+    matches!(std::env::var("COLORTERM").as_deref(), Ok("truecolor") | Ok("24bit"))
 }
 
 fn supports_ansi256() -> bool {
-    std::env::var("TERM")
-        .map(|term| term.contains("256color"))
-        .unwrap_or(false)
+    std::env::var("TERM").map(|term| term.contains("256color")).unwrap_or(false)
 }
 
 pub fn detect_color_capability() -> ColorCapability {

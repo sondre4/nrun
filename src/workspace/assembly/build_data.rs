@@ -1,11 +1,16 @@
 use std::path::PathBuf;
 
-use crate::workspace::{assembly::values::{get_next_package_id, initialize_values}, parsers::{package_json::read_package_json, pnpm_workspace::find_pnpm_package_path_patterns}, project::find::find_monorepo_project, resolvers::{path_patterns::resolve_packages, scripts::resolve_scripts}, types::{Package, PackageManager, Workspace}};
+use crate::workspace::{
+    assembly::values::{get_next_package_id, initialize_values},
+    parsers::{package_json::read_package_json, pnpm_workspace::find_pnpm_package_path_patterns},
+    project::find::find_monorepo_project,
+    resolvers::{path_patterns::resolve_packages, scripts::resolve_scripts},
+    types::{Package, PackageManager, Workspace},
+};
 
 const ROOT_PACKAGE_ID: usize = 0;
 
 pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u32) -> Result<Workspace, String> {
-
     // initial values
     let values = initialize_values(start_directory, search_depth)?;
     let directory = values.directory;
@@ -17,15 +22,14 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
     let mut workspace: Workspace = Workspace {
         root_path: monorepo.root_path.clone(),
         package_manager: monorepo.package_manager,
-        packages: Vec::new()
+        packages: Vec::new(),
     };
 
     // println!("Found project: '{}' with package manager '{:#?}'", monorepo.root_path.to_string_lossy(), monorepo.package_manager);
 
-
     // read root package.json
     // not needed for pnpm? still needed for main scripts
-    let root_package_json_result  = read_package_json(&monorepo);
+    let root_package_json_result = read_package_json(&monorepo);
     let root_package_json = match root_package_json_result {
         Ok(schema) => schema,
         Err(error) => {
@@ -52,7 +56,6 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
 
     workspace.packages.push(root_package);
 
-
     // find path patterns of packages
 
     let mut extra_patterns: Vec<String> = Vec::new();
@@ -64,7 +67,8 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
             extra_patterns = patterns;
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
-            if root_package_json.workspaces.is_some() { // workspaces field in package.json
+            if root_package_json.workspaces.is_some() {
+                // workspaces field in package.json
                 extra_patterns = root_package_json.workspaces.unwrap();
             }
         }

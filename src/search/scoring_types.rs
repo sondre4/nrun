@@ -10,11 +10,11 @@ pub const SCRIPT_NAME_WEIGHT: f64 = 1.75;
 pub const SCRIPT_COMMAND_WEIGHT: f64 = 1.00;
 pub const PACKAGE_NAME_WEIGHT: f64 = 1.40;
 
-pub struct ScoredScript  {
+pub struct ScoredScript {
     pub script: Script,
     pub script_name_score: f64,
     pub script_command_score: f64,
-    pub score: f64
+    pub score: f64,
 }
 
 pub struct ScoredPackage {
@@ -25,5 +25,5 @@ pub struct ScoredPackage {
     pub package_name_score: f64,
 
     // max score of either one of package's scripts or its name
-    pub score: f64
+    pub score: f64,
 }

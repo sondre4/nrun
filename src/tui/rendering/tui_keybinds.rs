@@ -1,13 +1,24 @@
 use std::{cmp::max, collections::HashMap};
 
-use ratatui::{Frame, layout::{Constraint, Layout, Rect}, text::{Line, Span}, widgets::Paragraph};
+use ratatui::{
+    Frame,
+    layout::{Constraint, Layout, Rect},
+    text::{Line, Span},
+    widgets::Paragraph,
+};
 
-use crate::tui::{action::Action, app::FocusedSection, keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name}, rendering::style_elements::get_keybind_display_style, styles::ui_style::KeybindDisplayUiStyle};
+use crate::tui::{
+    action::Action,
+    app::FocusedSection,
+    keybinds::{Keybind, MAIN_KEYBINDS, SEARCH_KEYBINDS, get_keybind_name},
+    rendering::style_elements::get_keybind_display_style,
+    styles::ui_style::KeybindDisplayUiStyle,
+};
 
 struct DisplayedKeybindEntry {
     action: Action,
     description: String,
-    keys: Vec<String>
+    keys: Vec<String>,
 }
 
 fn choose_keybind_set(focused_section: &FocusedSection) -> Vec<&'static Keybind> {
@@ -18,7 +29,7 @@ fn choose_keybind_set(focused_section: &FocusedSection) -> Vec<&'static Keybind>
             for keybind in MAIN_KEYBINDS {
                 keybinds.push(keybind);
             }
-        },
+        }
 
         FocusedSection::Search => {
             for keybind in SEARCH_KEYBINDS {
@@ -104,7 +115,7 @@ fn build_keybind_display_data(keybind_map: &HashMap<Action, Vec<Keybind>>) -> Ve
         let entry: DisplayedKeybindEntry = DisplayedKeybindEntry {
             action: *action,
             description: keybind_description,
-            keys: keybind_keys
+            keys: keybind_keys,
         };
 
         entries.push(entry);
@@ -179,12 +190,7 @@ pub fn render_tui_keybinds(frame: &mut Frame, area: Rect, focused_section: &Focu
     let keybind_display_data = keybinds_to_display_entries(keybinds);
     let display_lines = build_display_lines(keybind_display_data, style);
 
-    let [keybind_name_row, description_row] = Layout::vertical(
-        [
-            Constraint::Length(1),
-            Constraint::Length(1)
-        ]
-    ).areas(area);
+    let [keybind_name_row, description_row] = Layout::vertical([Constraint::Length(1), Constraint::Length(1)]).areas(area);
 
     let display_name_row = Paragraph::new(display_lines[0].clone());
     let display_description = Paragraph::new(display_lines[1].clone());

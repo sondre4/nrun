@@ -1,6 +1,15 @@
 use nucleo::{Matcher, pattern::Pattern};
 
-use crate::{search::{matching::match_find_score, scoring_types::{MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_WEIGHT, SCRIPT_COMMAND_WEIGHT, SCRIPT_NAME_WEIGHT, SIGNIFICANT_SCORE_GAP, ScoredPackage, ScoredScript}}, workspace::types::{Package, Script}};
+use crate::{
+    search::{
+        matching::match_find_score,
+        scoring_types::{
+            MINIMUM_RELATIVE_SCORE_FACTOR, PACKAGE_NAME_WEIGHT, SCRIPT_COMMAND_WEIGHT, SCRIPT_NAME_WEIGHT, SIGNIFICANT_SCORE_GAP, ScoredPackage,
+            ScoredScript,
+        },
+    },
+    workspace::types::{Package, Script},
+};
 
 pub fn get_scores_from_scored_scripts(scored_scripts: &Vec<ScoredScript>) -> Vec<f64> {
     let mut scores: Vec<f64> = Vec::new();
@@ -65,19 +74,14 @@ pub fn calculate_minimum_needed_score(scores: &Vec<f64>) -> f64 {
     return best_score * MINIMUM_RELATIVE_SCORE_FACTOR;
 }
 
-
 // descending: largest first
 pub fn sort_scripts_by_score(scripts: &mut Vec<ScoredScript>) -> () {
-    scripts.sort_by(|a, b| {
-        b.score.total_cmp(&a.score)
-    });
+    scripts.sort_by(|a, b| b.score.total_cmp(&a.score));
 }
 
 // descending: largest first
 pub fn sort_packages_by_score(packages: &mut Vec<ScoredPackage>) -> () {
-    packages.sort_by(|a, b| {
-        b.score.total_cmp(&a.score)
-    });
+    packages.sort_by(|a, b| b.score.total_cmp(&a.score));
 }
 
 pub fn should_filter_package_scripts(scored_package: &ScoredPackage) -> bool {
@@ -104,7 +108,7 @@ pub fn score_script(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &m
         script: script.clone(),
         script_name_score: weighted_name_score,
         script_command_score: weighted_command_score,
-        score: score_max(weighted_name_score, weighted_command_score) // multiply with weights here?
+        score: score_max(weighted_name_score, weighted_command_score), // multiply with weights here?
     };
 
     return scored_script;
@@ -127,7 +131,7 @@ pub fn score_package(pattern: &Pattern, utf32_buffer: &mut Vec<char>, matcher: &
         package: package.clone(),
         scored_scripts: scored_scripts,
         package_name_score: weighted_package_name_score,
-        score: score_max(weighted_package_name_score, best_item_score) // multiply with weights here?
+        score: score_max(weighted_package_name_score, best_item_score), // multiply with weights here?
     };
 
     return scored_package;

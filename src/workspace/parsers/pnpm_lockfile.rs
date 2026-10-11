@@ -17,13 +17,13 @@ pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Result<Vec<LockfileConfig>, Stri
     let documents = Deserializer::from_str(&yaml_file);
 
     for document in documents {
-        let parsed_yaml_result =  LockfileConfig::deserialize(document);
+        let parsed_yaml_result = LockfileConfig::deserialize(document);
 
         match parsed_yaml_result {
             Ok(parsed_yaml) => {
                 output_pnpm_lockfile_schemas.push(parsed_yaml);
-            },
-            Err(error ) => return Err(format!("Error whilst parsing {debug_out_path}: {error}"))
+            }
+            Err(error) => return Err(format!("Error whilst parsing {debug_out_path}: {error}")),
         }
     }
 

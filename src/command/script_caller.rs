@@ -5,17 +5,14 @@ use crate::workspace::types::PackageManager;
 #[derive(Debug)]
 pub struct ScriptCaller {
     pub packager_manager: PackageManager,
-    pub program_path: PathBuf
+    pub program_path: PathBuf,
 }
 
 #[derive(Debug)]
 pub enum ScriptCallerError {
-    PackageManagerNotFound {
-        package_manager: PackageManager,
-        searched_names: String,
-    },
+    PackageManagerNotFound { package_manager: PackageManager, searched_names: String },
     PathNotSet,
-    Io(io::Error)
+    Io(io::Error),
 }
 
 impl ScriptCaller {

@@ -1,7 +1,16 @@
-use crate::{tui::{self, app::App, events, operation::OperationResult, rendering::tui_view::TuiView, terminal::{TerminalGuard, initialize_terminal}}, workspace::types::Workspace};
+use crate::{
+    tui::{
+        self,
+        app::App,
+        events,
+        operation::OperationResult,
+        rendering::tui_view::TuiView,
+        terminal::{TerminalGuard, initialize_terminal},
+    },
+    workspace::types::Workspace,
+};
 
 pub fn run_tui(workspace: Workspace) -> Result<(), String> {
-
     // steps:
     // read events
     // handle events
@@ -21,7 +30,6 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     // main loop
     while app.running() {
-
         // read events
         let event = events::next()?; // blocks thread
 
@@ -44,7 +52,6 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
         app.update_filtered_rows();
         app.prepare_current_selection_if_needed(&last_operation_result);
 
-
         // Render after updating state
         let current_filtered_rows = app.get_filtered_rows();
         let mut view: TuiView = TuiView::initialize_new(current_filtered_rows);
@@ -59,12 +66,8 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             layout = view.style_tui_layout(frame, layout, current_focused_section, color_palette);
 
             // calculate viewport values
-            let viewport_state = view.calculate_viewport_state(
-                &layout,
-                &current_view_data.selection,
-                current_view_data.scroll_offset,
-                &last_operation_result
-            );
+            let viewport_state =
+                view.calculate_viewport_state(&layout, &current_view_data.selection, current_view_data.scroll_offset, &last_operation_result);
 
             app.update_current_scroll_offset(viewport_state.scroll_offset);
 
