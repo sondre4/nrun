@@ -84,7 +84,7 @@ fn find_package_manager(path: &Path) -> Option<PackageManager> {
     return None;
 }
 
-fn build_project_data(current_path: PathBuf, package_manager: PackageManager) -> Project {
+pub fn build_project_data(current_path: PathBuf, package_manager: PackageManager) -> Project {
     let package_manager_config = match package_manager {
         PackageManager::Npm => NPM_CONFIG,
         PackageManager::Pnpm => PNPM_CONFIG,

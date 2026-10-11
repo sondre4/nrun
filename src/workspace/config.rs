@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use crate::workspace::types::PackageManager;
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct PackageManagerConfig {
     pub manifest_name: &'static str,
     pub lockfile_name: &'static str,
@@ -37,6 +38,7 @@ pub const PNPM_CONFIG: PackageManagerConfig = PackageManagerConfig {
     // workspace_config_field: "",
 };
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct Project {
     pub package_manager: PackageManager,
     pub root_path: PathBuf,

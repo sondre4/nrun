@@ -2,7 +2,7 @@ use std::{fmt, path::PathBuf};
 
 // for workspace metadata
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PackageManager {
     Npm,
     Pnpm,
