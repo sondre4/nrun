@@ -2,35 +2,35 @@ use std::path::PathBuf;
 
 use crate::workspace::types::PackageManager;
 
-pub struct ProjectConfig {
+pub struct PackageManagerConfig {
     pub manifest_name: &'static str,
     pub lockfile_name: &'static str,
     pub workspace_config_name: &'static str,
     // pub workspace_config_field: &'static str,
 }
 
-pub const NPM_CONFIG: ProjectConfig = ProjectConfig {
+pub const NPM_CONFIG: PackageManagerConfig = PackageManagerConfig {
     manifest_name: "package.json",
     lockfile_name: "package-lock.json",
     workspace_config_name: "",
     // workspace_config_field: "workspaces",
 };
 
-pub const BUN_CONFIG: ProjectConfig = ProjectConfig {
+pub const BUN_CONFIG: PackageManagerConfig = PackageManagerConfig {
     manifest_name: "package.json",
     lockfile_name: "bun.lock",
     workspace_config_name: "",
     // workspace_config_field: "workspaces",
 };
 
-pub const YARN_CONFIG: ProjectConfig = ProjectConfig {
+pub const YARN_CONFIG: PackageManagerConfig = PackageManagerConfig {
     manifest_name: "package.json",
     lockfile_name: "yarn.lock",
     workspace_config_name: "",
     // workspace_config_field: "workspaces",
 };
 
-pub const PNPM_CONFIG: ProjectConfig = ProjectConfig {
+pub const PNPM_CONFIG: PackageManagerConfig = PackageManagerConfig {
     manifest_name: "package.json",
     lockfile_name: "pnpm-lock.yaml",
     workspace_config_name: "pnpm-workspace.yaml",
@@ -40,5 +40,5 @@ pub const PNPM_CONFIG: ProjectConfig = ProjectConfig {
 pub struct Project {
     pub package_manager: PackageManager,
     pub root_path: PathBuf,
-    pub config: ProjectConfig,
+    pub config: PackageManagerConfig,
 }
