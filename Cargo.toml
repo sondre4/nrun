@@ -18,3 +18,7 @@ tui-input = "0.15.5"
 
 [lints.clippy]
 needless_return = "allow"
+collapsible_if = "allow"
+enum_variant_names = "allow"
+let_and_return = "allow"
+unused_unit = "allow"
