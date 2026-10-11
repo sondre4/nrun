@@ -35,8 +35,7 @@ pub fn display_command_call_info(config: &ScriptConfig) -> () {
     // println!();
 
     // Using ... line
-    let using_line_content =
-        format!("{} {} {} {}", text("Using"), info(&config.package_manager), text("from"), info_strong(config.caller.program_path.display()));
+    let using_line_content = format!("{} {} {} {}", text("Using"), info(&config.package_manager), text("from"), info_strong(config.caller.program_path.display()));
     println!("{} {}", separator(">"), using_line_content);
 
     // Running script in ... line

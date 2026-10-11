@@ -57,7 +57,7 @@ impl TuiRow {
     }
 
     pub fn get_row_data(&self) -> Option<TuiRowData> {
-        let mut found_package_id: Option<usize> = None;
+        let found_package_id: Option<usize>;
         let mut found_script_id: Option<usize> = None;
 
         match self {

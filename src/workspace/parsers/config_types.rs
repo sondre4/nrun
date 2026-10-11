@@ -15,6 +15,7 @@ pub struct WorkspaceConfig {
     pub packages: Option<Vec<String>>,
 }
 
+#[allow(dead_code)] // Could be used in the future
 #[derive(Debug, Deserialize)]
 pub struct LockfileConfig {
     pub importers: HashMap<String, serde_yaml::Value>,

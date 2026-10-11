@@ -8,8 +8,8 @@ use crate::{
         filtering::{only_keep_groups_with_score_above_minimum_score, only_keep_scripts_with_score_above_minimum_score},
         matching::search_query_empty,
         scoring::{
-            calculate_minimum_needed_score, get_scores_from_scored_packages, get_scores_from_scored_scripts, score_package,
-            should_filter_package_scripts, sort_packages_by_score, sort_scripts_by_score,
+            calculate_minimum_needed_score, get_scores_from_scored_packages, get_scores_from_scored_scripts, score_package, should_filter_package_scripts, sort_packages_by_score,
+            sort_scripts_by_score,
         },
         scoring_types::{ScoredPackage, ScoredScript},
     },

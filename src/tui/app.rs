@@ -295,8 +295,6 @@ impl App {
 
     pub fn handle_operation(&mut self, operation: Operation) -> OperationResult {
         match operation {
-            Operation::Nothing => {}
-
             // Exit program
             Operation::Quit => {
                 self.app_state.running = false;
@@ -307,8 +305,7 @@ impl App {
             // because those are updated in typing events
             Operation::MoveUp => {
                 let current_view_data = self.get_current_view_data();
-                let new_selection =
-                    get_new_selection_after_move(&self.tui_view_data.filtered_rows, &current_view_data.selection, SelectionMovement::Up);
+                let new_selection = get_new_selection_after_move(&self.tui_view_data.filtered_rows, &current_view_data.selection, SelectionMovement::Up);
 
                 if new_selection.is_some() {
                     self.set_current_selection(new_selection.unwrap());
@@ -317,8 +314,7 @@ impl App {
 
             Operation::MoveDown => {
                 let current_view_data = self.get_current_view_data();
-                let new_selection =
-                    get_new_selection_after_move(&self.tui_view_data.filtered_rows, &current_view_data.selection, SelectionMovement::Down);
+                let new_selection = get_new_selection_after_move(&self.tui_view_data.filtered_rows, &current_view_data.selection, SelectionMovement::Down);
 
                 if new_selection.is_some() {
                     self.set_current_selection(new_selection.unwrap());

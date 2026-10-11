@@ -8,8 +8,7 @@ pub struct TuiLayout {
 }
 
 fn create_layout(area: Rect) -> TuiLayout {
-    let sections =
-        Layout::default().direction(Direction::Vertical).constraints([Constraint::Length(3), Constraint::Min(1), Constraint::Length(4)]).split(area);
+    let sections = Layout::default().direction(Direction::Vertical).constraints([Constraint::Length(3), Constraint::Min(1), Constraint::Length(4)]).split(area);
 
     let layout = TuiLayout {
         search: sections[0],

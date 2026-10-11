@@ -31,7 +31,7 @@ fn change_within_bounds(collection_length: usize, current_index: usize, change: 
     return true;
 }
 
-fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
+fn get_new_selection(rows: &[TuiRow], selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
     let row_collection_length = rows.len();
     let mut new_index = selected_row_index;
 
@@ -60,9 +60,7 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
 }
 
 // app decides which selection is used, depending on which section is focused
-pub fn get_new_selection_after_move(
-    current_filtered_rows: &Vec<TuiRow>, current_selection: &Selection, direction: SelectionMovement,
-) -> Option<Selection> {
+pub fn get_new_selection_after_move(current_filtered_rows: &[TuiRow], current_selection: &Selection, direction: SelectionMovement) -> Option<Selection> {
     let selected_visible_row_index_wrapped = find_index_of_selection_in_visible_rows(current_selection, current_filtered_rows);
 
     if selected_visible_row_index_wrapped.is_none() {

@@ -6,8 +6,6 @@ pub mod move_selection;
 pub mod package_expansion;
 
 pub enum Operation {
-    Nothing,
-
     // Exit program
     Quit,
 
@@ -38,10 +36,6 @@ pub enum OperationResult {
 
 pub fn action_to_operation(app: &App, action: Action) -> Operation {
     match action {
-        // Action::Nothing => {
-        //     return Operation::Nothing;
-        // }
-
         // Exit program
         Action::Quit => {
             return Operation::Quit;

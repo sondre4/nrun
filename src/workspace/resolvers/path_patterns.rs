@@ -2,12 +2,7 @@ use std::path::{Path, PathBuf};
 
 use glob::glob;
 
-use crate::workspace::{
-    config::Project,
-    parsers::package_json::read_package_json_from_path,
-    resolvers::scripts::resolve_scripts,
-    types::Package,
-};
+use crate::workspace::{config::Project, parsers::package_json::read_package_json_from_path, resolvers::scripts::resolve_scripts, types::Package};
 
 fn path_is_package(monorepo: &Project, path: &Path) -> bool {
     let potential_package_path = path.join(monorepo.config.manifest_name);

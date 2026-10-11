@@ -14,6 +14,7 @@ pub struct ScriptUiStyle {
     pub command: Style,
 }
 
+#[allow(dead_code)] // Could be used in the future
 #[derive(Clone, Copy)]
 pub struct VSpaceUiStyle {
     pub style: Style,

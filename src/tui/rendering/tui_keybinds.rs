@@ -1,4 +1,4 @@
-use std::{cmp::max, collections::HashMap};
+use std::cmp::max;
 
 use ratatui::{
     Frame,
@@ -55,6 +55,7 @@ fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindE
 
         let mut keybind_names: Vec<String> = Vec::new();
 
+        #[allow(clippy::needless_range_loop)]
         for inner_index in 0..keybind_count {
             let inner_keybind = &keybinds[inner_index];
 
@@ -77,6 +78,7 @@ fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindE
     return entries;
 }
 
+#[allow(clippy::vec_init_then_push)]
 fn get_padding_spans(top_column_count: usize, bottom_column_count: usize, pad_length: usize) -> Vec<Span<'static>> {
     let end_length = max(top_column_count, bottom_column_count) + pad_length;
 

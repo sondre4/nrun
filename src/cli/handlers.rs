@@ -41,7 +41,7 @@ pub fn handle_list_packages(global_arguments: GlobalArguments, json_output_forma
     display_packages(packages);
 }
 
-pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &String, debug: bool, json_output_format: bool) -> () {
+pub fn handle_cli_search(global_arguments: GlobalArguments, search_query: &str, debug: bool, json_output_format: bool) -> () {
     let found_workspace = handle_finding_workspace(&global_arguments);
 
     if found_workspace.is_none() {

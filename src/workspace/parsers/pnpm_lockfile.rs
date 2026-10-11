@@ -5,6 +5,7 @@ use serde_yaml::Deserializer;
 
 use crate::workspace::parsers::{config_types::LockfileConfig, file_exists::file_exists};
 
+#[allow(dead_code)] // Could be used in the future
 pub fn parse_pnpm_lockfile_yaml(path: &Path) -> Result<Vec<LockfileConfig>, String> {
     file_exists(path)?;
 

@@ -3,10 +3,7 @@
 use std::collections::HashSet;
 
 use crate::{
-    tui::{
-        app::Selection,
-        rendering::tui_rows::TuiRow,
-    },
+    tui::{app::Selection, rendering::tui_rows::TuiRow},
     workspace::types::Package,
 };
 
@@ -54,7 +51,7 @@ pub fn to_visible_rows(possible_tui_rows: Vec<TuiRow>, scroll_offset: usize, mai
     return visible_rows;
 }
 
-pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: &Vec<TuiRow>) -> Option<usize> {
+pub fn find_index_of_selection_in_visible_rows(selection: &Selection, visible_rows: &[TuiRow]) -> Option<usize> {
     let selected_row_wrapped = visible_rows.iter().position(|tui_row| {
         if *tui_row == selection.row {
             return true;

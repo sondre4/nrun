@@ -65,8 +65,7 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
             layout = view.style_tui_layout(frame, layout, current_focused_section, color_palette);
 
             // calculate viewport values
-            let viewport_state =
-                view.calculate_viewport_state(&layout, &current_view_data.selection, current_view_data.scroll_offset, &last_operation_result);
+            let viewport_state = view.calculate_viewport_state(&layout, &current_view_data.selection, current_view_data.scroll_offset, &last_operation_result);
 
             app.update_current_scroll_offset(viewport_state.scroll_offset);
 

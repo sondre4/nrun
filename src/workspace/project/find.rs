@@ -63,7 +63,7 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Resul
 
         if is_yarn_project_root(&directory) {
             let project: Project = Project {
-                package_manager: PackageManager::Pnpm,
+                package_manager: PackageManager::Yarn,
                 root_path: directory,
                 config: PNPM_CONFIG,
             };
@@ -73,7 +73,7 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Resul
 
         if is_bun_project_root(&directory) {
             let project: Project = Project {
-                package_manager: PackageManager::Pnpm,
+                package_manager: PackageManager::Bun,
                 root_path: directory,
                 config: PNPM_CONFIG,
             };

@@ -7,7 +7,6 @@ pub struct ScriptCaller {
     pub program_path: PathBuf,
 }
 
-
 pub enum ScriptCallerError {
     // PackageManagerNotFound { package_manager: PackageManager, searched_names: String },
     PathNotSet,
