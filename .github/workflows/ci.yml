@@ -2,7 +2,8 @@ name: Check formatting, linting and building
 
 on:
   pull_request:
-    - [main]
+    branches: [main]
+
   push:
     branches:
       - dev/ci
