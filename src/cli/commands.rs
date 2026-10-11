@@ -9,13 +9,21 @@ use crate::cli::handlers;
 #[command(
     name = "nrun",
     version,
-    about = "Calling 'nrun' without a command/subcommand launches the TUI",
+    about = "Calling 'nrun' without a command/subcommand launches the TUI (Default behavior is interactive)",
     long_about = "about2",
     after_help = "about3",
 )]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Option<Command>,
+
+    /// Package name
+    #[arg(short, long, requires = "script")]
+    package: Option<String>,
+
+    /// Script name
+    #[arg(short, long, requires = "package")]
+    script: Option<String>,
 
     // default command arguments
     /// Optional: specify a path to a workspace root
@@ -58,6 +66,8 @@ pub enum Command {
 }
 
 pub struct GlobalArguments {
+    package: Option<String>,
+    script: Option<String>,
     pub path: Option<PathBuf>,
     pub depth: u32
 }
@@ -65,6 +75,8 @@ pub struct GlobalArguments {
 impl GlobalArguments {
     pub fn from(input: &Cli) -> GlobalArguments {
         return GlobalArguments {
+            package: input.package.clone(),
+            script: input.script.clone(),
             path: input.path.clone(),
             depth: input.depth.clone()
         };
@@ -87,6 +99,7 @@ pub fn handle_command(input: Cli) -> () {
             handlers::handle_cli_search(global_args, &query, debug, json);
         },
 
+        // Default
         None => {
             handlers::handle_launching_tui(global_args);
         }
