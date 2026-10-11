@@ -66,8 +66,8 @@ pub enum Command {
 }
 
 pub struct GlobalArguments {
-    package: Option<String>,
-    script: Option<String>,
+    pub package: Option<String>,
+    pub script: Option<String>,
     pub path: Option<PathBuf>,
     pub depth: u32
 }
@@ -92,7 +92,7 @@ pub fn handle_command(input: Cli) -> () {
         },
 
         Some(Command::Tui) => {
-            handlers::handle_launching_tui(global_args);
+            handlers::handle_cli_default(global_args);
         },
 
         Some(Command::Search { query, debug,  json }) => {
@@ -101,7 +101,7 @@ pub fn handle_command(input: Cli) -> () {
 
         // Default
         None => {
-            handlers::handle_launching_tui(global_args);
+            handlers::handle_cli_default(global_args);
         }
     }
 }
