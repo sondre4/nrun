@@ -28,7 +28,7 @@ pub struct Cli {
     // default command arguments
     /// Optional: specify a path to a workspace root
     #[arg(short, long, global = true)]
-    path: Option<PathBuf>,
+    workspace: Option<PathBuf>,
 
     /// Optional: specify how far out of the starting directory nrun should search for a workspace root
     #[arg(short, long, global = true, default_value_t = 7)] // default depth is 7
@@ -68,7 +68,7 @@ pub enum Command {
 pub struct GlobalArguments {
     pub package: Option<String>,
     pub script: Option<String>,
-    pub path: Option<PathBuf>,
+    pub workspace: Option<PathBuf>,
     pub depth: u32
 }
 
@@ -77,7 +77,7 @@ impl GlobalArguments {
         return GlobalArguments {
             package: input.package.clone(),
             script: input.script.clone(),
-            path: input.path.clone(),
+            workspace: input.workspace.clone(),
             depth: input.depth.clone()
         };
     }

@@ -9,7 +9,7 @@ use crate::workspace::find_workspace;
 use crate::workspace::types::Workspace;
 
 fn handle_finding_workspace(global_arguments: &GlobalArguments) -> Option<Workspace> {
-    let workspace_result = find_workspace(&global_arguments.path, &global_arguments.depth);
+    let workspace_result = find_workspace(&global_arguments.workspace, &global_arguments.depth);
     match workspace_result {
         Ok(result) => {
             return Some(result);
