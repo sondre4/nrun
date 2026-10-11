@@ -15,7 +15,6 @@ use crate::tui::{
 };
 
 struct DisplayedKeybindEntry {
-    action: Action,
     description: String,
     keys: Vec<String>,
 }
@@ -68,56 +67,11 @@ fn keybinds_to_display_entries(keybinds: Vec<&Keybind>) -> Vec<DisplayedKeybindE
         completed_keybind_actions.push(current_action);
 
         let keybind_entry: DisplayedKeybindEntry = DisplayedKeybindEntry {
-            action: current_action,
             description: keybind.description.to_string(),
             keys: keybind_names,
         };
 
         entries.push(keybind_entry);
-    }
-
-    return entries;
-}
-
-fn build_keybind_map(keybinds: Vec<&Keybind>) -> HashMap<Action, Vec<Keybind>> {
-    let mut keybind_map: HashMap<Action, Vec<Keybind>> = HashMap::new();
-
-    for keybind in keybinds {
-        let action = keybind.action;
-
-        let keybind_collection = keybind_map.entry(action).or_default();
-        keybind_collection.push(keybind.clone());
-    }
-
-    return keybind_map;
-}
-
-fn build_keybind_display_data(keybind_map: &HashMap<Action, Vec<Keybind>>) -> Vec<DisplayedKeybindEntry> {
-    let mut entries: Vec<DisplayedKeybindEntry> = Vec::new();
-
-    for (action, keybinds) in keybind_map {
-        let main_keybind_description: String = String::from(keybinds[0].description);
-        let mut keybind_description: String = main_keybind_description.clone();
-        let mut keybind_keys: Vec<String> = Vec::new();
-
-        for keybind in keybinds {
-            let key_name = get_keybind_name(keybind);
-            keybind_keys.push(key_name);
-
-            let description = String::from(keybind.description);
-
-            if description != main_keybind_description {
-                keybind_description.push_str(format!("/{}", description).as_str());
-            }
-        }
-
-        let entry: DisplayedKeybindEntry = DisplayedKeybindEntry {
-            action: *action,
-            description: keybind_description,
-            keys: keybind_keys,
-        };
-
-        entries.push(entry);
     }
 
     return entries;

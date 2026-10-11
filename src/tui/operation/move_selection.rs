@@ -32,11 +32,10 @@ fn change_within_bounds(collection_length: usize, current_index: usize, change: 
 }
 
 fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &SelectionMovement) -> Option<Selection> {
-    let mut running = true;
     let row_collection_length = rows.len();
     let mut new_index = selected_row_index;
 
-    while running {
+    loop {
         let change = get_selection_change(direction);
         if !change_within_bounds(row_collection_length, new_index, change) {
             return None;
@@ -47,7 +46,6 @@ fn get_new_selection(rows: &Vec<TuiRow>, selected_row_index: usize, direction: &
         if matches!(rows[new_index], TuiRow::Vspace) {
             continue;
         }
-        running = false;
         break;
     }
 

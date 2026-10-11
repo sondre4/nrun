@@ -99,16 +99,6 @@ pub fn get_script_row_style(visible_row: &TuiRow, selection: &Selection, styles:
     };
 }
 
-pub fn get_vspace_row_style(visible_row: &TuiRow, selection: &Selection, styles: &UiStyles) -> VSpaceUiStyle {
-    let style = get_row_style(visible_row, selection, styles);
-    match style {
-        UiStyle::VspaceStyle(vspace_ui_style) => {
-            return vspace_ui_style;
-        }
-        _ => unreachable!("Row style should not be other than style for vspace row"),
-    };
-}
-
 pub fn get_keybind_display_style(styles: &UiStyles) -> KeybindDisplayUiStyle {
     let style = styles.keybind_display;
     match style {

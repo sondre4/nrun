@@ -13,7 +13,7 @@ pub fn render_search_bar(frame: &mut Frame, search_bar_section: Rect, input: &In
     let section_y = search_bar_section.y;
     let cursor_x_display_columns = u16::try_from(input.visual_cursor());
 
-    let mut cursor_x_columns: u16 = 0;
+    let cursor_x_columns: u16;
 
     match cursor_x_display_columns {
         Ok(result) => {

@@ -2,7 +2,7 @@ use tui_input::InputRequest;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Action {
-    Nothing,
+    // Nothing,
 
     // Exit program
     Quit,

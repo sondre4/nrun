@@ -62,12 +62,12 @@ impl ScriptConfig {
                 return Ok(config);
             }
             Err(error) => match error {
-                ScriptCallerError::PackageManagerNotFound {
-                    package_manager: _,
-                    searched_names,
-                } => {
-                    return Err(format!("Package manager not found. Paths tried: {}", searched_names));
-                }
+                // ScriptCallerError::PackageManagerNotFound {
+                //     package_manager: _,
+                //     searched_names,
+                // } => {
+                //     return Err(format!("Package manager not found. Paths tried: {}", searched_names));
+                // }
                 ScriptCallerError::PathNotSet => {
                     return Err("Path not set".to_string());
                 }

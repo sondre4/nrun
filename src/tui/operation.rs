@@ -38,9 +38,9 @@ pub enum OperationResult {
 
 pub fn action_to_operation(app: &App, action: Action) -> Operation {
     match action {
-        Action::Nothing => {
-            return Operation::Nothing;
-        }
+        // Action::Nothing => {
+        //     return Operation::Nothing;
+        // }
 
         // Exit program
         Action::Quit => {

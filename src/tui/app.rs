@@ -362,8 +362,6 @@ impl App {
                 self.app_state.search_input.handle(input_request);
                 return OperationResult::UpdatedSearchQuery;
             }
-
-            _ => {}
         }
 
         return OperationResult::None;

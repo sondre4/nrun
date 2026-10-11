@@ -67,9 +67,5 @@ pub fn to_action(focused_section: &FocusedSection, event: Event) -> Option<Actio
 
             return None;
         }
-
-        _ => {
-            return None;
-        }
     }
 }
