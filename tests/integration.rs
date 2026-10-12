@@ -1,2 +1,5 @@
-#[path = "integration/discover_npm_project.rs"]
-mod discover_npm_project;
+#[path = "integration/discover_project.rs"]
+mod discover_project;
+
+#[path = "integration/discover_monorepo.rs"]
+mod discover_monorepo;
