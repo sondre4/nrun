@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use crate::workspace::{
     config::{BUN_CONFIG, NPM_CONFIG, PNPM_CONFIG, Project, YARN_CONFIG},
-    project::find::build_project_data,
+    project::find::build_project_info,
     types::PackageManager,
 };
 
@@ -17,7 +17,7 @@ fn builds_correct_project_data_when_npm() {
         config: NPM_CONFIG,
     };
 
-    let built_data = build_project_data(example_path, package_manager);
+    let built_data = build_project_info(example_path, package_manager);
 
     assert_eq!(built_data, expected_project);
 }
@@ -33,7 +33,7 @@ fn builds_correct_project_data_when_yarn() {
         config: YARN_CONFIG,
     };
 
-    let built_data = build_project_data(example_path, package_manager);
+    let built_data = build_project_info(example_path, package_manager);
 
     assert_eq!(built_data, expected_project);
 }
@@ -49,7 +49,7 @@ fn builds_correct_project_data_when_bun() {
         config: BUN_CONFIG,
     };
 
-    let built_data = build_project_data(example_path, package_manager);
+    let built_data = build_project_info(example_path, package_manager);
 
     assert_eq!(built_data, expected_project);
 }
@@ -65,7 +65,7 @@ fn builds_correct_project_data_when_pnpm() {
         config: PNPM_CONFIG,
     };
 
-    let built_data = build_project_data(example_path, package_manager);
+    let built_data = build_project_info(example_path, package_manager);
 
     assert_eq!(built_data, expected_project);
 }

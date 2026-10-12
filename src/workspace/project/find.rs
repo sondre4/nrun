@@ -84,7 +84,7 @@ fn find_package_manager(path: &Path) -> Option<PackageManager> {
     return None;
 }
 
-pub fn build_project_data(current_path: PathBuf, package_manager: PackageManager) -> Project {
+pub fn build_project_info(current_path: PathBuf, package_manager: PackageManager) -> Project {
     let package_manager_config = match package_manager {
         PackageManager::Npm => NPM_CONFIG,
         PackageManager::Pnpm => PNPM_CONFIG,
@@ -108,7 +108,7 @@ fn find_monorepo_project_metadata(start_directory: PathBuf, depth: u32) -> Resul
         let found_package_manager = find_package_manager(&directory);
 
         if found_package_manager.is_some() {
-            let project = build_project_data(directory, found_package_manager.unwrap());
+            let project = build_project_info(directory, found_package_manager.unwrap());
             return Ok(project);
         }
 
