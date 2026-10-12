@@ -54,5 +54,5 @@ jobs:
       - name: Run cargo check
         run: cargo check --all-features
 
-      - name: Run unit tests
+      - name: Run unit tests and integration tests
         run: cargo test --workspace --all-features

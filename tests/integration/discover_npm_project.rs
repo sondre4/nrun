@@ -21,11 +21,14 @@ fn finds_npm_project() {
     assert!(too_small_depth_result.is_err());
 
     // Should be positive path
-    let found_result = find_monorepo_project(fixture_path.clone(), 0);
+    let found_result = find_monorepo_project(fixture_path.clone(), 5);
+    if found_result.is_err() {
+        println!("{}", found_result.as_ref().err().unwrap());
+    }
+
     assert!(found_result.is_ok());
 
     // Check that the correct project was found
-
     let expected_project: Project = Project {
         package_manager: PackageManager::Npm,
         root_path: fixture_path,
