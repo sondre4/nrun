@@ -21,14 +21,14 @@ impl fmt::Display for PackageManager {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Script {
     pub id: usize,
     pub name: String,
     pub command: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Package {
     pub id: usize,
     pub name: String,
@@ -36,7 +36,7 @@ pub struct Package {
     pub scripts: Vec<Script>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Workspace {
     pub root_path: PathBuf,
     pub package_manager: PackageManager,
