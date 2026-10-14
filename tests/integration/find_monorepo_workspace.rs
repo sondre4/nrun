@@ -8,8 +8,8 @@ use nrun::workspace::{
 #[test]
 fn finds_npm_monorepo() {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let fixture_path_base = base_directory.join("tests").join("fixtures").join("npm-project");
-    let fixture_path_package = base_directory.join("tests").join("fixtures").join("npm-project").join("packages").join("package-a");
+    let fixture_path_base = base_directory.join("tests").join("fixtures").join("npm-monorepo");
+    let fixture_path_package = base_directory.join("tests").join("fixtures").join("npm-monorepo").join("packages").join("package-a");
 
     // Wrong path argument
     let wrong_path_result = find_workspace(&Some(base_directory), &5);
