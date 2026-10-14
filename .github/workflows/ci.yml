@@ -1,4 +1,4 @@
-name: Check formatting, linting and building
+name: CI
 
 on:
   pull_request:
