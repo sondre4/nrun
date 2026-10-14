@@ -1,10 +1,11 @@
 use crate::workspace::{parsers::config_types::PackageJson, types::Script};
 
-pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String> {
+pub fn resolve_scripts(package_json: &PackageJson) -> Option<Vec<Script>> {
     let script_map_option = &package_json.scripts;
 
     if script_map_option.is_none() {
-        return Err("package.json schema contains no scripts".to_string());
+        // return Err("package.json schema contains no scripts".to_string());
+        return None;
     }
 
     let script_map = script_map_option.as_ref().unwrap();
@@ -28,5 +29,5 @@ pub fn resolve_scripts(package_json: &PackageJson) -> Result<Vec<Script>, String
         return script_a.name.cmp(&script_b.name);
     });
 
-    return Ok(scripts);
+    return Some(scripts);
 }

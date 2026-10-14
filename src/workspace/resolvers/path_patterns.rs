@@ -48,13 +48,20 @@ pub fn resolve_packages(monorepo: &Project, path_pattern: &String, start_package
         if path_is_package(monorepo, &found_path) {
             let package_json_path = found_path.join(monorepo.config.manifest_name);
             let package_json = read_package_json_from_path(&package_json_path)?;
-            let read_scripts = resolve_scripts(&package_json)?;
+            let read_scripts = resolve_scripts(&package_json);
+
+            // App functionality decision:
+            // If a package (also root package) has no scripts, the package is not included (nrun is built to browse scripts)
+            if read_scripts.is_none() {
+                // Skip iteration
+                continue;
+            }
 
             let resolved_package: Package = Package {
                 id: current_package_id,
                 name: package_json.name.unwrap_or(format!("{}", found_path.clone().to_string_lossy())),
                 path: found_path,
-                scripts: read_scripts,
+                scripts: read_scripts.unwrap(),
             };
 
             resolved_packages.push(resolved_package);

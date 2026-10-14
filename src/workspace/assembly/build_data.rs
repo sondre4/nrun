@@ -25,8 +25,6 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
         packages: Vec::new(),
     };
 
-    // println!("Found project: '{}' with package manager '{:#?}'", monorepo.root_path.to_string_lossy(), monorepo.package_manager);
-
     // read root package.json
     // not needed for pnpm? still needed for main scripts
     let root_package_json_result = read_package_json(&monorepo);
@@ -38,20 +36,15 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
     };
 
     // read scripts in root package.json
-    let root_package_json_scripts_result = resolve_scripts(&root_package_json);
-    let root_package_json_scripts = match root_package_json_scripts_result {
-        Ok(result) => result,
-        Err(error) => {
-            return Err(format!("Error: {error}"));
-        }
-    };
+    let resolved_project_root_scripts = resolve_scripts(&root_package_json);
+    let project_root_scripts = if resolved_project_root_scripts.is_some() { resolved_project_root_scripts.unwrap() } else { Vec::new() };
 
     // add root package to workspace vector
     let root_package: Package = Package {
         id: ROOT_PACKAGE_ID,
         name: root_package_json.name.unwrap_or(workspace.root_path.clone().to_string_lossy().to_string()),
         path: workspace.root_path.clone(),
-        scripts: root_package_json_scripts,
+        scripts: project_root_scripts,
     };
 
     workspace.packages.push(root_package);
