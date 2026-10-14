@@ -1,11 +1,13 @@
-#[path = "integration/discover_project.rs"]
-mod discover_project;
+// Monorepos
+#[path = "integration/discovers_monorepo_package_manager.rs"]
+mod discovers_monorepo_package_manager;
 
-#[path = "integration/discover_monorepo.rs"]
-mod discover_monorepo;
+#[path = "integration/discovers_monorepo_workspace.rs"]
+mod discovers_monorepo_workspace;
 
-#[path = "integration/find_project_workspace.rs"]
-mod find_project_workspace;
+// Normal projects
+#[path = "integration/discovers_project_package_manager.rs"]
+mod discovers_project_package_manager;
 
-#[path = "integration/find_monorepo_workspace.rs"]
-mod find_monorepo_workspace;
+#[path = "integration/discovers_project_workspace.rs"]
+mod discovers_project_workspace;

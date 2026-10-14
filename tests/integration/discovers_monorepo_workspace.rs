@@ -6,7 +6,7 @@ use nrun::workspace::{
 };
 
 #[test]
-fn finds_npm_monorepo() {
+fn npm_monorepo() {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let fixture_path_base = base_directory.join("tests").join("fixtures").join("npm-monorepo");
     let fixture_path_package = base_directory.join("tests").join("fixtures").join("npm-monorepo").join("packages").join("package-a");
@@ -25,7 +25,7 @@ fn finds_npm_monorepo() {
     // Should be positive path
     let found_workspace = find_workspace(&Some(fixture_path_package.clone()), &5);
     if found_workspace.is_err() {
-        println!("{}", found_workspace.as_ref().err().unwrap());
+        println!("Error while finding workspace: {}", found_workspace.as_ref().err().unwrap());
     }
 
     assert!(found_workspace.is_ok());

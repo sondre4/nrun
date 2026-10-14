@@ -6,7 +6,7 @@ use nrun::workspace::{
 };
 
 #[test]
-fn finds_npm_workspace() {
+fn npm_workspace() {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let fixture_path = base_directory.join("tests").join("fixtures").join("npm-project");
 
