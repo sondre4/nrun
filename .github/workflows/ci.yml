@@ -48,6 +48,17 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+        # Setup npm for integration test 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check npm installed
+        run: |
+          node --version
+          npm --version
+
+        # Cargo check and test (unit and integration tests)
       - name: Install rust
         uses: actions-rust-lang/setup-rust-toolchain@v2
 

@@ -11,15 +11,15 @@ fn npm_workspace() {
     let fixture_path = base_directory.join("tests").join("fixtures").join("npm-project");
 
     // Wrong path argument
-    let wrong_path_result = find_workspace(&Some(base_directory.clone()), &5);
+    let wrong_path_result = find_workspace(Some(&base_directory.clone()), &5);
     assert!(wrong_path_result.is_err());
 
     // Too small depth argument
-    let too_small_depth_result = find_workspace(&Some(fixture_path.clone()), &0);
+    let too_small_depth_result = find_workspace(Some(&fixture_path.clone()), &0);
     assert!(too_small_depth_result.is_err());
 
     // Should be positive path
-    let found_workspace = find_workspace(&Some(fixture_path.clone()), &5);
+    let found_workspace = find_workspace(Some(&fixture_path.clone()), &5);
     if found_workspace.is_err() {
         println!("{}", found_workspace.as_ref().err().unwrap());
     }

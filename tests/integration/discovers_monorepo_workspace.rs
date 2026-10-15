@@ -12,18 +12,18 @@ fn npm_monorepo() {
     let fixture_path_package = base_directory.join("tests").join("fixtures").join("npm-monorepo").join("packages").join("app-a");
 
     // Wrong path argument
-    let wrong_path_result = find_workspace(&Some(base_directory), &5);
+    let wrong_path_result = find_workspace(Some(&base_directory), &5);
     assert!(wrong_path_result.is_err());
 
     // Too small depth arguments
-    let too_small_depth_result_1 = find_workspace(&Some(fixture_path_base.clone()), &0);
+    let too_small_depth_result_1 = find_workspace(Some(&fixture_path_base.clone()), &0);
     assert!(too_small_depth_result_1.is_err());
 
-    let too_small_depth_result_2 = find_workspace(&Some(fixture_path_package.clone()), &1);
+    let too_small_depth_result_2 = find_workspace(Some(&fixture_path_package.clone()), &1);
     assert!(too_small_depth_result_2.is_err());
 
     // Should be positive path
-    let found_workspace = find_workspace(&Some(fixture_path_package.clone()), &5);
+    let found_workspace = find_workspace(Some(&fixture_path_package.clone()), &5);
     if found_workspace.is_err() {
         println!("Error while finding workspace: {}", found_workspace.as_ref().err().unwrap());
     }

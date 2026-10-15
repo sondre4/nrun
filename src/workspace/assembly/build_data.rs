@@ -10,7 +10,7 @@ use crate::workspace::{
 
 const ROOT_PACKAGE_ID: usize = 0;
 
-pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u32) -> Result<Workspace, String> {
+pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u32) -> Result<Workspace, String> {
     // initial values
     let values = initialize_values(start_directory, search_depth)?;
     let directory = values.directory;
