@@ -226,6 +226,32 @@ impl App {
     }
 
     // Selection setters
+    pub fn initialize_selection(&mut self) -> () {
+
+        // Only continue if filtered rows have at least 2 rows
+        // (At least one package + one script)
+        if self.tui_view_data.filtered_rows.len() < 2 {
+            return;
+        }
+
+        let first_script_row = &self.tui_view_data.filtered_rows[1];
+        let first_package_id = first_script_row.get_package_id();
+        let first_script_id = first_script_row.get_script_id();
+
+        if first_package_id.is_none() || first_script_id.is_none() {
+            return;
+        }
+
+        let initial_selection: Selection = Selection {
+            row: TuiRow::Script {
+                package_id: first_package_id.unwrap(),
+                script_id: first_script_id.unwrap(),
+            },
+        };
+
+        self.set_current_selection(initial_selection);
+    }
+
     pub fn set_current_selection(&mut self, new_selection: Selection) -> () {
         let current_view_data = self.get_current_view_data_mut();
         current_view_data.selection = new_selection;

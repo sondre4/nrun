@@ -23,9 +23,16 @@ pub fn run_tui(workspace: Workspace) -> Result<(), String> {
 
     let mut app = App::new(workspace);
     let mut last_operation_result: OperationResult = OperationResult::None;
-    // let mut searcher: PackageSearcher = PackageSearcher::new();
 
+    // Initialize app state before first iteration
+
+    // Expanded packages has to be initialized before initializing filtered rows:
+    // updating filtered rows depends on expanded package set
     app.initialize_expanded_packages();
+    app.update_filtered_rows();
+
+    // Initialize selected row
+    app.initialize_selection();
 
     // main loop
     while app.running() {

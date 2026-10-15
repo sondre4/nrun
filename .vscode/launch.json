@@ -13,7 +13,7 @@
                 ]
             },
             "args": [
-                "-p",
+                "-w",
                 "${env:USERPROFILE}/path/to/test/project"
             ],
             "cwd": "${workspaceFolder}",
