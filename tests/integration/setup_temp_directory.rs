@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use tempfile::{TempDir, tempdir};
+use tempfile::TempDir;
 
 // pub fn setup_temp_directory() -> () {
 //     tempdir
