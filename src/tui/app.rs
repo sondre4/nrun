@@ -227,7 +227,6 @@ impl App {
 
     // Selection setters
     pub fn initialize_selection(&mut self) -> () {
-
         // Only continue if filtered rows have at least 2 rows
         // (At least one package + one script)
         if self.tui_view_data.filtered_rows.len() < 2 {
