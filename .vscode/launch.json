@@ -13,8 +13,8 @@
                 ]
             },
             "args": [
-                "-p",
-                "${env:USERPROFILE}/path/to/test/project"
+                "-w",
+                "${env:USERPROFILE}/strength-program-builder"
             ],
             "cwd": "${workspaceFolder}",
             "terminal": "external"
