@@ -1,8 +1,8 @@
 {
-  "name": "fixture-yarn-project",
+  "name": "fixture-bun-project",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "run-yarn-project": "node index.js"
+    "run-bun-project": "node index.js"
   }
 }
