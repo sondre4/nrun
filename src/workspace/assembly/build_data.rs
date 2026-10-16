@@ -39,7 +39,7 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
     let resolved_project_root_scripts = resolve_scripts(&root_package_json);
     let project_root_scripts = if resolved_project_root_scripts.is_some() { resolved_project_root_scripts.unwrap() } else { Vec::new() };
 
-    if project_root_scripts.len() > 0 {
+    if !project_root_scripts.is_empty() {
         // add root package to workspace vector
         let root_package: Package = Package {
             id: ROOT_PACKAGE_ID,
@@ -50,7 +50,6 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
 
         workspace.packages.push(root_package);
     }
-
 
     // find path patterns of packages
 
@@ -93,9 +92,6 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
             package_start_id += workspace.packages.len();
         }
     }
-
-    // println!("Package patterns: {:#?}", extra_patterns);
-    // println!("Project found: {:#?}", workspace);
 
     return Ok(workspace);
 }
