@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use nrun::{
     command::{command_caller::CommandCaller, script_config::ScriptConfig},
@@ -7,10 +7,9 @@ use nrun::{
 
 use crate::setup_temp_directory::create_temp_directory;
 
-#[test]
-fn npm_monorepo() {
+fn test_can_call_monorepo_script(monorepo_path: &Path) {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let fixture_base_path = base_directory.join("tests").join("fixtures").join("npm-monorepo");
+    let fixture_base_path = base_directory.join("tests").join("fixtures").join(monorepo_path);
 
     let temp_fixture_path_result = create_temp_directory(&fixture_base_path);
     assert!(temp_fixture_path_result.is_ok());
@@ -50,4 +49,9 @@ fn npm_monorepo() {
     // The script should create a file called 'test.txt'
     let test_file_path = temp_fixture_monorepo_package_path.join("test.txt");
     assert!(test_file_path.exists(), "File not found at {}", test_file_path.to_string_lossy());
+}
+
+#[test]
+fn npm_monorepo() -> () {
+    test_can_call_monorepo_script(&PathBuf::from("npm-monorepo"));
 }

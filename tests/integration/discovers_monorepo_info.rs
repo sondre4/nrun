@@ -1,17 +1,15 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use nrun::workspace::{
     config::{NPM_CONFIG, Project},
     project::find::find_monorepo_project,
     types::PackageManager,
 };
-// use std::process::Command;
 
-#[test]
-fn npm_monorepo() {
+fn test_discover_monorepo_info(monorepo_path: &Path) -> () {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let fixture_path_base = base_directory.join("tests").join("fixtures").join("npm-monorepo");
-    let fixture_path_package = base_directory.join("tests").join("fixtures").join("npm-monorepo").join("packages").join("package-a");
+    let fixture_path_base = base_directory.join("tests").join("fixtures").join(monorepo_path);
+    let fixture_path_package = base_directory.join("tests").join("fixtures").join(monorepo_path).join("packages").join("package-a");
 
     // Wrong path argument
     let wrong_path_result = find_monorepo_project(base_directory, 5);
@@ -41,4 +39,9 @@ fn npm_monorepo() {
 
     let project = found_result.unwrap();
     assert_eq!(project, expected_project);
+}
+
+#[test]
+fn npm_monorepo() -> () {
+    test_discover_monorepo_info(&PathBuf::from("npm-monorepo"));
 }

@@ -1,12 +1,11 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use nrun::workspace::{
     find_workspace,
     types::{Package, PackageManager, Script, Workspace},
 };
 
-#[test]
-fn npm_monorepo() {
+fn test_discover_monorepo_workspace(monorepo_path: &Path) -> () {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let fixture_path_base = base_directory.join("tests").join("fixtures").join("npm-monorepo");
     let fixture_path_package = base_directory.join("tests").join("fixtures").join("npm-monorepo").join("packages").join("app-a");
@@ -91,4 +90,9 @@ fn npm_monorepo() {
         assert_eq!(workspace_package.path, expected_package.path);
         assert_eq!(workspace_package.scripts, expected_package.scripts);
     }
+}
+
+#[test]
+fn npm_monorepo() -> () {
+    test_discover_monorepo_workspace(&PathBuf::from("npm-monorepo"));
 }
