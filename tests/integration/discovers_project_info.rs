@@ -13,17 +13,10 @@ fn test_discover_project_info(project_path: &Path, expected_package_manager: Pac
     // Wrong path argument
     let wrong_path_result = find_monorepo_project(base_directory, 5);
     assert!(wrong_path_result.is_err());
-    // if wrong_path_result.is_ok() {
-    //     return false;
-    // }
 
     // Too small depth argument
     let too_small_depth_result = find_monorepo_project(fixture_path.clone(), 0);
     assert!(too_small_depth_result.is_err());
-
-    // if too_small_depth_result.is_ok() {
-    //     return false;
-    // }
 
     // Should be positive path
     let found_result = find_monorepo_project(fixture_path.clone(), 5);

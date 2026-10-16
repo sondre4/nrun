@@ -51,16 +51,16 @@ fn npm_monorepo() -> () {
 }
 
 #[test]
-fn bun_project() -> () {
-    test_can_call_monorepo_script(&PathBuf::from("bun-project"));
+fn bun_monorepo() -> () {
+    test_can_call_monorepo_script(&PathBuf::from("bun-monorepo"));
 }
 
 #[test]
-fn yarn_project() -> () {
-    test_can_call_monorepo_script(&PathBuf::from("yarn-project"));
+fn yarn_monorepo() -> () {
+    test_can_call_monorepo_script(&PathBuf::from("yarn-monorepo"));
 }
 
 #[test]
-fn pnpm_project() -> () {
-    test_can_call_monorepo_script(&PathBuf::from("pnpm-project"));
+fn pnpm_monorepo() -> () {
+    test_can_call_monorepo_script(&PathBuf::from("pnpm-monorepo"));
 }

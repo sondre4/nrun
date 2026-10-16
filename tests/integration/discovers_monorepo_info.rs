@@ -42,21 +42,21 @@ fn test_discover_monorepo_info(monorepo_path: &Path, expected_package_manager: P
 }
 
 #[test]
-fn npm_project() -> () {
-    test_discover_monorepo_info(&PathBuf::from("npm-project"), PackageManager::Npm, NPM_CONFIG);
+fn npm_monorepo() -> () {
+    test_discover_monorepo_info(&PathBuf::from("npm-monorepo"), PackageManager::Npm, NPM_CONFIG);
 }
 
 #[test]
-fn bun_project() -> () {
-    test_discover_monorepo_info(&PathBuf::from("bun-project"), PackageManager::Bun, BUN_CONFIG);
+fn bun_monorepo() -> () {
+    test_discover_monorepo_info(&PathBuf::from("bun-monorepo"), PackageManager::Bun, BUN_CONFIG);
 }
 
 #[test]
-fn yarn_project() -> () {
-    test_discover_monorepo_info(&PathBuf::from("yarn-project"), PackageManager::Yarn, YARN_CONFIG);
+fn yarn_monorepo() -> () {
+    test_discover_monorepo_info(&PathBuf::from("yarn-monorepo"), PackageManager::Yarn, YARN_CONFIG);
 }
 
 #[test]
-fn pnpm_project() -> () {
-    test_discover_monorepo_info(&PathBuf::from("pnpm-project"), PackageManager::Pnpm, PNPM_CONFIG);
+fn pnpm_monorepo() -> () {
+    test_discover_monorepo_info(&PathBuf::from("pnpm-monorepo"), PackageManager::Pnpm, PNPM_CONFIG);
 }
