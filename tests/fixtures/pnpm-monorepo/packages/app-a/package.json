@@ -1,0 +1,8 @@
+{
+  "name": "fixture-app-a",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "run-a": "node index.js"
+  }
+}
