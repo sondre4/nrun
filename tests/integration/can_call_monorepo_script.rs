@@ -1,4 +1,4 @@
-use std::{path::{Path, PathBuf}, thread::sleep, time::Duration};
+use std::path::{Path, PathBuf};
 
 use nrun::{
     command::{command_caller::CommandCaller, script_config::ScriptConfig},
@@ -33,7 +33,7 @@ fn test_can_call_monorepo_script(monorepo_path: &Path) {
     let call_result = CommandCaller::call(config);
     assert!(call_result.is_ok());
 
-    // Check if script in monorepo fixture ran.
+    // Check if script in monorepo fixture ran
     // The script should create a file called 'test.txt'
     let test_file_path = temp_monorepo_package_path.join("test.txt");
     assert!(test_file_path.exists(), "File not found at {}", test_file_path.to_string_lossy());

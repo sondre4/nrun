@@ -5,7 +5,6 @@ mod setup_temp_directory;
 #[path = "integration/can_call_monorepo_script.rs"]
 mod can_call_monorepo_script;
 
-
 #[path = "integration/discovers_monorepo_info.rs"]
 mod discovers_monorepo_info;
 
