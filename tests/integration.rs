@@ -5,6 +5,7 @@ mod setup_temp_directory;
 #[path = "integration/can_call_monorepo_script.rs"]
 mod can_call_monorepo_script;
 
+
 #[path = "integration/discovers_monorepo_info.rs"]
 mod discovers_monorepo_info;
 
@@ -12,6 +13,9 @@ mod discovers_monorepo_info;
 mod discovers_monorepo_workspace;
 
 // Normal projects
+#[path = "integration/can_call_project_script.rs"]
+mod can_call_project_script;
+
 #[path = "integration/discovers_project_info.rs"]
 mod discovers_project_info;
 
