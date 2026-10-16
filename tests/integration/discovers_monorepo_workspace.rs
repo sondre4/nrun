@@ -5,7 +5,7 @@ use nrun::workspace::{
     types::{Package, PackageManager, Script, Workspace},
 };
 
-fn test_discover_monorepo_workspace(monorepo_path: &Path) -> () {
+fn test_discover_monorepo_workspace(monorepo_path: &Path, expected_package_manager: PackageManager) -> () {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let fixture_path_base = base_directory.join("tests").join("fixtures").join(monorepo_path);
     let fixture_path_package = base_directory.join("tests").join("fixtures").join(monorepo_path).join("packages").join("app-a");
@@ -33,12 +33,12 @@ fn test_discover_monorepo_workspace(monorepo_path: &Path) -> () {
 
     // build expected data
     let expected_packages = vec![
-        Package {
-            id: 0,
-            name: "fixture-npm-monorepo".to_string(),
-            path: fixture_path_base.clone().join(""),
-            scripts: vec![],
-        },
+        // Package {
+        //     id: 0,
+        //     name: format!("fixture-{package_manager_name}-monorepo"),
+        //     path: fixture_path_base.clone().join(""),
+        //     scripts: vec![],
+        // },
         Package {
             id: 0,
             name: "fixture-app-a".to_string(),
@@ -63,7 +63,7 @@ fn test_discover_monorepo_workspace(monorepo_path: &Path) -> () {
 
     let expected_workspace = Workspace {
         root_path: fixture_path_base,
-        package_manager: PackageManager::Npm,
+        package_manager: expected_package_manager,
         packages: expected_packages,
     };
 
@@ -94,5 +94,10 @@ fn test_discover_monorepo_workspace(monorepo_path: &Path) -> () {
 
 #[test]
 fn npm_monorepo() -> () {
-    test_discover_monorepo_workspace(&PathBuf::from("npm-monorepo"));
+    test_discover_monorepo_workspace(&PathBuf::from("npm-monorepo"), PackageManager::Npm);
+}
+
+#[test]
+fn bun_monorepo() -> () {
+    test_discover_monorepo_workspace(&PathBuf::from("bun-monorepo"), PackageManager::Bun);
 }

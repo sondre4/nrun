@@ -11,13 +11,15 @@ fn test_can_call_project_script(project_path: &Path) -> () {
     let temp_project = create_temp_project_from_base(&get_cargo_manifest_dir_path(), project_path);
     let temp_project_path = temp_project.root_path().to_path_buf();
 
-    println!("Temp project root path: {:#?}", temp_project.root_path());
+    // println!("Temp project root path: {:#?}", temp_project.root_path());
 
     // Find workspace packages/scripts
     let found_workspace = find_workspace(Some(&temp_project_path), &5);
     if found_workspace.is_err() {
         println!("Error while finding workspace: {}", found_workspace.as_ref().err().unwrap());
     }
+
+    println!("{found_workspace:#?}");
 
     assert!(found_workspace.is_ok());
 
@@ -28,7 +30,8 @@ fn test_can_call_project_script(project_path: &Path) -> () {
     let chosen_script = &chosen_package.scripts[0];
     let config_result = ScriptConfig::from_config_data(chosen_script, chosen_package, &workspace.package_manager);
 
-    assert!(config_result.is_ok());
+    // This will fail if the package manager corresponding to the fixture project does not exist in the test environment
+    assert!(config_result.is_ok(), "Config result is error: {}", config_result.err().unwrap());
 
     let config = config_result.unwrap();
 
@@ -44,4 +47,9 @@ fn test_can_call_project_script(project_path: &Path) -> () {
 #[test]
 fn npm_project() -> () {
     test_can_call_project_script(&PathBuf::from("npm-project"));
+}
+
+#[test]
+fn bun_project() -> () {
+    test_can_call_project_script(&PathBuf::from("bun-project"));
 }

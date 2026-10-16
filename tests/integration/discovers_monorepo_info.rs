@@ -1,12 +1,12 @@
 use std::path::{Path, PathBuf};
 
 use nrun::workspace::{
-    config::{NPM_CONFIG, Project},
+    config::{BUN_CONFIG, NPM_CONFIG, PackageManagerConfig, Project},
     project::find::find_monorepo_project,
     types::PackageManager,
 };
 
-fn test_discover_monorepo_info(monorepo_path: &Path) -> () {
+fn test_discover_monorepo_info(monorepo_path: &Path, expected_package_manager: PackageManager, expected_config: PackageManagerConfig) -> () {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let fixture_path_base = base_directory.join("tests").join("fixtures").join(monorepo_path);
     let fixture_path_package = base_directory.join("tests").join("fixtures").join(monorepo_path).join("packages").join("package-a");
@@ -32,9 +32,9 @@ fn test_discover_monorepo_info(monorepo_path: &Path) -> () {
 
     // Check that the correct project was found
     let expected_project: Project = Project {
-        package_manager: PackageManager::Npm,
+        package_manager: expected_package_manager,
         root_path: fixture_path_base,
-        config: NPM_CONFIG,
+        config: expected_config,
     };
 
     let project = found_result.unwrap();
@@ -42,6 +42,11 @@ fn test_discover_monorepo_info(monorepo_path: &Path) -> () {
 }
 
 #[test]
-fn npm_monorepo() -> () {
-    test_discover_monorepo_info(&PathBuf::from("npm-monorepo"));
+fn npm_project() -> () {
+    test_discover_monorepo_info(&PathBuf::from("npm-project"), PackageManager::Npm, NPM_CONFIG);
+}
+
+#[test]
+fn bun_project() -> () {
+    test_discover_monorepo_info(&PathBuf::from("bun-project"), PackageManager::Bun, BUN_CONFIG);
 }
