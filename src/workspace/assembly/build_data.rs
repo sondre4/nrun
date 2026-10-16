@@ -61,7 +61,7 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
             let patterns_result = find_pnpm_package_path_patterns(&monorepo);
             match patterns_result {
                 Ok(patterns) => extra_patterns = patterns,
-                Err(_error) => { },
+                Err(_error) => {}
             };
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
