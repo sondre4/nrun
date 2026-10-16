@@ -96,7 +96,7 @@ pub fn handle_cli_default(global_arguments: GlobalArguments) -> () {
     match launch_tui_result {
         Ok(result) => result,
         Err(error) => {
-            println!("nrun: Encountered an error whilst running TUI: {error}");
+            println!("nrun: Error whilst running TUI: {error}");
             return;
         }
     };
