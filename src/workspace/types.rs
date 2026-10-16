@@ -36,6 +36,9 @@ pub struct Package {
     pub scripts: Vec<Script>,
 }
 
+/// Domain type Workspace in the context of this tool refers to a project, which can be either a normal project or a monorepo
+/// Some package managers refer to workspaces as the packages in a monorepo project.
+/// In the context of this tool's domain types, a Package refers to the packages in a monorepo or the project root config
 #[derive(Debug, PartialEq, Eq)]
 pub struct Workspace {
     pub root_path: PathBuf,

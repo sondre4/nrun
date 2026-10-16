@@ -1,0 +1,8 @@
+{
+  "name": "fixture-pnpm-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "run-pnpm-project": "node index.js"
+  }
+}
