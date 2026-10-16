@@ -39,15 +39,17 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
     let resolved_project_root_scripts = resolve_scripts(&root_package_json);
     let project_root_scripts = if resolved_project_root_scripts.is_some() { resolved_project_root_scripts.unwrap() } else { Vec::new() };
 
-    // add root package to workspace vector
-    let root_package: Package = Package {
-        id: ROOT_PACKAGE_ID,
-        name: root_package_json.name.unwrap_or(workspace.root_path.clone().to_string_lossy().to_string()),
-        path: workspace.root_path.clone(),
-        scripts: project_root_scripts,
-    };
+    if !project_root_scripts.is_empty() {
+        // add root package to workspace vector
+        let root_package: Package = Package {
+            id: ROOT_PACKAGE_ID,
+            name: root_package_json.name.unwrap_or(workspace.root_path.clone().to_string_lossy().to_string()),
+            path: workspace.root_path.clone(),
+            scripts: project_root_scripts,
+        };
 
-    workspace.packages.push(root_package);
+        workspace.packages.push(root_package);
+    }
 
     // find path patterns of packages
 
@@ -68,7 +70,11 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
     }
 
     let first_package = workspace.packages.first();
-    let mut package_start_id = get_next_package_id(first_package.unwrap());
+    let mut package_start_id: usize = 0;
+
+    if first_package.is_some() {
+        package_start_id = get_next_package_id(first_package.unwrap());
+    }
 
     // Find packages from path patterns
     for path_pattern in &extra_patterns {
@@ -86,9 +92,6 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
             package_start_id += workspace.packages.len();
         }
     }
-
-    // println!("Package patterns: {:#?}", extra_patterns);
-    // println!("Project found: {:#?}", workspace);
 
     return Ok(workspace);
 }

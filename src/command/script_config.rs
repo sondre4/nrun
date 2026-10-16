@@ -72,7 +72,7 @@ impl ScriptConfig {
                     return Err("Path not set".to_string());
                 }
                 ScriptCallerError::Io(io_error) => {
-                    return Err(format!("IO Error: {}", io_error));
+                    return Err(format!("{} (hint: does your project's package manager exist on your system?)", io_error));
                 }
             },
         }
