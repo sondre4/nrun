@@ -6,40 +6,40 @@ use crate::workspace::{
 };
 
 fn is_npm_project_root(path: &Path) -> bool {
-    let workspace_filepath = path.join(NPM_CONFIG.manifest_name);
+    let manifest_filepath = path.join(NPM_CONFIG.manifest_name);
     let lockfile_filepath = path.join(NPM_CONFIG.lockfile_name);
 
-    if workspace_filepath.exists() && lockfile_filepath.exists() {
+    if manifest_filepath.exists() && lockfile_filepath.exists() {
         return true;
     }
     return false;
 }
 
 fn is_yarn_project_root(path: &Path) -> bool {
-    let workspace_filepath = path.join(YARN_CONFIG.manifest_name);
+    let manifest_filepath = path.join(YARN_CONFIG.manifest_name);
     let lockfile_filepath = path.join(YARN_CONFIG.lockfile_name);
 
-    if workspace_filepath.exists() && lockfile_filepath.exists() {
+    if manifest_filepath.exists() && lockfile_filepath.exists() {
         return true;
     }
     return false;
 }
 
 fn is_bun_project_root(path: &Path) -> bool {
-    let workspace_filepath = path.join(BUN_CONFIG.manifest_name);
+    let manifest_filepath = path.join(BUN_CONFIG.manifest_name);
     let lockfile_filepath = path.join(BUN_CONFIG.lockfile_name);
 
-    if workspace_filepath.exists() && lockfile_filepath.exists() {
+    if manifest_filepath.exists() && lockfile_filepath.exists() {
         return true;
     }
     return false;
 }
 
 fn is_pnpm_project_root(path: &Path) -> bool {
-    let workspace_filepath = path.join(PNPM_CONFIG.workspace_config_name);
     let manifest_filepath = path.join(PNPM_CONFIG.manifest_name);
     let lockfile_filepath = path.join(PNPM_CONFIG.lockfile_name);
-    if workspace_filepath.exists() && manifest_filepath.exists() && lockfile_filepath.exists() {
+    let workspace_filepath = path.join(PNPM_CONFIG.workspace_config_name);
+    if manifest_filepath.exists() && (lockfile_filepath.exists() || workspace_filepath.exists()) {
         return true;
     }
     return false;
