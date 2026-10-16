@@ -5,35 +5,34 @@ use nrun::workspace::{
     project::find::find_monorepo_project,
     types::PackageManager,
 };
-// use std::process::Command;
 
-fn finds_project(project_path: &Path) -> bool {
+fn test_discover_project_info(project_path: &Path) -> () {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let fixture_path = base_directory.join("tests").join("fixtures").join(project_path);
 
     // Wrong path argument
     let wrong_path_result = find_monorepo_project(base_directory, 5);
-    // assert!(wrong_path_result.is_err());
-    if wrong_path_result.is_ok() {
-        return false;
-    }
+    assert!(wrong_path_result.is_err());
+    // if wrong_path_result.is_ok() {
+    //     return false;
+    // }
 
     // Too small depth argument
     let too_small_depth_result = find_monorepo_project(fixture_path.clone(), 0);
-    // assert!(too_small_depth_result.is_err());
+    assert!(too_small_depth_result.is_err());
 
-    if too_small_depth_result.is_ok() {
-        return false;
-    }
+    // if too_small_depth_result.is_ok() {
+    //     return false;
+    // }
 
     // Should be positive path
     let found_result = find_monorepo_project(fixture_path.clone(), 5);
     if found_result.is_err() {
         println!("{}", found_result.as_ref().err().unwrap());
-        return false;
+        // return false;
     }
 
-    // assert!(found_result.is_ok());
+    assert!(found_result.is_ok());
 
     // Check that the correct project was found
     let expected_project: Project = Project {
@@ -43,10 +42,12 @@ fn finds_project(project_path: &Path) -> bool {
     };
 
     let project = found_result.unwrap();
-    return project == expected_project;
+    // return project == expected_project;
+    assert_eq!(project, expected_project);
 }
 
 #[test]
 fn npm_project() -> () {
-    assert!(finds_project(&PathBuf::from("npm-project")));
+    // assert!(discovers_project(&PathBuf::from("npm-project")));
+    test_discover_project_info(&PathBuf::from("npm-project"));
 }

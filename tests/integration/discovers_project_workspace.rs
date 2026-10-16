@@ -1,14 +1,13 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use nrun::workspace::{
     find_workspace,
     types::{Package, PackageManager, Script, Workspace},
 };
 
-#[test]
-fn npm_workspace() {
+fn test_discover_project_workspace(project_path: &Path) -> () {
     let base_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let fixture_path = base_directory.join("tests").join("fixtures").join("npm-project");
+    let fixture_path = base_directory.join("tests").join("fixtures").join(project_path);
 
     // Wrong path argument
     let wrong_path_result = find_workspace(Some(&base_directory.clone()), &5);
@@ -52,4 +51,9 @@ fn npm_workspace() {
 
     let workspace = found_workspace.unwrap();
     assert_eq!(workspace, expected_workspace);
+}
+
+#[test]
+fn npm_project() -> () {
+    test_discover_project_workspace(&PathBuf::from("npm-project"));
 }
