@@ -58,8 +58,11 @@ pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u
     match monorepo.package_manager {
         PackageManager::Pnpm => {
             // for pnpm: parse pnpm-workspace.yaml
-            let patterns = find_pnpm_package_path_patterns(&monorepo)?;
-            extra_patterns = patterns;
+            let patterns_result = find_pnpm_package_path_patterns(&monorepo);
+            match patterns_result {
+                Ok(patterns) => extra_patterns = patterns,
+                Err(_error) => { },
+            };
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
             if root_package_json.workspaces.is_some() {
