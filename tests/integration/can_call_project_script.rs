@@ -1,9 +1,9 @@
 use std::path::{Path, PathBuf};
 
-use nrun::{command::{command_caller::CommandCaller, script_config::ScriptConfig}, workspace::{
-    find_workspace,
-    types::{Package, PackageManager, Script, Workspace},
-}};
+use nrun::{
+    command::{command_caller::CommandCaller, script_config::ScriptConfig},
+    workspace::find_workspace,
+};
 
 use crate::setup_temp_directory::{create_temp_project_from_base, get_cargo_manifest_dir_path};
 
@@ -35,7 +35,7 @@ fn test_can_call_project_script(project_path: &Path) -> () {
     let call_result = CommandCaller::call(config);
     assert!(call_result.is_ok());
 
-    // Check if script in project fixture ran.
+    // Check if script in project fixture ran
     // The script should create a file called 'test.txt'
     let test_file_path = temp_project_path.join("test.txt");
     assert!(test_file_path.exists(), "File not found at {}", test_file_path.to_string_lossy());
