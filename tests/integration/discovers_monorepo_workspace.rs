@@ -101,3 +101,13 @@ fn npm_monorepo() -> () {
 fn bun_monorepo() -> () {
     test_discover_monorepo_workspace(&PathBuf::from("bun-monorepo"), PackageManager::Bun);
 }
+
+#[test]
+fn yarn_monorepo() -> () {
+    test_discover_monorepo_workspace(&PathBuf::from("yarn-monorepo"), PackageManager::Yarn);
+}
+
+#[test]
+fn pnpm_monorepo() -> () {
+    test_discover_monorepo_workspace(&PathBuf::from("pnpm-monorepo"), PackageManager::Pnpm);
+}

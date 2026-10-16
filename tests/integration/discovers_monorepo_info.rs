@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use nrun::workspace::{
-    config::{BUN_CONFIG, NPM_CONFIG, PackageManagerConfig, Project},
+    config::{BUN_CONFIG, NPM_CONFIG, PNPM_CONFIG, PackageManagerConfig, Project, YARN_CONFIG},
     project::find::find_monorepo_project,
     types::PackageManager,
 };
@@ -49,4 +49,14 @@ fn npm_project() -> () {
 #[test]
 fn bun_project() -> () {
     test_discover_monorepo_info(&PathBuf::from("bun-project"), PackageManager::Bun, BUN_CONFIG);
+}
+
+#[test]
+fn yarn_project() -> () {
+    test_discover_monorepo_info(&PathBuf::from("yarn-project"), PackageManager::Yarn, YARN_CONFIG);
+}
+
+#[test]
+fn pnpm_project() -> () {
+    test_discover_monorepo_info(&PathBuf::from("pnpm-project"), PackageManager::Pnpm, PNPM_CONFIG);
 }

@@ -62,3 +62,13 @@ fn npm_project() -> () {
 fn bun_project() -> () {
     test_discover_project_workspace(&PathBuf::from("bun-project"), PackageManager::Bun, String::from("bun"));
 }
+
+#[test]
+fn yarn_project() -> () {
+    test_discover_project_workspace(&PathBuf::from("yarn-project"), PackageManager::Yarn, String::from("yarn"));
+}
+
+#[test]
+fn pnpm_project() -> () {
+    test_discover_project_workspace(&PathBuf::from("pnpm-project"), PackageManager::Pnpm, String::from("pnpm"));
+}
