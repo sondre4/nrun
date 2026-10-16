@@ -39,7 +39,7 @@ fn is_pnpm_project_root(path: &Path) -> bool {
     let workspace_filepath = path.join(PNPM_CONFIG.workspace_config_name);
     let manifest_filepath = path.join(PNPM_CONFIG.manifest_name);
     let lockfile_filepath = path.join(PNPM_CONFIG.lockfile_name);
-    if workspace_filepath.exists() && manifest_filepath.exists() && lockfile_filepath.exists() {
+    if workspace_filepath.exists() && (manifest_filepath.exists() || lockfile_filepath.exists()) {
         return true;
     }
     return false;
