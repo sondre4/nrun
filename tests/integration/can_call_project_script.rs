@@ -19,8 +19,6 @@ fn test_can_call_project_script(project_path: &Path) -> () {
         println!("Error while finding workspace: {}", found_workspace.as_ref().err().unwrap());
     }
 
-    println!("{found_workspace:#?}");
-
     assert!(found_workspace.is_ok());
 
     let workspace = found_workspace.unwrap();
@@ -52,4 +50,14 @@ fn npm_project() -> () {
 #[test]
 fn bun_project() -> () {
     test_can_call_project_script(&PathBuf::from("bun-project"));
+}
+
+#[test]
+fn yarn_project() -> () {
+    test_can_call_project_script(&PathBuf::from("yarn-project"));
+}
+
+#[test]
+fn pnpm_project() -> () {
+    test_can_call_project_script(&PathBuf::from("pnpm-project"));
 }
