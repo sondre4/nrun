@@ -2,7 +2,7 @@ use std::{fmt, path::PathBuf};
 
 // for workspace metadata
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PackageManager {
     Npm,
     Pnpm,
@@ -21,14 +21,14 @@ impl fmt::Display for PackageManager {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Script {
     pub id: usize,
     pub name: String,
     pub command: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Package {
     pub id: usize,
     pub name: String,
@@ -36,7 +36,10 @@ pub struct Package {
     pub scripts: Vec<Script>,
 }
 
-#[derive(Debug)]
+/// Domain type Workspace in the context of this tool refers to a project, which can be either a normal project or a monorepo
+/// Some package managers refer to workspaces as the packages in a monorepo project.
+/// In the context of this tool's domain types, a Package refers to the packages in a monorepo or the project root config
+#[derive(Debug, PartialEq, Eq)]
 pub struct Workspace {
     pub root_path: PathBuf,
     pub package_manager: PackageManager,

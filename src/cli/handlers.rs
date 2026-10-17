@@ -9,7 +9,8 @@ use crate::workspace::find_workspace;
 use crate::workspace::types::Workspace;
 
 fn handle_finding_workspace(global_arguments: &GlobalArguments) -> Option<Workspace> {
-    let workspace_result = find_workspace(&global_arguments.workspace, &global_arguments.depth);
+    let path_argument = global_arguments.workspace.as_ref();
+    let workspace_result = find_workspace(path_argument, &global_arguments.depth);
     match workspace_result {
         Ok(result) => {
             return Some(result);
@@ -95,7 +96,7 @@ pub fn handle_cli_default(global_arguments: GlobalArguments) -> () {
     match launch_tui_result {
         Ok(result) => result,
         Err(error) => {
-            println!("nrun: Encountered an error whilst running TUI: {error}");
+            println!("nrun: Error whilst running TUI: {error}");
             return;
         }
     };

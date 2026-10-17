@@ -1,0 +1,10 @@
+{
+  "name": "fixture-npm-project",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "run-npm-project": "node index.js"
+  }
+}

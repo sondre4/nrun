@@ -10,7 +10,7 @@ use crate::workspace::{
 
 const ROOT_PACKAGE_ID: usize = 0;
 
-pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u32) -> Result<Workspace, String> {
+pub fn build_workspace_object(start_directory: Option<&PathBuf>, search_depth: u32) -> Result<Workspace, String> {
     // initial values
     let values = initialize_values(start_directory, search_depth)?;
     let directory = values.directory;
@@ -25,8 +25,6 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
         packages: Vec::new(),
     };
 
-    // println!("Found project: '{}' with package manager '{:#?}'", monorepo.root_path.to_string_lossy(), monorepo.package_manager);
-
     // read root package.json
     // not needed for pnpm? still needed for main scripts
     let root_package_json_result = read_package_json(&monorepo);
@@ -38,23 +36,20 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
     };
 
     // read scripts in root package.json
-    let root_package_json_scripts_result = resolve_scripts(&root_package_json);
-    let root_package_json_scripts = match root_package_json_scripts_result {
-        Ok(result) => result,
-        Err(error) => {
-            return Err(format!("Error: {error}"));
-        }
-    };
+    let resolved_project_root_scripts = resolve_scripts(&root_package_json);
+    let project_root_scripts = if resolved_project_root_scripts.is_some() { resolved_project_root_scripts.unwrap() } else { Vec::new() };
 
-    // add root package to workspace vector
-    let root_package: Package = Package {
-        id: ROOT_PACKAGE_ID,
-        name: root_package_json.name.unwrap_or(workspace.root_path.clone().to_string_lossy().to_string()),
-        path: workspace.root_path.clone(),
-        scripts: root_package_json_scripts,
-    };
+    if !project_root_scripts.is_empty() {
+        // add root package to workspace vector
+        let root_package: Package = Package {
+            id: ROOT_PACKAGE_ID,
+            name: root_package_json.name.unwrap_or(workspace.root_path.clone().to_string_lossy().to_string()),
+            path: workspace.root_path.clone(),
+            scripts: project_root_scripts,
+        };
 
-    workspace.packages.push(root_package);
+        workspace.packages.push(root_package);
+    }
 
     // find path patterns of packages
 
@@ -63,8 +58,11 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
     match monorepo.package_manager {
         PackageManager::Pnpm => {
             // for pnpm: parse pnpm-workspace.yaml
-            let patterns = find_pnpm_package_path_patterns(&monorepo)?;
-            extra_patterns = patterns;
+            let patterns_result = find_pnpm_package_path_patterns(&monorepo);
+            match patterns_result {
+                Ok(patterns) => extra_patterns = patterns,
+                Err(_error) => {}
+            };
         }
         PackageManager::Npm | PackageManager::Bun | PackageManager::Yarn => {
             if root_package_json.workspaces.is_some() {
@@ -75,7 +73,11 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
     }
 
     let first_package = workspace.packages.first();
-    let mut package_start_id = get_next_package_id(first_package.unwrap());
+    let mut package_start_id: usize = 0;
+
+    if first_package.is_some() {
+        package_start_id = get_next_package_id(first_package.unwrap());
+    }
 
     // Find packages from path patterns
     for path_pattern in &extra_patterns {
@@ -93,9 +95,6 @@ pub fn build_workspace_object(start_directory: Option<PathBuf>, search_depth: u3
             package_start_id += workspace.packages.len();
         }
     }
-
-    // println!("Package patterns: {:#?}", extra_patterns);
-    // println!("Project found: {:#?}", workspace);
 
     return Ok(workspace);
 }
