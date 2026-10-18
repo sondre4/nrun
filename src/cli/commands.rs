@@ -5,32 +5,34 @@ use clap::Subcommand;
 
 use crate::cli::handlers;
 
+// TODO: include command examples
 #[derive(Parser)]
 #[command(
     name = "nrun",
     version,
-    about = "Calling 'nrun' without a command/subcommand launches the TUI (Default behavior is interactive)",
-    long_about = "about2",
-    after_help = "about3"
+    about = "Nrun is a tool designed for browsing and calling the Node scripts in projects and monorepos",
+    long_about = "Nrun searches for a project/monorepo root, reads the project's package manager's lockfile, and looks for scripts defined in package.json files.\nCurrently, Nrun can recognize projects with npm, pnpm, bun, and yarn (newer) as the package manager.",
+    after_help = "For more information about Nrun, see the README.md in the repository"
 )]
 pub struct Cli {
+    /// Calling 'nrun' without a command/subcommand launches the TUI (Default behavior is to launch interactive TUI)
     #[command(subcommand)]
     pub command: Option<Command>,
 
-    /// Package name
+    /// You can specify a package and script name to call that script directly using the project's package manager
     #[arg(short, long, requires = "script")]
     package: Option<String>,
 
-    /// Script name
+    /// You can specify a package and script name to call that script directly using the project's package manager
     #[arg(short, long, requires = "package")]
     script: Option<String>,
 
     // default command arguments
-    /// Optional: specify a path to a workspace root
+    /// Optional: specify a path to a project/monorepo root directory
     #[arg(short, long, global = true)]
     workspace: Option<PathBuf>,
 
-    /// Optional: specify how far out of the starting directory nrun should search for a workspace root
+    /// Optional: specify how far out of the starting directory nrun should search for a project/monorepo root
     #[arg(short, long, global = true, default_value_t = 7)] // default depth is 7
     depth: u32,
 }
@@ -40,25 +42,24 @@ pub enum Command {
     /// Launch nrun's TUI. The TUI is also launched when no command/subcommand is specified (default)
     Tui,
 
-    /// Search the data
+    /// Search the packages and the scripts that Nrun has found from the CLI
     Search {
-        /// The text to search for
+        /// The text to search for. Fuzzy-matches the search query in package names and script names/commands
         #[arg(short, long)]
         query: String,
 
-        /// Output to stdout in JSON format
+        /// When displaying results directory to stdout, the output will be in JSON format
         #[arg(short, long, default_value_t = false)]
         json: bool,
-
-        /// Enable scoring/filtering debug output
-        #[arg(long, default_value_t = false)]
-        debug: bool,
+        // /// Enable scoring/filtering debug output
+        // #[arg(long, default_value_t = false)]
+        // debug: bool,
     },
 
     /// List all packages and their scripts in a workspace
     #[command(visible_alias = "l", visible_alias = "ls")]
     List {
-        /// Output to stdout in JSON format
+        /// Output the found scripts to stdout in JSON format
         #[arg(short, long, default_value_t = false)]
         json: bool,
     },
@@ -98,10 +99,9 @@ pub fn handle_command(input: Cli) -> () {
 
         Some(Command::Search {
             query,
-            debug,
             json,
         }) => {
-            handlers::handle_cli_search(global_args, &query, debug, json);
+            handlers::handle_cli_search(global_args, &query, false, json);
         }
 
         // Default
