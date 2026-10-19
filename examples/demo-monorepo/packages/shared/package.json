@@ -1,0 +1,9 @@
+{
+  "name": "@demo/shared",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node -e \"console.log('Building shared')\"",
+    "test": "node --test"
+  }
+}

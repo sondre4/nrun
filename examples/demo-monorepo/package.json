@@ -1,0 +1,11 @@
+{
+  "name": "demo",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "build": "pnpm -r --if-present run build",
+    "test": "pnpm -r --if-present run test",
+    "list": "pnpm -r list --depth -1"
+  }
+}
