@@ -11,9 +11,9 @@ i cant remember what the npm scripts are called -->
 
 <p align="center">
   <img
-    src="docs/assets/tui-demo-styled.png"
+    src="docs/assets/tui-demo.png"
     alt="TUI Demo"
-    width="900"
+    width="1200"
   />
 </p>
 
