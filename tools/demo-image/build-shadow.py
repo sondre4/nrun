@@ -48,7 +48,7 @@ for y in range(height):
         # Smoothstep interpolation.
         fade = 1.0 - t * t * (3.0 - 2.0 * t)
 
-        new_alpha = round(a * max_opacity * (2 * fade)**2)
+        new_alpha = round(a * max_opacity * (1.5*fade)**3)
         pixels[x, y] = (0, 0, 0, new_alpha) # type: ignore
 
 img.save("shadow-faded.png")
