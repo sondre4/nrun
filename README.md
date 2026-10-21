@@ -12,7 +12,10 @@ i cant remember what the npm scripts are called -->
 <!-- Badges -->
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20Windows-334155" alt="platforms">
+  <a href="#compatibility">
+    <img src="https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20Windows-334155"
+    alt="platforms">
+  </a>
   <a href="#compatibility">
     <img src="https://img.shields.io/badge/supports-npm%20%7C%20bun%20%7C%20yarn%20%7C%20pnpm-334155"
         alt="Supports npm, Bun, Yarn, and pnpm,">
