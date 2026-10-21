@@ -12,7 +12,11 @@ i cant remember what the npm scripts are called -->
 <!-- Badges -->
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20Windows-blue" alt="platforms">
+  <img src="https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20Windows-334155" alt="platforms">
+  <a href="#compatibility">
+    <img src="https://img.shields.io/badge/supports-npm%20%7C%20bun%20%7C%20yarn%20%7C%20pnpm-334155"
+        alt="Supports npm, Bun, Yarn, and pnpm,">
+  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/sondre4/nrun" alt="License">
   </a>
@@ -34,9 +38,30 @@ i cant remember what the npm scripts are called -->
   />
 </p>
 
+## Features
+- TUI
+  - Browse project-defined scripts from all packages in e.g. a Node monorepo
+  - Run selected script by pressing `Enter`
+  - Expand/collapse selected package by pressing `Enter`
+  - Search for package/script names
 
+- CLI
+  - Display all project-defined scripts in e.g. a Node monorepo
+  - Search scripts from the command line
+  - Output formatted packages/scripts overview
+  - Optional JSON output format
+  - Run `nrun --help` for more information
+
+## Compatibility
+- Works with **npm**, **Bun**, **Yarn**, and **pnpm**
+- Works for Node **projects** and **monorepos**
+- Runs natively on **Linux**, **macOS** and **Windows**.
+
+### Package-manager specifics tested
+- Project and monorepo discovery for **npm**, **Bun**, **Yarn**, and **pnpm**
+- Running project-defined scripts
+- Tested on Linux, macOS and Windows in CI
 
 <!-- ### Format and lint command
 `cargo fmt`
 `cargo clippy --workspace --all-targets --all-features` -->
-
