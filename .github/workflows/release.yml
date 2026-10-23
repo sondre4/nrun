@@ -1,0 +1,309 @@
+# Release workflow
+# 1: compile natively
+# 2: package to zip/tar.gz
+# 3: store in artifact storage
+# 4: download each natively compiled build to native runner
+# 5: (installation test) check that it is able to be unpackaged
+# 6: if everything ok, upload release build to Github release
+name: Release
+
+on:
+  pull_request:
+    branches: [release]
+    tags:
+      - "v*"
+  
+  # While setting up release workflow
+  push:
+    branches: [dev/release-workflow]
+
+#   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            archive_ext: tar.gz
+
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            archive_ext: tar.gz
+
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+            archive_ext: tar.gz
+
+          - target: aarch64-apple-darwin
+            runner: macos-15
+            archive_ext: tar.gz
+
+          - target: x86_64-pc-windows-msvc
+            runner: windows-2025
+            archive_ext: zip
+
+          - target: aarch64-pc-windows-msvc
+            runner: windows-11-arm
+            archive_ext: zip
+
+    runs-on: ${{ matrix.runner }}
+
+
+
+    env:
+      BINARY_NAME: nrun
+      TARGET: ${{ matrix.target }}
+      ASSET_NAME: nrun-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive_ext }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Install Rust and configure caching
+        uses: actions-rust-lang/setup-rust-toolchain@v2
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+
+      # Run tests before building release (tests already ran in PRs?)
+      - name: Run Rust tests
+        run: cargo test --locked --all-targets
+
+      - name: Build release binary
+        run: cargo build --locked --release --target ${{ matrix.target }}
+
+
+      # Package built binaries
+      # Linux/macOS packaging
+      - name: Package Linux/macOS binary
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          stage="$RUNNER_TEMP/package"
+          mkdir -p "$stage" dist
+
+          cp "target/$TARGET/release/$BINARY_NAME" "$stage/"
+          chmod 755 "$stage/$BINARY_NAME"
+
+          tar -C "$stage" \
+            -czf "$GITHUB_WORKSPACE/dist/$ASSET_NAME" \
+            "$BINARY_NAME"
+
+          cd "$GITHUB_WORKSPACE/dist"
+          sha256sum "$ASSET_NAME" > "$ASSET_NAME.sha256"
+
+      # Windows packaging
+      - name: Package Windows binary
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $stage = Join-Path $env:RUNNER_TEMP "package"
+          New-Item -ItemType Directory -Force -Path $stage, "dist" | Out-Null
+
+          $binary = "target/$env:TARGET/release/$env:BINARY_NAME.exe"
+          Copy-Item $binary "$stage/$env:BINARY_NAME.exe"
+
+          Compress-Archive `
+            -Path "$stage/$env:BINARY_NAME.exe" `
+            -DestinationPath "dist/$env:ASSET_NAME" `
+            -Force
+
+          $hash = (Get-FileHash -Algorithm SHA256 "dist/$env:ASSET_NAME").Hash.ToLower()
+          "$hash  $env:ASSET_NAME" |
+            Out-File -Encoding ascii "dist/$env:ASSET_NAME.sha256"
+
+      # Store built artifacts in Github artifact storage
+      - name: Store packaged release artifact in GitHub artifact storage
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ matrix.target }}
+          path: |
+            dist/${{ env.ASSET_NAME }}
+            dist/${{ env.ASSET_NAME }}.sha256
+          if-no-files-found: error
+          retention-days: 2
+
+
+  # Second job in the workflow
+  # Test that installing the built binaries (extracting from zip/tar.gz) works
+  # Check running nrun --version
+
+  install-test:
+    name: Install test ${{ matrix.target }}
+    needs: build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            archive_ext: tar.gz
+
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            archive_ext: tar.gz
+
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+            archive_ext: tar.gz
+
+          - target: aarch64-apple-darwin
+            runner: macos-15
+            archive_ext: tar.gz
+
+          - target: x86_64-pc-windows-msvc
+            runner: windows-2025
+            archive_ext: zip
+
+          - target: aarch64-pc-windows-msvc
+            runner: windows-11-arm
+            archive_ext: zip
+
+    runs-on: ${{ matrix.runner }}
+
+    env:
+      BINARY_NAME: nrun
+      TARGET: ${{ matrix.target }}
+      ASSET_NAME: nrun-${{ github.ref_name }}-${{ matrix.target }}.${{ matrix.archive_ext }}
+
+
+    # Installation test
+    # Check that the compiled release binaries can actually be extracted from the package and ran natively
+    # Last test before published release
+
+    steps:
+      - name: Download packaged release artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: release-${{ matrix.target }}
+          path: downloaded
+
+      # Check SHA256 checksums
+      # Linux/macOS
+      - name: Check package checksum (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cd downloaded
+          sha256sum -c "$ASSET_NAME.sha256"
+
+      # Windows
+      - name: Check package checksum (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $archive = "downloaded/$env:ASSET_NAME"
+          $checksumFile = "$archive.sha256"
+
+          $expected = (Get-Content $checksumFile).Trim() -split '\s+'
+          $actual = (Get-FileHash -Algorithm SHA256 $archive).Hash
+
+          if ($expected[0] -ne $actual) {
+            throw "SHA-256 checksum verification failed"
+          }
+
+
+      # Run installation test
+      # Linux/macOS 
+      - name: Extract and test Linux/macOS package
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          archive="$GITHUB_WORKSPACE/downloaded/$ASSET_NAME"
+          extracted="$RUNNER_TEMP/extracted"
+          install_dir="$RUNNER_TEMP/nrun-bin"
+
+          test -f "$archive"
+          mkdir -p "$extracted" "$install_dir"
+
+          tar -xzf "$archive" -C "$extracted"
+
+          install -m 755 \
+            "$extracted/$BINARY_NAME" \
+            "$install_dir/$BINARY_NAME"
+
+          export PATH="$install_dir:$PATH"
+
+          nrun --version
+          nrun --help
+
+
+      # Windows
+      - name: Extract and test Windows package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $archive = "downloaded/$env:ASSET_NAME"
+          $extracted = Join-Path $env:RUNNER_TEMP "extracted"
+          $installDir = Join-Path $env:RUNNER_TEMP "mytool-bin"
+
+          if (!(Test-Path $archive)) {
+            throw "Release archive not found: $archive"
+          }
+
+          Expand-Archive -Path $archive -DestinationPath $extracted -Force
+          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+          Copy-Item "$extracted/$env:BINARY_NAME.exe" $installDir
+
+          $env:PATH = "$installDir;$env:PATH"
+
+          & "$installDir/$env:BINARY_NAME.exe" --version
+          if ($LASTEXITCODE -ne 0) { throw "nrun --version test failed" }
+
+          & "$installDir/$env:BINARY_NAME.exe" --help
+          if ($LASTEXITCODE -ne 0) { throw "nrun --help test failed" }
+
+
+  # Last step
+  # If everything ok, publish to release in the repo
+  # publish:
+  #   name: Publish GitHub Release
+  #   needs: [build, install-test]
+  #   runs-on: ubuntu-24.04
+
+  #   permissions:
+  #     contents: write
+
+  #   steps:
+  #     - name: Download tested release artifacts
+  #       uses: actions/download-artifact@v8
+  #       with:
+  #         pattern: release-*
+  #         path: release-assets
+  #         merge-multiple: true
+
+      # - name: Add SHA256SUMS
+      #   working-directory: release-assets
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+
+      #     cat *.sha256 > SHA256SUMS
+      #     rm -- *.sha256
+
+      # - name: Publish release
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   run: |
+      #     gh release create "$GITHUB_REF_NAME" \
+      #       release-assets/* \
+      #       --verify-tag \
+      #       --generate-notes
