@@ -60,7 +60,7 @@ i cant remember what the npm scripts are called -->
 - Works for Node **projects** and **monorepos**
 - Runs natively on **Linux**, **macOS** and **Windows**.
 
-### Package-manager specifics tested
+#### Package-manager specifics tested
 - Project and monorepo discovery for **npm**, **Bun**, **Yarn**, and **pnpm**
 - Running project-defined scripts
 - Tested on Linux, macOS and Windows in CI
