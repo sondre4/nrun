@@ -12,6 +12,9 @@ on:
     tags:
       - "v*"
 
+  # Allows for manual running of workflow
+  workflow_dispatch:
+
 permissions:
   contents: read
 
