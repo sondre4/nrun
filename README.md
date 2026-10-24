@@ -27,7 +27,7 @@ i cant remember what the npm scripts are called -->
     <img src="https://github.com/sondre4/nrun/actions/workflows/ci.yml/badge.svg" alt="CI status">
   </a>
   <a href="https://github.com/sondre4/nrun/releases/latest">
-    <img src="https://img.shields.io/github/v/release/sondre4/nrun" alt="Latest release">
+    <img src="https://img.shields.io/github/v/release/sondre4/nrun?include_prereleases" alt="Latest release">
   </a>
 </p>
 
