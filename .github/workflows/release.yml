@@ -8,16 +8,9 @@
 name: Release
 
 on:
-  pull_request:
-    branches: [release]
+  push:
     tags:
       - "v*"
-  
-  # While setting up release workflow
-  push:
-    branches: [dev/release-workflow]
-
-#   workflow_dispatch:
 
 permissions:
   contents: read
@@ -70,6 +63,14 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+
+      - name: Check that tag belongs to the release branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin release
+          git merge-base --is-ancestor \
+            "$GITHUB_SHA" origin/release
 
       - name: Install Rust and configure caching
         uses: actions-rust-lang/setup-rust-toolchain@v2
