@@ -55,6 +55,16 @@ i cant remember what the npm scripts are called -->
   - Optional JSON output format
   - Run `nrun --help` for more information
 
+## Compatibility
+- Works with **npm**, **Bun**, **Yarn**, and **pnpm**
+- Works for Node **projects** and **monorepos**
+- Runs natively on **Linux**, **macOS** and **Windows**.
+
+### Package-manager specifics tested
+- Project and monorepo discovery for **npm**, **Bun**, **Yarn**, and **pnpm**
+- Running project-defined scripts
+- Tested on Linux, macOS and Windows in CI
+
 ## Installation
 
 Download the latest release for your operating system and CPU architecture from the GitHub Releases page.
@@ -80,7 +90,7 @@ Replace the release link above with the actual repository URL.
 
 For example, to install it in `~/.local/bin`:
 
-```
+```bash
 mkdir -p ~/.local/bin
 tar -xzf nrun-<version>-<target>.tar.gz
 install -m 755 nrun ~/.local/bin/nrun
@@ -92,7 +102,7 @@ If `~/.local/bin` is not already on your `PATH`, add it to your shell configurat
 
 For **Bash** or **Zsh**, add this line to `~/.bashrc`, `~/.bash_profile`, or `~/.zshrc`, as appropriate:
 
-```
+```bash
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
@@ -106,7 +116,7 @@ Open a new terminal, or reload the relevant shell configuration file.
 
 Verify the installation:
 
-```
+```bash
 nrun --version
 nrun --help
 ```
@@ -127,7 +137,7 @@ To update `PATH`, open **Settings**, search for _Edit environment variables for 
 
 Open a new terminal and verify the installation:
 
-```
+```bash
 nrun.exe --version
 nrun.exe --help
 ```
@@ -140,13 +150,13 @@ Release archives include SHA-256 checksums in the `SHA256SUMS` file. Download th
 
 On Linux or macOS, if you have downloaded `SHA256SUMS` and the corresponding archive into the same directory, run:
 
-```
+```bash
 sha256sum -c SHA256SUMS
 ```
 
 On Windows, compare the archive's SHA-256 hash with the corresponding entry in `SHA256SUMS` using PowerShell:
 
-```
+```powershell
 Get-FileHash .\nrun-<version>-<target>.zip -Algorithm SHA256
 ```
 
@@ -169,26 +179,13 @@ You can build `nrun` yourself if you have a Rust toolchain installed.
 2. Clone the repository and enter its directory.
 3. Build the optimized binary with Cargo.
 
-```
+```bash
 git clone https://github.com/sondre4/nrun.git
 cd nrun
 cargo build --release --locked
 ```
 
-The resulting binary is located at `target/release/nrun` on Linux and macOS, or `target/release/nrun.exe` on Windows.
-
-To make it available from any directory, move the binary into a directory on your `PATH`, following the installation instructions above.
-
-
-## Compatibility
-- Works with **npm**, **Bun**, **Yarn**, and **pnpm**
-- Works for Node **projects** and **monorepos**
-- Runs natively on **Linux**, **macOS** and **Windows**.
-
-### Package-manager specifics tested
-- Project and monorepo discovery for **npm**, **Bun**, **Yarn**, and **pnpm**
-- Running project-defined scripts
-- Tested on Linux, macOS and Windows in CI
+The resulting binary is located at `target/release/nrun` on Linux and macOS, or `target/release/nrun.exe` on Windows. Move the binary into a directory on your `PATH` to make it available from any directory.
 
 ## Development
 
@@ -199,17 +196,17 @@ To make it available from any directory, move the binary into a directory on you
 
 ### Useful commands
 #### Formatting
-```
+```bash
 cargo fmt --all -- --check
 ```
 
 Format code automatically
-```
+```bash
 cargo fmt --all
 ```
 
 #### Linting
-```
+```bash
 cargo clippy --all-targets --all-features -- -D warnings
 ```
 
@@ -217,7 +214,7 @@ cargo clippy --all-targets --all-features -- -D warnings
 > [!IMPORTANT]
 > **npm**, **bun**, **yarn**, and **pnpm** are called during integration tests. If they are not available in the test environment, the integration tests will fail.
 
-```
+```bash
 cargo test --locked --all-targets
 ```
 
@@ -225,13 +222,13 @@ cargo test --locked --all-targets
 
 Build a debug version:
 
-```
+```bash
 cargo build
 ```
 
 Build an optimized release version:
 
-```
+```bash
 cargo build --locked --release
 ```
 
@@ -241,20 +238,19 @@ The resulting binary is located in `target/release/`
 
 Run it directly through Cargo:
 
-```
+```bash
 cargo run -- --help
 ```
 
 Pass additional CLI arguments after `--`:
 
-```
+```bash
 cargo run -- <arguments>
 ```
 
 ### Recommended local checks
-```
+```bash
 cargo fmt --all -- --check
 cargo clippy --all-targets --all-features -- -D warnings
 cargo test --locked --all-targets
 ```
-
