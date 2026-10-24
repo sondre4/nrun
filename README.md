@@ -27,7 +27,7 @@ i cant remember what the npm scripts are called -->
     <img src="https://github.com/sondre4/nrun/actions/workflows/ci.yml/badge.svg" alt="CI status">
   </a>
   <a href="https://github.com/sondre4/nrun/releases/latest">
-    <img src="https://img.shields.io/github/v/release/sondre4/nrun" alt="Latest release">
+    <img src="https://img.shields.io/github/v/release/sondre4/nrun?include_prereleases" alt="Latest release">
   </a>
 </p>
 
@@ -53,7 +53,12 @@ i cant remember what the npm scripts are called -->
   - Search scripts from the command line
   - Output formatted packages/scripts overview
   - Optional JSON output format
+  - All features available from the command line
+  -
   - Run `nrun --help` for more information
+
+# Use cases
+  - Quickly 
 
 ## Compatibility
 - Works with **npm**, **Bun**, **Yarn**, and **pnpm**
@@ -79,8 +84,6 @@ Precompiled binaries are available for:
 | macOS | Apple Silicon (ARM64) | `.tar.gz` |
 | Windows | x86-64 | `.zip` |
 | Windows | ARM64 | `.zip` |
-
-Replace the release link above with the actual repository URL.
 
 ### macOS and Linux
 
