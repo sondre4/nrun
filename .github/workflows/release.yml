@@ -66,13 +66,15 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       # Only run release workflow on release branch
       - name: Check that tag belongs to the release branch
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin release
+          git fetch origin +refs/heads/release:refs/remotes/origin/release
           git merge-base --is-ancestor \
             "$GITHUB_SHA" origin/release
 
