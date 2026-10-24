@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build ${{ matrix.target }}
+    name: Build and package ${{ matrix.target }}
 
     strategy:
       fail-fast: true
@@ -67,6 +67,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v7
 
+      # Only run release workflow on release branch
       - name: Check that tag belongs to the release branch
         shell: bash
         run: |
@@ -75,7 +76,7 @@ jobs:
           git merge-base --is-ancestor \
             "$GITHUB_SHA" origin/release
 
-      - name: Install Rust and configure caching
+      - name: Setup rust
         uses: actions-rust-lang/setup-rust-toolchain@v2
         with:
           toolchain: stable
@@ -220,7 +221,7 @@ jobs:
 
       # Run installation test
       # Linux/macOS 
-      - name: Extract and test Linux/macOS package
+      - name: Extract Linux/macOS package + installation test
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -230,23 +231,29 @@ jobs:
           extracted="$RUNNER_TEMP/extracted"
           install_dir="$RUNNER_TEMP/nrun-bin"
 
-          test -f "$archive"
           mkdir -p "$extracted" "$install_dir"
-
           tar -xzf "$archive" -C "$extracted"
 
           install -m 755 \
             "$extracted/$BINARY_NAME" \
             "$install_dir/$BINARY_NAME"
 
+          # Add the installation directory to PATH.
           export PATH="$install_dir:$PATH"
 
-          nrun --version
-          nrun --help
+          # Run from outside the installation directory
+          cd "$RUNNER_TEMP"
+
+          # Check that PATH includes the binary
+          command -v "$BINARY_NAME"
+
+          # Check if binary is available via PATH.
+          "$BINARY_NAME" --version
+          "$BINARY_NAME" --help
 
 
       # Windows
-      - name: Extract and test Windows package
+      - name: Extract Windows package + installation test
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
@@ -254,56 +261,60 @@ jobs:
           $extracted = Join-Path $env:RUNNER_TEMP "extracted"
           $installDir = Join-Path $env:RUNNER_TEMP "mytool-bin"
 
-          if (!(Test-Path $archive)) {
-            throw "Release archive not found: $archive"
-          }
-
           Expand-Archive -Path $archive -DestinationPath $extracted -Force
           New-Item -ItemType Directory -Force -Path $installDir | Out-Null
 
           Copy-Item "$extracted/$env:BINARY_NAME.exe" $installDir
 
+          # Add the installation directory to PATH
           $env:PATH = "$installDir;$env:PATH"
 
-          & "$installDir/$env:BINARY_NAME.exe" --version
+          # Run from a different working directory
+          Set-Location $env:RUNNER_TEMP
+
+          # Check that PATH includes the binary
+          $resolved = Get-Command "$env:BINARY_NAME.exe" -ErrorAction Stop
+          Write-Output $resolved.Source
+
+          # Check if binary is available via PATH.
+          & "$env:BINARY_NAME.exe" --version
           if ($LASTEXITCODE -ne 0) { throw "nrun --version test failed" }
 
-          & "$installDir/$env:BINARY_NAME.exe" --help
+          & "$env:BINARY_NAME.exe" --help
           if ($LASTEXITCODE -ne 0) { throw "nrun --help test failed" }
 
-
-  # Last step
+  # Last job in the workflow
   # If everything ok, publish to release in the repo
-  # publish:
-  #   name: Publish GitHub Release
-  #   needs: [build, install-test]
-  #   runs-on: ubuntu-24.04
+  publish:
+    name: Publish
+    needs: [build, install-test]
+    runs-on: ubuntu-24.04
 
-  #   permissions:
-  #     contents: write
+    permissions:
+      contents: write
 
-  #   steps:
-  #     - name: Download tested release artifacts
-  #       uses: actions/download-artifact@v8
-  #       with:
-  #         pattern: release-*
-  #         path: release-assets
-  #         merge-multiple: true
+    steps:
+      - name: Download tested release artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
 
-      # - name: Add SHA256SUMS
-      #   working-directory: release-assets
-      #   shell: bash
-      #   run: |
-      #     set -euo pipefail
+      - name: Add SHA256SUMS
+        working-directory: release-assets
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      #     cat *.sha256 > SHA256SUMS
-      #     rm -- *.sha256
+          cat *.sha256 > SHA256SUMS
+          rm -- *.sha256
 
-      # - name: Publish release
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
-      #   run: |
-      #     gh release create "$GITHUB_REF_NAME" \
-      #       release-assets/* \
-      #       --verify-tag \
-      #       --generate-notes
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            release-assets/* \
+            --verify-tag \
+            --generate-notes
