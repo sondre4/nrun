@@ -85,7 +85,7 @@ v @demo/shared (2)
    └─  test                      │ node --test
 ```
 
-2. ### `nrun.exe ls -p "@demo/api" -j`
+2. ### `nrun ls -p "@demo/api" -j`
 - `-p, -package`: `-p "@demo/api"` specifies the `@demo/api` package
 - `-j, -json`: `-j` selects JSON output format 
 
