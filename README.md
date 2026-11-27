@@ -41,19 +41,100 @@ i cant remember what the npm scripts are called -->
   />
 </p>
 
+## What does it do?
+
+1. Finds the root directory of the project
+2. Determines the project's package manager
+3. Parses `package.json` files in the project's packages
+4. Displays the scripts it found, organized by package
+
+## Use case
+Traditionally, to run a script in a Node project:
+1. Find the `package.json` in the package
+2. Read the list of scripts in the `package.json`
+3. Type the entire script command
+
+With Nrun, the process becomes:
+1. Run one command anywhere in the monorepo: `nrun`
+2. Use arrow keys or `j/k` to find the script, then press `Enter`
+
+## CLI Examples
+
+Nrun's CLI supports the same functionality:
+
+1. ### `nrun ls`
+
+```
+       Script                    │ Command
+----------------------------------------------------------------------------------------------
+v demo (3)
+   ├─  build                     │ pnpm -r --if-present run build
+   ├─  list                      │ pnpm -r list --depth -1
+   └─  test                      │ pnpm -r --if-present run test
+
+v @demo/api (2)
+   ├─  build                     │ node -e "console.log('Building api')"
+   └─  test                      │ node --test
+
+v @demo/web (2)
+   ├─  build                     │ node -e "console.log('Building web')"
+   └─  test                      │ node --test
+
+v @demo/shared (2)
+   ├─  build                     │ node -e "console.log('Building shared')"
+   └─  test                      │ node --test
+```
+
+2. ### `nrun.exe ls -p "@demo/api" -j`
+- `-p, -package`: `-p "@demo/api"` specifies the `@demo/api` package
+- `-j, -json`: `-j` selects JSON output format 
+
+```json
+{
+  "root_path": "~/nrun/examples/demo-monorepo",
+  "package_manager": "Pnpm",
+  "packages": [
+    {
+      "name": "@demo/api",
+      "path": "~/nrun/examples/demo-monorepo/apps/api",
+      "scripts": [
+        {
+          "name": "build",
+          "command": "node -e \"console.log('Building api')\""
+        },
+        {
+          "name": "test",
+          "command": "node --test"
+        }
+      ]
+    }
+  ]
+}
+```
+(`~` represents the home directory)
+
 ## Features
-- TUI
+- Terminal UI (TUI)
   - Browse project-defined scripts from all packages in e.g. a Node monorepo
   - Run selected script by pressing `Enter`
   - Expand/collapse selected package by pressing `Enter`
   - Search for package/script names
 
-- CLI
+- Command-line Interface (CLI)
   - Display all project-defined scripts in e.g. a Node monorepo
   - Search scripts from the command line
   - Output formatted packages/scripts overview
   - Optional JSON output format
+  - All features available from the command line
   - Run `nrun --help` for more information
+
+## Agents
+The CLI could in theory be used by AI agents. Agents could discover available commands using `nrun help`, discover project scripts using the CLI, and read results in a formatted table or the `-j` option can be specified for JSON format.
+
+This has, however, not been tested.
+
+## Scripting
+The CLI makes it possible to use the tool in shell scripts and automated workflows. Optional JSON output (`-j` or `-json`) provides machine-readable results that can be processed by other tools.
 
 ## Compatibility
 - Works with **npm**, **Bun**, **Yarn**, and **pnpm**
@@ -64,6 +145,9 @@ i cant remember what the npm scripts are called -->
 - Project and monorepo discovery for **npm**, **Bun**, **Yarn**, and **pnpm**
 - Running project-defined scripts
 - Tested on Linux, macOS and Windows in CI
+
+> [!WARNING]
+> This tool runs scripts defined in project `package.json` files. These scripts can run arbitrary commands with the permissions of the current user. Only run scripts from projects you trust.
 
 ## Installation
 
@@ -79,8 +163,6 @@ Precompiled binaries are available for:
 | macOS | Apple Silicon (ARM64) | `.tar.gz` |
 | Windows | x86-64 | `.zip` |
 | Windows | ARM64 | `.zip` |
-
-Replace the release link above with the actual repository URL.
 
 ### macOS and Linux
 

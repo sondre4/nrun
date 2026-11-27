@@ -62,6 +62,10 @@ pub enum Command {
         /// Output the found scripts to stdout in JSON format
         #[arg(short, long, default_value_t = false)]
         json: bool,
+
+        /// Specify a package. In the 'list' subcommand, this will only display scripts from the specified package
+        #[arg(short, long)]
+        package: Option<String>,
     },
 }
 
@@ -89,8 +93,9 @@ pub fn handle_command(input: Cli) -> () {
     match input.command {
         Some(Command::List {
             json,
+            package,
         }) => {
-            handlers::handle_list_packages(global_args, json);
+            handlers::handle_list_packages(global_args, json, package);
         }
 
         Some(Command::Tui) => {

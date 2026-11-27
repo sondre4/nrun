@@ -22,14 +22,24 @@ fn handle_finding_workspace(global_arguments: &GlobalArguments) -> Option<Worksp
     }
 }
 
-pub fn handle_list_packages(global_arguments: GlobalArguments, json_output_format: bool) -> () {
+pub fn handle_list_packages(global_arguments: GlobalArguments, json_output_format: bool, package_name: Option<String>) -> () {
     let found_workspace = handle_finding_workspace(&global_arguments);
 
     if found_workspace.is_none() {
         return;
     }
 
-    let workspace = found_workspace.unwrap();
+    let mut workspace = found_workspace.unwrap();
+
+    if package_name.is_some() {
+        let found_package = workspace.packages.iter().find(|p| p.name == package_name.clone().unwrap()).cloned();
+
+        if found_package.is_some() {
+            workspace.packages.clear();
+            workspace.packages.push(found_package.unwrap());
+        }
+    }
+
     let packages = &workspace.packages;
 
     if json_output_format {

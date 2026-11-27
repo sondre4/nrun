@@ -1,6 +1,6 @@
 [package]
 name = "nrun"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 
 [dependencies]
@@ -30,3 +30,4 @@ unused_unit = "allow"
 redundant_field_names = "allow"
 question_mark = "allow"
 unnecessary_unwrap = "allow"
+needless_range_loop = "allow"
